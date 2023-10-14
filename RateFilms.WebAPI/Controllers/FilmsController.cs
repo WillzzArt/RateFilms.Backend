@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RateFilms.Application.Services;
 using RateFilms.Domain.Models;
 using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Repositories;
+using System.Collections;
 
 namespace RateFilms.WebAPI.Controllers
 {
@@ -13,13 +15,15 @@ namespace RateFilms.WebAPI.Controllers
 
         private readonly IBaseRepository _repository;
         
-        public FilmsController(ILogger<FilmsController> logger, IBaseRepository repository)
+        public FilmsController(
+            ILogger<FilmsController> logger, 
+            IBaseRepository repository)
         {
             _logger = logger;
             _repository = repository;
         }
 
-        [HttpGet(Name = "GetFilms")]
+        [HttpGet("GetFilms")]
         public IActionResult Index()
         {
             User user = new User();
@@ -30,8 +34,13 @@ namespace RateFilms.WebAPI.Controllers
             user.Role = Role.User;
 
             _repository.CreateAsync(user);
-            _repository.SaveChangesAsync();
             return Ok(user);
+        }
+
+        [HttpGet("GetAll")]
+        public async Task<IEnumerable> GetAll()
+        {
+            return await _repository.GetAllAsync<User>();
         }
     }
 }

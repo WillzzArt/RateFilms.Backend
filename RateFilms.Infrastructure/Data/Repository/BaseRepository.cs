@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace RateFilms.Infrastructure.Data.Repository
 {
-    public class BaseRepository : IBaseRepository
+    public class BaseRepository: IBaseRepository
     {
         private ApplicationDbContext _context;
 
@@ -19,14 +19,10 @@ namespace RateFilms.Infrastructure.Data.Repository
             _context = context;
         }
 
-        public async Task SaveChangesAsync()
+        public async Task CreateAsync<TEntity>(TEntity entity) where TEntity : class, IEntity
         {
+            await _context.Set<TEntity>().AddAsync(entity);
             await _context.SaveChangesAsync();
-        }
-
-        public async Task<EntityEntry<T>> CreateAsync<T>(T entity) where T: class, IEntity
-        {
-            return await _context.Set<T>().AddAsync(entity);
         }
 
         public async Task<bool> DeleteAsync<T>(Guid? id) where T : class, IEntity
@@ -37,6 +33,7 @@ namespace RateFilms.Infrastructure.Data.Repository
                 if (oldEntity != null)
                 {
                     _context.Set<T>().Remove(oldEntity);
+                    await _context.SaveChangesAsync();
                     return true;
                 }
             }
@@ -61,18 +58,20 @@ namespace RateFilms.Infrastructure.Data.Repository
             return await _context.Set<T>().ToListAsync();
         }
 
-        public async Task<EntityEntry<T>?> UpdateAsync<T>(T entity, Guid? id) where T : class, IEntity
+        public async Task<bool> UpdateAsync<T>(T entity, Guid? id) where T : class, IEntity
         {
             if (id != null)
             {
-                var oldEntity = await _context.Set<T>().FirstOrDefaultAsync(o=> o.Id == id);
+                var oldEntity = await _context.Set<T>().FirstOrDefaultAsync(o => o.Id == id);
                 if (oldEntity != null)
                 {
                     entity.Id = oldEntity.Id;
-                    return _context.Set<T>().Update(entity);
+                    _context.Set<T>().Update(entity);
+                    await _context.SaveChangesAsync();
+                    return true;
                 }
             }
-            return null;
+            return false;
         }
     }
 }
