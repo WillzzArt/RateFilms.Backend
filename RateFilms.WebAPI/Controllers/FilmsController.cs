@@ -27,7 +27,6 @@ namespace RateFilms.WebAPI.Controllers
         public IActionResult Index()
         {
             User user = new User();
-            user.Id = Guid.NewGuid();
             user.UserName = "aaa";
             user.Email = "email@emai.ru";
             user.Password = "ada9a9a9a";

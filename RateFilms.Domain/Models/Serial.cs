@@ -18,6 +18,6 @@ namespace RateFilms.Domain.Models
         public float AvgRating { get; set; }
         public int AgeRating { get; set; }
         public int SeriesCount { get; set; }
-        public IEnumerable<Series> Series { get; set; }
+        public IEnumerable<Season> Seasons { get; set; }
     }
 }

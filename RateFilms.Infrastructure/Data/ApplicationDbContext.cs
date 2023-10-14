@@ -31,5 +31,8 @@ namespace RateFilms.Infrastructure.Data
         DbSet<Series> Series { get; set; }
         DbSet<User> Users { get; set; }
         DbSet<Genre> Genres { get; set; } 
+        DbSet<Season> Seasons { get; set; }
+        DbSet<Image> Images { get; set; }
+        DbSet<Actor> Actors { get; set; }
     }
 }
