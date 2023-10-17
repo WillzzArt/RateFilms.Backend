@@ -29,7 +29,7 @@ namespace RateFilms.WebAPI.Controllers
             User user = new User();
             user.UserName = "aaa";
             user.Email = "email@emai.ru";
-            user.Password = "ada9a9a9a";
+            //user.Password = "ada9a9a9a";
             user.Role = Role.User;
 
             _repository.CreateAsync(user);

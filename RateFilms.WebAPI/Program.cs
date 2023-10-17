@@ -13,6 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<IBaseRepository, BaseRepository>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
 
 var connectionString = builder.Configuration.GetConnectionString("WebApiDatabase");
 

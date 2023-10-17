@@ -1,16 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using RateFilms.Domain.Models.Interfaces;
 using RateFilms.Domain.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RateFilms.Infrastructure.Data.Repository
 {
-    public class BaseRepository: IBaseRepository
+    public class BaseRepository : IBaseRepository
     {
         private ApplicationDbContext _context;
 
