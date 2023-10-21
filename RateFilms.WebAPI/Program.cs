@@ -4,11 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using RateFilms.Application.Services;
+using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Repositories;
 using RateFilms.Infrastructure.Data;
 using RateFilms.Infrastructure.Data.Repository;
 using RateFilms.WebAPI.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,7 +39,20 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+
+    options.AddPolicy("admin", build =>
+    {
+        build.RequireAssertion(x => x.User.HasClaim(ClaimTypes.Role, Role.Admin.ToString()));
+    });
+
+    options.AddPolicy("user", build =>
+    {
+        build.RequireAssertion(x => x.User.HasClaim(ClaimTypes.Role, Role.Admin.ToString())
+                                    || x.User.HasClaim(ClaimTypes.Role, Role.User.ToString()));
+    });
+}); 
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

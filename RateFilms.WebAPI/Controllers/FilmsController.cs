@@ -26,18 +26,20 @@ namespace RateFilms.WebAPI.Controllers
 
         [Authorize]
         [HttpGet("GetFilms")]
-        public async Task<IEnumerable<User>> IndexAsync()
+        public async Task<IEnumerable<Film>> IndexAsync()
         {
             var user = await _repository.GetAllAsync<User>();
 
             
-            return user;
+            return await _repository.GetAllAsync<Film>();
         }
 
-        [HttpGet("GetAll")]
-        public async Task<IEnumerable> GetAll()
+        [Authorize(Policy = "admin")]
+        [HttpGet("GetAdmin")]
+        public IActionResult CreateFilm()
         {
-            return await _repository.GetAllAsync<User>();
+
+            return Ok("I admin");
         }
     }
 }
