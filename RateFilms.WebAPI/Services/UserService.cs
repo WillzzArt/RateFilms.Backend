@@ -1,22 +1,12 @@
-﻿using NuGet.Protocol.Core.Types;
-using NuGet.Protocol.Plugins;
-using RateFilms.Domain.DTO.Authorization;
+﻿using RateFilms.Domain.DTO.Authorization;
 using RateFilms.Domain.Helpers;
-using RateFilms.Domain.Models;
 using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Repositories;
-using RateFilms.Infrastructure.Data.Repository;
 using RateFilms.WebAPI.JWT;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RateFilms.Application.Services
 {
-    public class UserService: IUserService
+    public class UserService : IUserService
     {
         private readonly IBaseRepository _baseRepository;
         private readonly IUserRepository _userRepository;
@@ -54,13 +44,9 @@ namespace RateFilms.Application.Services
 
             await _baseRepository.CreateAsync(user);
 
-            var response = Authenticate(new LoginRequest
-            {
-                UserLogin = user.UserName,
-                Password = user.Password
-            });
+            var token = Token.CreateToken(_configuration, user);
 
-            return await response;
+            return new LoginResponse(user, token);
         }
 
         public async Task<IEnumerable<User>> GetAll()
