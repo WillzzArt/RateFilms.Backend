@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RateFilms.Domain.DTO.Authorization
 {
-    public class Login
+    public class LoginRequest
     {
         [Required(ErrorMessage = "Укажите никнейм или электронный адрес")]
         public string UserLogin { get; set; }

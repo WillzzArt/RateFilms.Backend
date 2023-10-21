@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using RateFilms.Application.Services;
 using RateFilms.Domain.DTO.Authorization;
 using RateFilms.Domain.Helpers;
 using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Repositories;
+using RateFilms.WebAPI.JWT;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -21,72 +24,44 @@ namespace RateFilms.WebAPI.Controllers
 
         private readonly IConfiguration _configuration;
 
+        private readonly IUserService _userService;
+
         public AccountController(
             ILogger<AccountController> logger,
             IBaseRepository repository,
             IUserRepository userRepository,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IUserService userService)
         {
             _logger = logger;
             _repository = repository;
             _userRepository = userRepository;
             _configuration = configuration;
+            _userService = userService;
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(Registration registration)
+        public async Task<ActionResult> Register(Registration model)
         {
-            User user = new User();
-            var password = HashPasswordHelper.HashPassword(registration.Password);
-            user.Password = password;
-            user.Email = registration.Email;
-            user.UserName = registration.UserName;
+            var response = await _userService.Register(model);
 
-            _repository.CreateAsync(user);
+            if (response == null)
+            {
+                return BadRequest(new { message = "Didn't register!" });
+            }
 
-            return Ok(user);
+            return Ok(response);
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(Login login)
+        public async Task<ActionResult<string>> Login(LoginRequest model)
         {
-            User? user = await _userRepository.FindUser(login.UserLogin);
-            if (user == null)
-            {
-                return BadRequest("user not found");
-                
-            }
-            if (user.Password != HashPasswordHelper.HashPassword(login.Password))
-            {
-                return BadRequest("invalid password");
-            }
+            var response = await _userService.Authenticate(model);
 
-            string token = CreateToken(user);
+            if (response == null)
+                return BadRequest(new { message = "Username or password is incorrect" });
 
-            return Ok(token);
-        }
-
-        private string CreateToken(User user)
-        {
-            List<Claim> claims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Email, user.Email)
-            };
-
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8
-                .GetBytes(_configuration.GetSection("AppSettings:Token").Value));
-
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddDays(1),
-                signingCredentials: creds);
-
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-
-            return jwt;
+            return Ok(response);
         }
     }
 }

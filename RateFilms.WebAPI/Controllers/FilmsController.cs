@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RateFilms.Application.Services;
 using RateFilms.Domain.Models;
 using RateFilms.Domain.Models.Authorization;
@@ -23,17 +24,14 @@ namespace RateFilms.WebAPI.Controllers
             _repository = repository;
         }
 
+        [Authorize]
         [HttpGet("GetFilms")]
-        public IActionResult Index()
+        public async Task<IEnumerable<User>> IndexAsync()
         {
-            User user = new User();
-            user.UserName = "aaa";
-            user.Email = "email@emai.ru";
-            //user.Password = "ada9a9a9a";
-            user.Role = Role.User;
+            var user = await _repository.GetAllAsync<User>();
 
-            _repository.CreateAsync(user);
-            return Ok(user);
+            
+            return user;
         }
 
         [HttpGet("GetAll")]
