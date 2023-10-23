@@ -1,4 +1,5 @@
-﻿using RateFilms.Domain.Models.Authorization;
+﻿using RateFilms.Domain.Models;
+using RateFilms.Domain.Models.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace RateFilms.Application.Services
 {
     public interface IFilmService
     {
-        Task<IEnumerable<User>> GetUsers();
+        Task<IEnumerable<Film>> GetFilms();
+        Task CreateFilmsAsync(Film film);
     }
 }

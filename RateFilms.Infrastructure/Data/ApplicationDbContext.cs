@@ -26,6 +26,14 @@ namespace RateFilms.Infrastructure.Data
             optionsBuilder.UseNpgsql("Host=localhost; Database=rateFilms; Username=postgres; Password=root");
         }
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<User>(entity => {
+                entity.HasIndex(e => e.Email).IsUnique();
+                entity.HasIndex(e => e.UserName).IsUnique();
+            });
+        }
+
         DbSet<Film> Films { get; set; }
         DbSet<Serial> Serials { get; set; }
         DbSet<User> Users { get; set; }

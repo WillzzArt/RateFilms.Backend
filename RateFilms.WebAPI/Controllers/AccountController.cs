@@ -47,7 +47,7 @@ namespace RateFilms.WebAPI.Controllers
 
             if (response == null)
             {
-                return BadRequest(new { message = "Didn't register!" });
+                return BadRequest(new { message = "Username or email already exists" });
             }
 
             return Ok(response);

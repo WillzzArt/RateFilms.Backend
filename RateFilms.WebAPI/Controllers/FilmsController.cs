@@ -14,24 +14,30 @@ namespace RateFilms.WebAPI.Controllers
     {
         private readonly ILogger<FilmsController> _logger;
 
-        private readonly IBaseRepository _repository;
+        private readonly IFilmService _filmService;
         
         public FilmsController(
-            ILogger<FilmsController> logger, 
-            IBaseRepository repository)
+            ILogger<FilmsController> logger,
+            IFilmService filmService)
         {
             _logger = logger;
-            _repository = repository;
+            _filmService = filmService;
         }
 
-        [Authorize]
         [HttpGet("GetFilms")]
         public async Task<IEnumerable<Film>> IndexAsync()
         {
-            var user = await _repository.GetAllAsync<User>();
+            var film = await _filmService.GetFilms();
+            return film;
+        }
 
-            
-            return await _repository.GetAllAsync<Film>();
+        [Authorize(Policy = "admin")]
+        [HttpPost("CreateFilm")]
+        public async Task<IActionResult> AddFilms(Film film)
+        {
+            await _filmService.CreateFilmsAsync(film);
+
+            return Redirect("/Films/GetFilms");
         }
 
         [Authorize(Policy = "admin")]

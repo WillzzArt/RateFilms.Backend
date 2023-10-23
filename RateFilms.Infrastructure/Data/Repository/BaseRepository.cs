@@ -34,22 +34,15 @@ namespace RateFilms.Infrastructure.Data.Repository
             return false;
         }
 
-        public async Task<T?> FindByIdAsync<T>(Guid? id) where T : class, IEntity
+        public async Task<T?> FindByIdAsync<T>(Guid id) where T : class, IEntity
         {
-            if (id != null)
-            {
-                var entity = await _context.Set<T>().FirstOrDefaultAsync(e => e.Id == id);
-                if (entity != null)
-                {
-                    return entity;
-                }
-            }
-            return null;
+            return await _context.Set<T>().FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task<IEnumerable<T>> GetAllAsync<T>() where T : class, IEntity
         {
-            return await _context.Set<T>().ToListAsync();
+            var t = await _context.Set<T>().ToListAsync();
+            return t;
         }
 
         public async Task<bool> UpdateAsync<T>(T entity, Guid? id) where T : class, IEntity
@@ -67,5 +60,6 @@ namespace RateFilms.Infrastructure.Data.Repository
             }
             return false;
         }
+
     }
 }

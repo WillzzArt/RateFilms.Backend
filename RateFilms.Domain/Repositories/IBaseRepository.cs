@@ -12,6 +12,6 @@ namespace RateFilms.Domain.Repositories
 
         Task<IEnumerable<TEntity>> GetAllAsync<TEntity>() where TEntity : class, IEntity;
 
-        Task<TEntity?> FindByIdAsync<TEntity>(Guid? id) where TEntity : class, IEntity;
+        Task<TEntity?> FindByIdAsync<TEntity>(Guid id) where TEntity : class, IEntity;
     }
 }

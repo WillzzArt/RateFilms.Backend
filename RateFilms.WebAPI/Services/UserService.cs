@@ -1,4 +1,5 @@
-﻿using RateFilms.Domain.DTO.Authorization;
+﻿using Microsoft.EntityFrameworkCore;
+using RateFilms.Domain.DTO.Authorization;
 using RateFilms.Domain.Helpers;
 using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Repositories;
@@ -42,7 +43,26 @@ namespace RateFilms.Application.Services
             user.UserName = model.UserName;
             user.Role = Role.User;
 
-            await _baseRepository.CreateAsync(user);
+            try
+            {
+                await _baseRepository.CreateAsync(user);
+            }
+            catch (DbUpdateException ex)
+            {
+                // Произошла ошибка сохранения
+                if (ex.InnerException is Npgsql.PostgresException pgEx && pgEx.SqlState == "23505")
+                {
+                    Console.WriteLine("Повторяющееся значение ключа нарушает ограничение уникальности.");
+                    Console.WriteLine(ex.InnerException.Message);
+                }
+                else
+                {
+                    // Ошибка сохранения по другой причине
+                    Console.WriteLine("Произошла ошибка сохранения.");
+                    Console.WriteLine(ex.InnerException.Message);
+                }
+                return null;
+            }
 
             var token = Token.CreateToken(_configuration, user);
 
