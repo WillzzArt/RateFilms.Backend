@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace RateFilms.Domain.Repositories
 {
-    public interface IActorRepository
+    public interface IFilmRepository
     {
-        IEnumerable<Film?> FindActorByFilmId();
+        IEnumerable<Film?> GetAllFilms();
     }
 }

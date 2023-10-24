@@ -12,12 +12,12 @@ namespace RateFilms.Application.Services
     public class FilmService: IFilmService
     {
         private readonly IBaseRepository _repository;
-        private readonly IActorRepository _actorRepository;
+        private readonly IFilmRepository _filmRepository;
 
-        public FilmService(IBaseRepository baseRepository, IActorRepository actorRepository)
+        public FilmService(IBaseRepository baseRepository, IFilmRepository filmRepository)
         {
             _repository = baseRepository;
-            _actorRepository = actorRepository;
+            _filmRepository = filmRepository;
         }
 
         public async Task CreateFilmsAsync(Film film)
@@ -55,10 +55,10 @@ namespace RateFilms.Application.Services
             await _repository.CreateAsync(film);*/
         }
 
-        public async Task<IEnumerable<Film>> GetFilms()
+        public async Task<IEnumerable<Film?>> GetFilms()
         {
             
-            return _actorRepository.FindActorByFilmId();
+            return _filmRepository.GetAllFilms();
         }
     }
 }

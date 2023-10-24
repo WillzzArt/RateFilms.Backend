@@ -34,12 +34,12 @@ namespace RateFilms.Infrastructure.Data
             });
         }
 
-        DbSet<Film> Films { get; set; }
-        DbSet<Serial> Serials { get; set; }
-        DbSet<User> Users { get; set; }
-        DbSet<Genre> Genres { get; set; } 
-        DbSet<Season> Seasons { get; set; }
-        DbSet<Image> Images { get; set; }
-        DbSet<Actor> Actors { get; set; }
+        public DbSet<Film> Films { get; set; }
+        public DbSet<Serial> Serials { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Genre> Genres { get; set; } 
+        public DbSet<Season> Seasons { get; set; }
+        public DbSet<Image> Images { get; set; }
+        public DbSet<Actor> Actors { get; set; }
     }
 }

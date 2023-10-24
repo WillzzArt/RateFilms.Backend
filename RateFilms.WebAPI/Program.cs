@@ -65,7 +65,7 @@ builder.Services.AddTransient<IUserRepository, UserRepository>();
 
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IFilmService, FilmService>();
-builder.Services.AddTransient<IActorRepository, ActorRepository>();
+builder.Services.AddTransient<IFilmRepository, FilmRepository>();
 
 var connectionString = builder.Configuration.GetConnectionString("WebApiDatabase");
 
