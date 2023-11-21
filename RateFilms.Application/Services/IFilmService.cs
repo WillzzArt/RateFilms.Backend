@@ -10,7 +10,7 @@ namespace RateFilms.Application.Services
 {
     public interface IFilmService
     {
-        Task<IEnumerable<Film>> GetFilms();
+        Task<IEnumerable<Film?>> GetFilms();
         Task CreateFilmsAsync(Film film);
     }
 }

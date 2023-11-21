@@ -36,18 +36,7 @@ namespace RateFilms.Infrastructure.Data.Repository
                 film.Actors = actors;
             }
 
-
             return films;
-
-            /*var films = _context.Films;
-            foreach (var film in films)
-            {
-                _context.Entry(film).Collection(f => f.Actors).Load();
-                _context.Entry(film).Collection(f => f.Genre).Load();
-                _context.Entry(film).Collection(f => f.Images).Load();
-            }
-
-            return films;*/
         }
     }
 }

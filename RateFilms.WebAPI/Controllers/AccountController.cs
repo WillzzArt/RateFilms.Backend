@@ -1,14 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Mvc;
 using RateFilms.Application.Services;
 using RateFilms.Domain.DTO.Authorization;
-using RateFilms.Domain.Helpers;
-using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Repositories;
-using RateFilms.WebAPI.JWT;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace RateFilms.WebAPI.Controllers
 {

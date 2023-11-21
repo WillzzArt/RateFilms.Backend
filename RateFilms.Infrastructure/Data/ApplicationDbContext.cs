@@ -32,6 +32,15 @@ namespace RateFilms.Infrastructure.Data
                 entity.HasIndex(e => e.Email).IsUnique();
                 entity.HasIndex(e => e.UserName).IsUnique();
             });
+
+            builder.Entity<Locale>(entity =>
+            {
+                entity.HasKey(e => new
+                {
+                    e.Id,
+                    e.Key
+                });
+            });
         }
 
         public DbSet<Film> Films { get; set; }
@@ -41,5 +50,6 @@ namespace RateFilms.Infrastructure.Data
         public DbSet<Season> Seasons { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<Actor> Actors { get; set; }
+        public DbSet<Locale> Locales { get; set; }
     }
 }
