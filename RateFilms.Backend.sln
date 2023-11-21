@@ -13,13 +13,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{15E846B8-5B0E-4BB7-895D-F033B2DAA944}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RateFilms.Domain", "RateFilms.Domain\RateFilms.Domain.csproj", "{F55FBDA9-3DB2-4DD3-8229-EC6A31B0BD7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RateFilms.Domain", "RateFilms.Domain\RateFilms.Domain.csproj", "{F55FBDA9-3DB2-4DD3-8229-EC6A31B0BD7B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RateFilms.Application", "RateFilms.Application\RateFilms.Application.csproj", "{D36B3B3B-CF1E-44B8-B1DE-76EB2083106A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RateFilms.Application", "RateFilms.Application\RateFilms.Application.csproj", "{D36B3B3B-CF1E-44B8-B1DE-76EB2083106A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RateFilms.WebAPI", "RateFilms.WebAPI\RateFilms.WebAPI.csproj", "{D136FC35-6011-40E3-ACC6-AF8225C9470F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RateFilms.WebAPI", "RateFilms.WebAPI\RateFilms.WebAPI.csproj", "{D136FC35-6011-40E3-ACC6-AF8225C9470F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RateFilms.Infrastructure", "RateFilms.Infrastructure\RateFilms.Infrastructure.csproj", "{5639EEDF-E9F8-4F81-9691-6B25931553B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RateFilms.Infrastructure", "RateFilms.Infrastructure\RateFilms.Infrastructure.csproj", "{5639EEDF-E9F8-4F81-9691-6B25931553B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

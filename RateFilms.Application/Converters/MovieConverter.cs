@@ -1,12 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using RateFilms.Application.Models;
+using RateFilms.Domain.Models;
 
-namespace RateFilms.Application.Converter
+namespace RateFilms.Application.Converters
 {
-    internal class MovieConverter
+    internal static class MovieConverter
     {
+        public static Movies UnionFilmAndSerials(IEnumerable<Film> films, IEnumerable<Serial> serials)
+        {
+            return new Movies
+            {
+                Films = films,
+                Serials = serials
+            };
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RateFilms.Infrastructure.Data;
@@ -11,9 +12,11 @@ using RateFilms.Infrastructure.Data;
 namespace RateFilms.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231121223806_4.0")]
+    partial class _40
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,6 +47,9 @@ namespace RateFilms.Infrastructure.Migrations
                     b.Property<Guid?>("SeasonId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("SerialDbModelId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("FilmId");
@@ -51,6 +57,8 @@ namespace RateFilms.Infrastructure.Migrations
                     b.HasIndex("ImageId");
 
                     b.HasIndex("SeasonId");
+
+                    b.HasIndex("SerialDbModelId");
 
                     b.ToTable("Actors");
                 });
@@ -100,6 +108,9 @@ namespace RateFilms.Infrastructure.Migrations
                     b.Property<Guid?>("SeasonId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("SerialDbModelId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasColumnType("text");
@@ -109,6 +120,8 @@ namespace RateFilms.Infrastructure.Migrations
                     b.HasIndex("FilmId");
 
                     b.HasIndex("SeasonId");
+
+                    b.HasIndex("SerialDbModelId");
 
                     b.ToTable("Images");
                 });
@@ -229,8 +242,12 @@ namespace RateFilms.Infrastructure.Migrations
                         .HasForeignKey("ImageId");
 
                     b.HasOne("RateFilms.Infrastructure.StorageModels.SeasonDbModel", "Season")
-                        .WithMany("Actors")
+                        .WithMany()
                         .HasForeignKey("SeasonId");
+
+                    b.HasOne("RateFilms.Infrastructure.StorageModels.SerialDbModel", null)
+                        .WithMany("Actors")
+                        .HasForeignKey("SerialDbModelId");
 
                     b.Navigation("Film");
 
@@ -246,8 +263,12 @@ namespace RateFilms.Infrastructure.Migrations
                         .HasForeignKey("FilmId");
 
                     b.HasOne("RateFilms.Infrastructure.StorageModels.SeasonDbModel", "Season")
-                        .WithMany("Images")
+                        .WithMany()
                         .HasForeignKey("SeasonId");
+
+                    b.HasOne("RateFilms.Infrastructure.StorageModels.SerialDbModel", null)
+                        .WithMany("Images")
+                        .HasForeignKey("SerialDbModelId");
 
                     b.Navigation("Film");
 
@@ -257,7 +278,7 @@ namespace RateFilms.Infrastructure.Migrations
             modelBuilder.Entity("RateFilms.Infrastructure.StorageModels.SeasonDbModel", b =>
                 {
                     b.HasOne("RateFilms.Infrastructure.StorageModels.SerialDbModel", "Serial")
-                        .WithMany("Seasons")
+                        .WithMany()
                         .HasForeignKey("SerialId");
 
                     b.Navigation("Serial");
@@ -270,16 +291,11 @@ namespace RateFilms.Infrastructure.Migrations
                     b.Navigation("Images");
                 });
 
-            modelBuilder.Entity("RateFilms.Infrastructure.StorageModels.SeasonDbModel", b =>
+            modelBuilder.Entity("RateFilms.Infrastructure.StorageModels.SerialDbModel", b =>
                 {
                     b.Navigation("Actors");
 
                     b.Navigation("Images");
-                });
-
-            modelBuilder.Entity("RateFilms.Infrastructure.StorageModels.SerialDbModel", b =>
-                {
-                    b.Navigation("Seasons");
                 });
 #pragma warning restore 612, 618
         }
