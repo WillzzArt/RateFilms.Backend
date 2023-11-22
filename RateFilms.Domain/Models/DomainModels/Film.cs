@@ -1,13 +1,8 @@
 ﻿using RateFilms.Domain.Models.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace RateFilms.Domain.Models
+namespace RateFilms.Domain.Models.DomainModels
 {
-    public class Film: IEntity
+    public class Film : IEntity
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

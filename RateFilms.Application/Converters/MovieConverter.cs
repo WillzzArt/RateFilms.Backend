@@ -1,5 +1,5 @@
 ﻿using RateFilms.Application.Models;
-using RateFilms.Domain.Models;
+using RateFilms.Domain.Models.DomainModels;
 
 namespace RateFilms.Application.Converters
 {

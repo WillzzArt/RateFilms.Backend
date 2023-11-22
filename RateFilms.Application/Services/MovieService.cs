@@ -1,6 +1,6 @@
 ﻿using RateFilms.Application.Converters;
 using RateFilms.Application.Models;
-using RateFilms.Domain.Models;
+using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Repositories;
 using System;
 using System.Collections.Generic;

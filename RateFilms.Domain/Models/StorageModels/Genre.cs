@@ -1,4 +1,4 @@
-﻿namespace RateFilms.Infrastructure.StorageModels
+﻿namespace RateFilms.Domain.StorageModels
 {
     public enum Genre
     {

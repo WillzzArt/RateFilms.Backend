@@ -1,4 +1,4 @@
-﻿using RateFilms.Domain.Models;
+﻿using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Repositories;
 
 namespace RateFilms.Application.Services

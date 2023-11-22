@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RateFilms.Application.Services;
-using RateFilms.Domain.Models;
 using RateFilms.Domain.Models.Authorization;
+using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Repositories;
 using System.Collections;
 

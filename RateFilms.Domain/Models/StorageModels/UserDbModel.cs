@@ -1,9 +1,9 @@
 ﻿using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.Interfaces;
 
-namespace RateFilms.Infrastructure.StorageModels
+namespace RateFilms.Domain.StorageModels
 {
-    public class UserDbModel: IEntity
+    public class UserDbModel : IEntity
     {
         public Guid Id { get; set; }
         public string? Name { get; set; }

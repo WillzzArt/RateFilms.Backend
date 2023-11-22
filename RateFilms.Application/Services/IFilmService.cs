@@ -1,5 +1,5 @@
-﻿using RateFilms.Domain.Models;
-using RateFilms.Domain.Models.Authorization;
+﻿using RateFilms.Domain.Models.Authorization;
+using RateFilms.Domain.Models.DomainModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;

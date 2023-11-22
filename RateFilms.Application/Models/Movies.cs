@@ -1,9 +1,4 @@
-﻿using RateFilms.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using RateFilms.Domain.Models.DomainModels;
 
 namespace RateFilms.Application.Models
 {

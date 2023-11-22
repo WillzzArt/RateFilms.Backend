@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using RateFilms.Domain.Models;
-using RateFilms.Domain.Models.Authorization;
-using RateFilms.Infrastructure.StorageModels;
+using RateFilms.Domain.StorageModels;
 
 namespace RateFilms.Infrastructure.Data
 {
