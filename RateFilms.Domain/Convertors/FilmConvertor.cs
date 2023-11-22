@@ -27,5 +27,28 @@ namespace RateFilms.Domain.Convertors
 
             return film;
         }
+
+        public static IEnumerable<Film> FilmDbListConvertFilmDomainList(IEnumerable<FilmDbModel> filmDbModels)
+        {
+            if (filmDbModels == null) throw new ArgumentNullException(nameof(filmDbModels));
+
+            var films = filmDbModels
+                .Select(f => new Film
+                {
+                    Id = f.Id,
+                    Name = f.Name,
+                    Description = f.Description,
+                    Actors = ActorConvertor.ActorDbListConvertActorDomainList(f.Actors),
+                    AgeRating = f.AgeRating,
+                    AvgRating = f.AvgRating,
+                    Duration = f.Duration,
+                    Author = f.Autor,
+                    Genre = f.Genre,
+                    Images = ActorConvertor.ImageDbListConvertImageDomainList(f.Images),
+                    PreviewImage = f.PreviewImage,
+                });
+
+            return films;
+        }
     }
 }

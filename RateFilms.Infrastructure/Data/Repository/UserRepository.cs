@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RateFilms.Domain.Convertors;
 using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Repositories;
+using RateFilms.Domain.StorageModels;
 
 namespace RateFilms.Infrastructure.Data.Repository
 {
@@ -15,8 +17,12 @@ namespace RateFilms.Infrastructure.Data.Repository
 
         public async Task<User?> FindUser(string userLogin)
         {
-            return await _context.Set<User>().FirstOrDefaultAsync(u => u.UserName == userLogin
+            var user = await _context.Set<UserDbModel>().FirstOrDefaultAsync(u => u.UserName == userLogin
                                                                 || u.Email == userLogin);
+
+            if (user == null) return null;
+
+            return UserConvertor.UserDbConvertUserDomain(user);
         }
     }
 }

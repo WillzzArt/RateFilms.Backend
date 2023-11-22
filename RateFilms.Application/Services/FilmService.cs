@@ -1,5 +1,6 @@
 ﻿using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Repositories;
+using RateFilms.Domain.StorageModels;
 
 namespace RateFilms.Application.Services
 {
@@ -14,7 +15,7 @@ namespace RateFilms.Application.Services
             _filmRepository = filmRepository;
         }
 
-        public async Task CreateFilmsAsync(Film film)
+        public async Task CreateFilmsAsync(FilmDbModel film)
         {
             await _repository.CreateAsync(film);
         }

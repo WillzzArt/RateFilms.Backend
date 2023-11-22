@@ -7,8 +7,8 @@ namespace RateFilms.Domain.StorageModels
         public Guid Id { get; set; }
         public string Url { get; set; }
         public Guid? FilmId { get; set; }
-        public FilmDbModel Film { get; set; }
+        public FilmDbModel? Film { get; set; }
         public Guid? SeasonId { get; set; }
-        public SeasonDbModel Season { get; set; }
+        public SeasonDbModel? Season { get; set; }
     }
 }

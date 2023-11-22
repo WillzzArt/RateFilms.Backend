@@ -11,25 +11,13 @@ namespace RateFilms.WebAPI.Controllers
     {
         private readonly ILogger<AccountController> _logger;
 
-        private readonly IBaseRepository _repository;
-
-        private readonly IUserRepository _userRepository;
-
-        private readonly IConfiguration _configuration;
-
         private readonly IUserService _userService;
 
         public AccountController(
             ILogger<AccountController> logger,
-            IBaseRepository repository,
-            IUserRepository userRepository,
-            IConfiguration configuration,
             IUserService userService)
         {
             _logger = logger;
-            _repository = repository;
-            _userRepository = userRepository;
-            _configuration = configuration;
             _userService = userService;
         }
 

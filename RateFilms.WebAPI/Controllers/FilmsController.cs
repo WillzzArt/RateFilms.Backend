@@ -4,6 +4,7 @@ using RateFilms.Application.Services;
 using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Repositories;
+using RateFilms.Domain.StorageModels;
 using System.Collections;
 
 namespace RateFilms.WebAPI.Controllers
@@ -33,7 +34,7 @@ namespace RateFilms.WebAPI.Controllers
 
         [Authorize(Policy = "admin")]
         [HttpPost("CreateFilm")]
-        public async Task<IActionResult> AddFilms(Film film)
+        public async Task<IActionResult> AddFilms(FilmDbModel film)
         {
             await _filmService.CreateFilmsAsync(film);
 

@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO.Authorization;
 using RateFilms.Domain.Helpers;
 using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Repositories;
+using RateFilms.Domain.StorageModels;
 using RateFilms.WebAPI.JWT;
 
 namespace RateFilms.Application.Services
@@ -36,7 +38,7 @@ namespace RateFilms.Application.Services
 
         public async Task<LoginResponse?> Register(Registration model)
         {
-            User user = new User();
+            UserDbModel user = new UserDbModel();
             var password = HashPasswordHelper.HashPassword(model.Password);
             user.Password = password;
             user.Email = model.Email;
@@ -64,19 +66,24 @@ namespace RateFilms.Application.Services
                 return null;
             }
 
-            var token = Token.CreateToken(_configuration, user);
+            var token = Token.CreateToken(_configuration, UserConvertor.UserDbConvertUserDomain(user));
 
-            return new LoginResponse(user, token);
+            return new LoginResponse(UserConvertor.UserDbConvertUserDomain(user), token);
         }
 
         public async Task<IEnumerable<User>> GetAll()
         {
-            return await _baseRepository.GetAllAsync<User>();
+            var user = await _baseRepository.GetAllAsync<UserDbModel>();
+            return UserConvertor.UserDbListConvertUserDomainList(user);
         }
 
         public async Task<User?> GetById(Guid id)
         {
-            return await _baseRepository.FindByIdAsync<User>(id);
+            var user = await _baseRepository.FindByIdAsync<UserDbModel>(id);
+
+            if (user == null) return null;
+
+            return UserConvertor.UserDbConvertUserDomain(user);
         }
     }
 }
