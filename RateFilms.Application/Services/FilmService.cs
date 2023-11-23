@@ -1,4 +1,5 @@
-﻿using RateFilms.Domain.Models.DomainModels;
+﻿using RateFilms.Domain.Convertors;
+using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Repositories;
 using RateFilms.Domain.StorageModels;
 
@@ -15,9 +16,9 @@ namespace RateFilms.Application.Services
             _filmRepository = filmRepository;
         }
 
-        public async Task CreateFilmsAsync(FilmDbModel film)
+        public async Task CreateFilmsAsync(Film film)
         {
-            await _repository.CreateAsync(film);
+            await _repository.CreateAsync(FilmConvertor.FilmDomainConvertFilmDb(film));
         }
 
         public async Task<IEnumerable<Film?>> GetFilms()

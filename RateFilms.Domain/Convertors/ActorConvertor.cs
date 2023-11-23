@@ -31,9 +31,25 @@ namespace RateFilms.Domain.Convertors
                     Name = a.Name,
                     Age = a.Age,
                     Image = ImageDbConvertImageDomain(a.Image)
-                });
+                }).ToList();
 
             return actors;
+        }
+
+        public static IEnumerable<ActorDbModel> ActorDomainListConvertActorDomainList(IEnumerable<Actor> actors)
+        {
+            if (actors == null) throw new ArgumentNullException(nameof(actors));
+
+            var actorsDb = actors
+                .Select(a => new ActorDbModel
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Age = a.Age,
+                    Image = ImageDomainConvertImageDb(a.Image ?? new Image()),
+                }).ToList();
+
+            return actorsDb;
         }
 
         public static Image ImageDbConvertImageDomain(ImageDbModel imageDbModel)
@@ -49,6 +65,19 @@ namespace RateFilms.Domain.Convertors
             return image;
         }
 
+        public static ImageDbModel ImageDomainConvertImageDb(Image image)
+        {
+            if (image == null) throw new ArgumentNullException(nameof(image));
+
+            var imageDb = new ImageDbModel
+            {
+                Id = image.Id,
+                Url = image.Url
+            };
+
+            return imageDb;
+        }
+
         public static IEnumerable<Image> ImageDbListConvertImageDomainList(IEnumerable<ImageDbModel> imageDbModels)
         {
             if (imageDbModels == null) throw new ArgumentNullException(nameof(imageDbModels));
@@ -58,7 +87,21 @@ namespace RateFilms.Domain.Convertors
                 {
                     Id = img.Id,
                     Url = img.Url
-                });
+                }).ToList();
+
+            return images;
+        }
+
+        public static IEnumerable<ImageDbModel> ImageDomainListConvertImageDbList(IEnumerable<Image> image)
+        {
+            if (image == null) throw new ArgumentNullException(nameof(image));
+
+            var images = image
+                .Select(img => new ImageDbModel
+                {
+                    Id = img.Id,
+                    Url = img.Url
+                }).ToList();
 
             return images;
         }

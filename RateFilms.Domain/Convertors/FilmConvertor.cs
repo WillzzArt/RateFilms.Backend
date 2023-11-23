@@ -38,7 +38,7 @@ namespace RateFilms.Domain.Convertors
                     Id = f.Id,
                     Name = f.Name,
                     Description = f.Description,
-                    Actors = ActorConvertor.ActorDbListConvertActorDomainList(f.Actors),
+                    Actors = ActorConvertor.ActorDbListConvertActorDomainList(f.Actors ?? new List<ActorDbModel>()),
                     AgeRating = f.AgeRating,
                     AvgRating = f.AvgRating,
                     Duration = f.Duration,
@@ -46,9 +46,31 @@ namespace RateFilms.Domain.Convertors
                     Genre = f.Genre,
                     Images = ActorConvertor.ImageDbListConvertImageDomainList(f.Images),
                     PreviewImage = f.PreviewImage,
-                });
+                }).ToList();
 
             return films;
+        }
+
+        public static FilmDbModel FilmDomainConvertFilmDb(Film film)
+        {
+            if (film == null) throw new ArgumentNullException(nameof(film));
+
+            var filmDb = new FilmDbModel
+            {
+                Id = film.Id,
+                Name = film.Name,
+                Description = film.Description,
+                Actors = ActorConvertor.ActorDomainListConvertActorDomainList(film.Actors ?? new List<Actor>()),
+                AgeRating = film.AgeRating,
+                AvgRating = film.AvgRating,
+                Duration = film.Duration,
+                Autor = film.Author,
+                Genre = film.Genre,
+                Images = ActorConvertor.ImageDomainListConvertImageDbList(film.Images ?? new List<Image>()),
+                PreviewImage = film.PreviewImage,
+            };
+
+            return filmDb;
         }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RateFilms.Infrastructure.Data;
@@ -11,9 +12,11 @@ using RateFilms.Infrastructure.Data;
 namespace RateFilms.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231123163534_5.0")]
+    partial class _50
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,6 +55,115 @@ namespace RateFilms.Infrastructure.Migrations
                     b.ToTable("ActorDbModelSeasonDbModel");
                 });
 
+            modelBuilder.Entity("RateFilms.Domain.Models.DomainModels.Actor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("Age")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("ImageId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("SeasonId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ImageId");
+
+                    b.HasIndex("SeasonId");
+
+                    b.ToTable("Actor");
+                });
+
+            modelBuilder.Entity("RateFilms.Domain.Models.DomainModels.Image", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("SeasonId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SeasonId");
+
+                    b.ToTable("Image");
+                });
+
+            modelBuilder.Entity("RateFilms.Domain.Models.DomainModels.Season", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<float?>("AvgRating")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly>("RealeseDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid?>("SerialId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SerialId");
+
+                    b.ToTable("Season");
+                });
+
+            modelBuilder.Entity("RateFilms.Domain.Models.DomainModels.Serial", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("AgeRating")
+                        .HasColumnType("integer");
+
+                    b.Property<float?>("AvgRating")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Duration")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Genre")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PreviewImage")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("SeriesCount")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Serial");
+                });
+
             modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.FavoriteFilmDbModel", b =>
                 {
                     b.Property<Guid?>("FilmId")
@@ -62,9 +174,6 @@ namespace RateFilms.Infrastructure.Migrations
 
                     b.Property<int?>("Status")
                         .HasColumnType("integer");
-
-                    b.Property<bool>("isFavorite")
-                        .HasColumnType("boolean");
 
                     b.HasKey("FilmId", "UserId");
 
@@ -80,9 +189,6 @@ namespace RateFilms.Infrastructure.Migrations
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid");
-
-                    b.Property<bool>("IsFavorite")
-                        .HasColumnType("boolean");
 
                     b.Property<int?>("Status")
                         .HasColumnType("integer");
@@ -310,6 +416,33 @@ namespace RateFilms.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("RateFilms.Domain.Models.DomainModels.Actor", b =>
+                {
+                    b.HasOne("RateFilms.Domain.Models.DomainModels.Image", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId");
+
+                    b.HasOne("RateFilms.Domain.Models.DomainModels.Season", null)
+                        .WithMany("Actors")
+                        .HasForeignKey("SeasonId");
+
+                    b.Navigation("Image");
+                });
+
+            modelBuilder.Entity("RateFilms.Domain.Models.DomainModels.Image", b =>
+                {
+                    b.HasOne("RateFilms.Domain.Models.DomainModels.Season", null)
+                        .WithMany("Images")
+                        .HasForeignKey("SeasonId");
+                });
+
+            modelBuilder.Entity("RateFilms.Domain.Models.DomainModels.Season", b =>
+                {
+                    b.HasOne("RateFilms.Domain.Models.DomainModels.Serial", null)
+                        .WithMany("Seasons")
+                        .HasForeignKey("SerialId");
+                });
+
             modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.FavoriteFilmDbModel", b =>
                 {
                     b.HasOne("RateFilms.Domain.StorageModels.FilmDbModel", "Film")
@@ -331,7 +464,7 @@ namespace RateFilms.Infrastructure.Migrations
 
             modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.FavoriteSerialDbModel", b =>
                 {
-                    b.HasOne("RateFilms.Domain.StorageModels.SerialDbModel", "Serial")
+                    b.HasOne("RateFilms.Domain.Models.DomainModels.Serial", "Serial")
                         .WithMany()
                         .HasForeignKey("SerialId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -379,6 +512,18 @@ namespace RateFilms.Infrastructure.Migrations
                         .HasForeignKey("SerialId");
 
                     b.Navigation("Serial");
+                });
+
+            modelBuilder.Entity("RateFilms.Domain.Models.DomainModels.Season", b =>
+                {
+                    b.Navigation("Actors");
+
+                    b.Navigation("Images");
+                });
+
+            modelBuilder.Entity("RateFilms.Domain.Models.DomainModels.Serial", b =>
+                {
+                    b.Navigation("Seasons");
                 });
 
             modelBuilder.Entity("RateFilms.Domain.StorageModels.FilmDbModel", b =>

@@ -21,12 +21,12 @@ namespace RateFilms.Application.Services
             _filmRepository = filmRepository;
         }
 
-        public async Task<Movies> GetAllMovies()
+        /*public async Task<Movies> GetAllMovies()
         {
             var serials = await _repository.GetAllAsync<Serial>();
             var films = _filmRepository.GetAllFilms();
 
             return MovieConverter.UnionFilmAndSerials(films, serials);
-        }
+        }*/
     }
 }

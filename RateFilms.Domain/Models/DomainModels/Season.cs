@@ -1,8 +1,6 @@
-﻿using RateFilms.Domain.Models.Interfaces;
-
-namespace RateFilms.Domain.Models.DomainModels
+﻿namespace RateFilms.Domain.Models.DomainModels
 {
-    public class Season : IEntity
+    public class Season
     {
         public Guid Id { get; set; }
         public DateOnly RealeseDate { get; set; }

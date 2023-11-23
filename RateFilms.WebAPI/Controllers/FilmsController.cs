@@ -34,7 +34,7 @@ namespace RateFilms.WebAPI.Controllers
 
         [Authorize(Policy = "admin")]
         [HttpPost("CreateFilm")]
-        public async Task<IActionResult> AddFilms(FilmDbModel film)
+        public async Task<IActionResult> AddFilms(Film film)
         {
             await _filmService.CreateFilmsAsync(film);
 

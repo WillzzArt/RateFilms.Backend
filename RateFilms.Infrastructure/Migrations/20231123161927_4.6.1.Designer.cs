@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RateFilms.Infrastructure.Data;
@@ -11,9 +12,11 @@ using RateFilms.Infrastructure.Data;
 namespace RateFilms.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231123161927_4.6.1")]
+    partial class _461
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,48 +53,6 @@ namespace RateFilms.Infrastructure.Migrations
                     b.HasIndex("SeasonId");
 
                     b.ToTable("ActorDbModelSeasonDbModel");
-                });
-
-            modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.FavoriteFilmDbModel", b =>
-                {
-                    b.Property<Guid?>("FilmId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int?>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("isFavorite")
-                        .HasColumnType("boolean");
-
-                    b.HasKey("FilmId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("FavoriteFilm");
-                });
-
-            modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.FavoriteSerialDbModel", b =>
-                {
-                    b.Property<Guid?>("SerialId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsFavorite")
-                        .HasColumnType("boolean");
-
-                    b.Property<int?>("Status")
-                        .HasColumnType("integer");
-
-                    b.HasKey("SerialId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("FavoriteSerial");
                 });
 
             modelBuilder.Entity("RateFilms.Domain.StorageModels.ActorDbModel", b =>
@@ -310,44 +271,6 @@ namespace RateFilms.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.FavoriteFilmDbModel", b =>
-                {
-                    b.HasOne("RateFilms.Domain.StorageModels.FilmDbModel", "Film")
-                        .WithMany()
-                        .HasForeignKey("FilmId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RateFilms.Domain.StorageModels.UserDbModel", "User")
-                        .WithMany("FavoriteFilms")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Film");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.FavoriteSerialDbModel", b =>
-                {
-                    b.HasOne("RateFilms.Domain.StorageModels.SerialDbModel", "Serial")
-                        .WithMany()
-                        .HasForeignKey("SerialId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RateFilms.Domain.StorageModels.UserDbModel", "User")
-                        .WithMany("FavoriteSerials")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Serial");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("RateFilms.Domain.StorageModels.ActorDbModel", b =>
                 {
                     b.HasOne("RateFilms.Domain.StorageModels.ImageDbModel", "Image")
@@ -394,13 +317,6 @@ namespace RateFilms.Infrastructure.Migrations
             modelBuilder.Entity("RateFilms.Domain.StorageModels.SerialDbModel", b =>
                 {
                     b.Navigation("Seasons");
-                });
-
-            modelBuilder.Entity("RateFilms.Domain.StorageModels.UserDbModel", b =>
-                {
-                    b.Navigation("FavoriteFilms");
-
-                    b.Navigation("FavoriteSerials");
                 });
 #pragma warning restore 612, 618
         }

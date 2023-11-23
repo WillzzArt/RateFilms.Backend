@@ -1,8 +1,6 @@
-﻿using RateFilms.Domain.Models.Interfaces;
-
-namespace RateFilms.Domain.Models.DomainModels
+﻿namespace RateFilms.Domain.Models.DomainModels
 {
-    public class Film : IEntity
+    public class Film
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
