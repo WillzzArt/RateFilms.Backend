@@ -1,13 +1,6 @@
-﻿using RateFilms.Domain.Models.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RateFilms.Domain.Models.Authorization
+﻿namespace RateFilms.Domain.Models.Authorization
 {
-    public class User: IEntity
+    public class User
     {
         public Guid Id { get; set; }
         public string? Name { get; set; }

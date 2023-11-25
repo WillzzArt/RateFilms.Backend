@@ -1,5 +1,5 @@
 ﻿using RateFilms.Domain.Models.Authorization;
-using RateFilms.Domain.StorageModels;
+using RateFilms.Domain.Models.StorageModels;
 
 namespace RateFilms.Domain.Convertors
 {

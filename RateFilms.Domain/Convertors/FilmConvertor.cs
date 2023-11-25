@@ -1,5 +1,6 @@
-﻿using RateFilms.Domain.Models.DomainModels;
-using RateFilms.Domain.StorageModels;
+﻿using RateFilms.Domain.Helpers;
+using RateFilms.Domain.Models.DomainModels;
+using RateFilms.Domain.Models.StorageModels;
 
 namespace RateFilms.Domain.Convertors
 {
@@ -14,15 +15,12 @@ namespace RateFilms.Domain.Convertors
                 Id = filmDbModel.Id,
                 Name = filmDbModel.Name,
                 Description = filmDbModel.Description,
-                Actors = ActorConvertor.ActorDbListConvertActorDomainList(filmDbModel.Actors),
+                People = PersonConvertor.PersonInFilmDbListConvertPersonDomainList(filmDbModel.People ?? new List<PersonInFilmDbModel>()),
                 AgeRating = filmDbModel.AgeRating,
                 AvgRating = filmDbModel.AvgRating,
                 Duration = filmDbModel.Duration,
-                Author = filmDbModel.Autor,
-                Genre = filmDbModel.Genre,
-                Images = ActorConvertor.ImageDbListConvertImageDomainList(filmDbModel.Images),
-                PreviewImage = filmDbModel.PreviewImage,
-
+                Genre = filmDbModel.Genre.Select(g => g.Genre.ToEnum(Genre.None)),
+                Images = PersonConvertor.ImageDbListConvertImageDomainList(filmDbModel.Images)
             };
 
             return film;
@@ -38,14 +36,12 @@ namespace RateFilms.Domain.Convertors
                     Id = f.Id,
                     Name = f.Name,
                     Description = f.Description,
-                    Actors = ActorConvertor.ActorDbListConvertActorDomainList(f.Actors ?? new List<ActorDbModel>()),
+                    People = PersonConvertor.PersonInFilmDbListConvertPersonDomainList(f.People ?? new List<PersonInFilmDbModel>()),
                     AgeRating = f.AgeRating,
                     AvgRating = f.AvgRating,
                     Duration = f.Duration,
-                    Author = f.Autor,
-                    Genre = f.Genre,
-                    Images = ActorConvertor.ImageDbListConvertImageDomainList(f.Images),
-                    PreviewImage = f.PreviewImage,
+                    Genre = f.Genre.Select(g => g.Genre.ToEnum(Genre.None)),
+                    Images = PersonConvertor.ImageDbListConvertImageDomainList(f.Images)
                 }).ToList();
 
             return films;
@@ -55,19 +51,24 @@ namespace RateFilms.Domain.Convertors
         {
             if (film == null) throw new ArgumentNullException(nameof(film));
 
+            film.Images.ToList().Add(film.PreviewImage);
+
             var filmDb = new FilmDbModel
             {
                 Id = film.Id,
                 Name = film.Name,
                 Description = film.Description,
-                Actors = ActorConvertor.ActorDomainListConvertActorDomainList(film.Actors ?? new List<Actor>()),
+                People = PersonConvertor.PersonDomainListConvertPersonInFilmDbList(film.People ?? new List<Person>(), film.Id),
                 AgeRating = film.AgeRating,
                 AvgRating = film.AvgRating,
                 Duration = film.Duration,
-                Autor = film.Author,
-                Genre = film.Genre,
-                Images = ActorConvertor.ImageDomainListConvertImageDbList(film.Images ?? new List<Image>()),
-                PreviewImage = film.PreviewImage,
+                Genre = film.Genre
+                .Select(g => new GenreDbModel
+                {
+                    Id = (int)g,
+                    Genre = g.ToString()
+                }),
+                Images = PersonConvertor.ImageDomainListConvertImageDbList(film.Images ?? new List<Image>())
             };
 
             return filmDb;

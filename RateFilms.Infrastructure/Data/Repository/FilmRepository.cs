@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RateFilms.Domain.Convertors;
 using RateFilms.Domain.Models.DomainModels;
+using RateFilms.Domain.Models.StorageModels;
 using RateFilms.Domain.Repositories;
-using RateFilms.Domain.StorageModels;
 
 namespace RateFilms.Infrastructure.Data.Repository
 {
@@ -14,40 +14,48 @@ namespace RateFilms.Infrastructure.Data.Repository
         {
             _context = context;
         }
+
+        //TODO
+        public async Task CreateAsync(FilmDbModel film)
+        {
+            if (film == null)
+            {
+                throw new ArgumentNullException(nameof(film));
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
         public IEnumerable<Film?> GetAllFilms()
         {
-            var filmsDb = _context.Films
-                .Include(g => g.Actors)
+            var filmsDb = _context.Film
+                .Include(g => g.People)
                 .Include(img => img.Images)
                 .ToList();
 
-            foreach (var film  in filmsDb)
+            foreach (var film in filmsDb)
             {
-                var actors = new List<ActorDbModel>();
+                var actors = new List<PersonInFilmDbModel>();
 
-                foreach (var actor in film.Actors)
+                foreach (var actor in film.People)
                 {
-                    actors.Add(_context.Actors.Include(g => g.Image).Where(a => a.Id == actor.Id).Single());
+                    var person = _context.PersonInFilm
+                        .Include(p => p.Professions)
+                        .Where(a => a.PersonId == actor.PersonId)
+                        .Single();
+
+                    person.Person = _context.Person
+                        .Include(p => p.Image)
+                        .Where(p => p.Id == actor.PersonId)
+                        .Single();
+
+                    actors.Add(person);
                 }
 
-                film.Actors = actors;
+                film.People = actors;
             }
 
             var films = FilmConvertor.FilmDbListConvertFilmDomainList(filmsDb);
-
-            /*foreach (var film in films)
-            {
-                var actors = new List<Actor>();
-
-                foreach (var genre in film.Genre)
-                    genre.Films = null;
-
-                foreach (var actor in film.Actors)
-                {
-                    actors.Add(_context.Actors.Include(g => g.Image).Where(a => a.Id == actor.Id).Single());
-                }
-                film.Actors = actors;
-            }*/
 
             return films;
         }

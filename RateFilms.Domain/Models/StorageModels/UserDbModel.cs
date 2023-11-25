@@ -1,8 +1,7 @@
 ﻿using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.Interfaces;
-using RateFilms.Domain.Models.StorageModels;
 
-namespace RateFilms.Domain.StorageModels
+namespace RateFilms.Domain.Models.StorageModels
 {
     public class UserDbModel : IEntity
     {

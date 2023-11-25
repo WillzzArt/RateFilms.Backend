@@ -1,10 +1,10 @@
 ﻿namespace RateFilms.Domain.Models.DomainModels
 {
-    public enum Genre
+    public enum Profession
     {
         None,
-        Action,
-        Fantasy,
-        Horror
+        Actor,
+        Autor,
+        Director
     }
 }

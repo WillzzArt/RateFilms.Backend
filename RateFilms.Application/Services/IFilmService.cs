@@ -1,5 +1,4 @@
 ﻿using RateFilms.Domain.Models.DomainModels;
-using RateFilms.Domain.StorageModels;
 
 namespace RateFilms.Application.Services
 {

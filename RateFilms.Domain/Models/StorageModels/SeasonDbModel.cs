@@ -1,6 +1,6 @@
 ﻿using RateFilms.Domain.Models.Interfaces;
 
-namespace RateFilms.Domain.StorageModels
+namespace RateFilms.Domain.Models.StorageModels
 {
     public class SeasonDbModel : IEntity
     {
@@ -11,6 +11,6 @@ namespace RateFilms.Domain.StorageModels
         public Guid? SerialId { get; set; }
         public SerialDbModel? Serial { get; set; }
         public IEnumerable<ImageDbModel> Images { get; set; }
-        public IEnumerable<ActorDbModel> Actors { get; set; }
+        public IEnumerable<SeriesDbModel> Series { get; set; }
     }
 }

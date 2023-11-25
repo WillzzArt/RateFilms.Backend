@@ -1,5 +1,4 @@
 ﻿using RateFilms.Domain.Models.DomainModels;
-using RateFilms.Domain.StorageModels;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RateFilms.Domain.Models.StorageModels

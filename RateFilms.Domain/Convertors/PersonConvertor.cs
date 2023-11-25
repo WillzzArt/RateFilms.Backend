@@ -1,0 +1,114 @@
+﻿using RateFilms.Domain.Helpers;
+using RateFilms.Domain.Models.DomainModels;
+using RateFilms.Domain.Models.StorageModels;
+
+namespace RateFilms.Domain.Convertors
+{
+    public static class PersonConvertor
+    {
+        public static Person ActorDbConvertActorDomain(PersonDbModel actorDbModel)
+        {
+            if (actorDbModel == null) throw new ArgumentNullException(nameof(actorDbModel));
+
+            var actor = new Person
+            {
+                Id = actorDbModel.Id,
+                Name = actorDbModel.Name,
+                Age = actorDbModel.Age,
+                Image = ImageDbConvertImageDomain(actorDbModel.Image ?? new ImageDbModel())
+            };
+
+            return actor;
+        }
+
+        public static IEnumerable<Person> PersonInFilmDbListConvertPersonDomainList(IEnumerable<PersonInFilmDbModel> personDbModels)
+        {
+            if (personDbModels == null) throw new ArgumentNullException(nameof(personDbModels));
+
+            var person = personDbModels
+                .Select(a => new Person
+                {
+                    Id = a.PersonId,
+                    Name = a.Person.Name,
+                    Age = a.Person.Age,
+                    Image = ImageDbConvertImageDomain(a.Person.Image ?? new ImageDbModel()),
+                    Professions = a.Professions.Select(p => p.Profession.ToEnum(Profession.None))
+                }).ToList();
+
+            return person;
+        }
+
+        public static IEnumerable<PersonInFilmDbModel> PersonDomainListConvertPersonInFilmDbList(IEnumerable<Person> people, Guid filmId)
+        {
+            if (people == null) throw new ArgumentNullException(nameof(people));
+
+            var peopleDb = people
+                .Select(a => new PersonInFilmDbModel
+                {
+                    PersonId = a.Id,
+                    FilmId = filmId,
+                    Professions = a.Professions.Select(p => new ProfessionDbModel
+                    {
+                        Id = (int)p,
+                        Profession = p.ToString()
+                    })
+                }).ToList();
+
+            return peopleDb;
+        }
+
+        public static Image ImageDbConvertImageDomain(ImageDbModel imageDbModel)
+        {
+            if (imageDbModel == null) throw new ArgumentNullException(nameof(imageDbModel));
+
+            var image = new Image
+            {
+                Id = imageDbModel.Id,
+                Url = imageDbModel.Url
+            };
+
+            return image;
+        }
+
+        public static ImageDbModel ImageDomainConvertImageDb(Image image)
+        {
+            if (image == null) throw new ArgumentNullException(nameof(image));
+
+            var imageDb = new ImageDbModel
+            {
+                Id = image.Id,
+                Url = image.Url
+            };
+
+            return imageDb;
+        }
+
+        public static List<Image> ImageDbListConvertImageDomainList(IEnumerable<ImageDbModel> imageDbModels)
+        {
+            if (imageDbModels == null) throw new ArgumentNullException(nameof(imageDbModels));
+
+            var images = imageDbModels
+                .Select(img => new Image
+                {
+                    Id = img.Id,
+                    Url = img.Url
+                }).ToList();
+
+            return images;
+        }
+
+        public static List<ImageDbModel> ImageDomainListConvertImageDbList(IEnumerable<Image> image)
+        {
+            if (image == null) throw new ArgumentNullException(nameof(image));
+
+            var images = image
+                .Select(img => new ImageDbModel
+                {
+                    Id = img.Id,
+                    Url = img.Url
+                }).ToList();
+
+            return images;
+        }
+    }
+}

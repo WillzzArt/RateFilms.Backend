@@ -5,7 +5,7 @@
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
-        public Genre Genre { get; set; }
+        public IEnumerable<Genre> Genre { get; set; }
         public int Duration { get; set; }
         public string? PreviewImage { get; set; }
         public float? AvgRating { get; set; }

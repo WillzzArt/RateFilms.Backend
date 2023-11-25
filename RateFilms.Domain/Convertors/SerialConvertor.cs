@@ -1,5 +1,6 @@
-﻿using RateFilms.Domain.Models.DomainModels;
-using RateFilms.Domain.StorageModels;
+﻿using RateFilms.Domain.Helpers;
+using RateFilms.Domain.Models.DomainModels;
+using RateFilms.Domain.Models.StorageModels;
 
 namespace RateFilms.Domain.Convertors
 {
@@ -15,11 +16,11 @@ namespace RateFilms.Domain.Convertors
                 Name = serialDbModel.Name,
                 Description = serialDbModel.Description,
                 Duration = serialDbModel.Duration,
-                PreviewImage = serialDbModel.PreviewImage,
+                //PreviewImage = serialDbModel.PreviewImage,
                 AgeRating = serialDbModel.AgeRating,
                 AvgRating = serialDbModel.AvgRating,
                 SeriesCount = serialDbModel.SeriesCount,
-                Genre = serialDbModel.Genre,
+                Genre = serialDbModel.Genre.Select(g => g.Genre.ToEnum(Genre.None)),
                 Seasons = SeasonDbListConvertSeasonDomain(serialDbModel.Seasons),
             };
 
@@ -34,10 +35,9 @@ namespace RateFilms.Domain.Convertors
                 .Select(s => new Season
                 {
                     Id = s.Id,
-                    Actors = ActorConvertor.ActorDbListConvertActorDomainList(s.Actors),
                     AvgRating = s.AvgRating,
                     Description = s.Description,
-                    Images = ActorConvertor.ImageDbListConvertImageDomainList(s.Images),
+                    Images = PersonConvertor.ImageDbListConvertImageDomainList(s.Images),
                     RealeseDate = s.RealeseDate 
                 });
 

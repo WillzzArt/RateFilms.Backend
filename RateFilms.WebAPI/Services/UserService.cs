@@ -3,8 +3,8 @@ using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO.Authorization;
 using RateFilms.Domain.Helpers;
 using RateFilms.Domain.Models.Authorization;
+using RateFilms.Domain.Models.StorageModels;
 using RateFilms.Domain.Repositories;
-using RateFilms.Domain.StorageModels;
 using RateFilms.WebAPI.JWT;
 
 namespace RateFilms.Application.Services

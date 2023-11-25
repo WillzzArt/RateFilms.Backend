@@ -1,11 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RateFilms.Application.Services;
-using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.DomainModels;
-using RateFilms.Domain.Repositories;
-using RateFilms.Domain.StorageModels;
-using System.Collections;
 
 namespace RateFilms.WebAPI.Controllers
 {
@@ -16,7 +12,7 @@ namespace RateFilms.WebAPI.Controllers
         private readonly ILogger<FilmsController> _logger;
 
         private readonly IFilmService _filmService;
-        
+
         public FilmsController(
             ILogger<FilmsController> logger,
             IFilmService filmService)

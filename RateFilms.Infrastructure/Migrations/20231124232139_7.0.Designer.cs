@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RateFilms.Infrastructure.Data;
@@ -11,9 +12,11 @@ using RateFilms.Infrastructure.Data;
 namespace RateFilms.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231124232139_7.0")]
+    partial class _70
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,7 +57,7 @@ namespace RateFilms.Infrastructure.Migrations
 
             modelBuilder.Entity("PersonInFilmDbModelProfessionDbModel", b =>
                 {
-                    b.Property<int>("ProfessionsId")
+                    b.Property<int>("ProfessionId")
                         .HasColumnType("integer");
 
                     b.Property<Guid>("PersonInFilmsFilmId")
@@ -63,7 +66,7 @@ namespace RateFilms.Infrastructure.Migrations
                     b.Property<Guid>("PersonInFilmsPersonId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("ProfessionsId", "PersonInFilmsFilmId", "PersonInFilmsPersonId");
+                    b.HasKey("ProfessionId", "PersonInFilmsFilmId", "PersonInFilmsPersonId");
 
                     b.HasIndex("PersonInFilmsFilmId", "PersonInFilmsPersonId");
 
@@ -139,6 +142,9 @@ namespace RateFilms.Infrastructure.Migrations
                     b.Property<int>("AgeRating")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Author")
+                        .HasColumnType("text");
+
                     b.Property<float?>("AvgRating")
                         .HasColumnType("real");
 
@@ -150,6 +156,9 @@ namespace RateFilms.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PreviewImage")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -170,9 +179,6 @@ namespace RateFilms.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Genre")
-                        .IsUnique();
 
                     b.ToTable("Genre");
                 });
@@ -269,10 +275,7 @@ namespace RateFilms.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Profession")
-                        .IsUnique();
-
-                    b.ToTable("Profession");
+                    b.ToTable("Proffesion");
                 });
 
             modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.SeasonDbModel", b =>
@@ -445,7 +448,7 @@ namespace RateFilms.Infrastructure.Migrations
                 {
                     b.HasOne("RateFilms.Domain.Models.StorageModels.ProfessionDbModel", null)
                         .WithMany()
-                        .HasForeignKey("ProfessionsId")
+                        .HasForeignKey("ProfessionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

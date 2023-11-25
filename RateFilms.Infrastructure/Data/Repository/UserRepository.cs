@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RateFilms.Domain.Convertors;
 using RateFilms.Domain.Models.Authorization;
+using RateFilms.Domain.Models.StorageModels;
 using RateFilms.Domain.Repositories;
-using RateFilms.Domain.StorageModels;
 
 namespace RateFilms.Infrastructure.Data.Repository
 {

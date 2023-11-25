@@ -1,6 +1,6 @@
 ﻿using RateFilms.Domain.Models.Interfaces;
 
-namespace RateFilms.Domain.StorageModels
+namespace RateFilms.Domain.Models.StorageModels
 {
     public class ImageDbModel : IEntity
     {

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -35,7 +34,7 @@ builder.Services.AddAuthentication(x =>
         ValidAudience = config["JwtSettings:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey
                                 (Encoding.UTF8.GetBytes(config[key: "JwtSettings:Secret"]))
-        
+
     };
 });
 
@@ -52,7 +51,7 @@ builder.Services.AddAuthorization(options =>
         build.RequireAssertion(x => x.User.HasClaim(ClaimTypes.Role, Role.Admin.ToString())
                                     || x.User.HasClaim(ClaimTypes.Role, Role.User.ToString()));
     });
-}); 
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -60,12 +59,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
-builder.Services.AddTransient<IBaseRepository, BaseRepository>();
-builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IBaseRepository, BaseRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-builder.Services.AddTransient<IUserService, UserService>();
-builder.Services.AddTransient<IFilmService, FilmService>();
-builder.Services.AddTransient<IFilmRepository, FilmRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IFilmService, FilmService>();
+builder.Services.AddScoped<IFilmRepository, FilmRepository>();
 
 var connectionString = builder.Configuration.GetConnectionString("WebApiDatabase");
 
