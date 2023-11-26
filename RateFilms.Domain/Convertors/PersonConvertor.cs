@@ -46,6 +46,14 @@ namespace RateFilms.Domain.Convertors
                 .Select(a => new PersonInFilmDbModel
                 {
                     PersonId = a.Id,
+                    Person = new PersonDbModel
+                    {
+                        Id = a.Id,
+                        Age = a.Age,
+                        Name = a.Name,
+                        ImageId = a.Image?.Id,
+                        Image = ImageDomainConvertImageDb(a.Image ?? new Image())
+                    },
                     FilmId = filmId,
                     Professions = a.Professions.Select(p => new ProfessionDbModel
                     {
@@ -64,7 +72,8 @@ namespace RateFilms.Domain.Convertors
             var image = new Image
             {
                 Id = imageDbModel.Id,
-                Url = imageDbModel.Url
+                Url = imageDbModel.Url,
+                isPreview = imageDbModel.isPreview
             };
 
             return image;
@@ -77,7 +86,8 @@ namespace RateFilms.Domain.Convertors
             var imageDb = new ImageDbModel
             {
                 Id = image.Id,
-                Url = image.Url
+                Url = image.Url,
+                isPreview = image.isPreview
             };
 
             return imageDb;
@@ -91,7 +101,8 @@ namespace RateFilms.Domain.Convertors
                 .Select(img => new Image
                 {
                     Id = img.Id,
-                    Url = img.Url
+                    Url = img.Url,
+                    isPreview = img.isPreview
                 }).ToList();
 
             return images;
@@ -105,7 +116,8 @@ namespace RateFilms.Domain.Convertors
                 .Select(img => new ImageDbModel
                 {
                     Id = img.Id,
-                    Url = img.Url
+                    Url = img.Url,
+                    isPreview = img.isPreview
                 }).ToList();
 
             return images;

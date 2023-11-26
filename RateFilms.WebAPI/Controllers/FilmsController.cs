@@ -28,7 +28,7 @@ namespace RateFilms.WebAPI.Controllers
             return film;
         }
 
-        [Authorize(Policy = "admin")]
+        //[Authorize(Policy = "admin")]
         [HttpPost("CreateFilm")]
         public async Task<IActionResult> AddFilms(Film film)
         {

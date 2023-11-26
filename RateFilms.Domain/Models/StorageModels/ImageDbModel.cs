@@ -10,5 +10,6 @@ namespace RateFilms.Domain.Models.StorageModels
         public FilmDbModel? Film { get; set; }
         public Guid? SeasonId { get; set; }
         public SeasonDbModel? Season { get; set; }
+        public bool isPreview { get; set; }
     }
 }

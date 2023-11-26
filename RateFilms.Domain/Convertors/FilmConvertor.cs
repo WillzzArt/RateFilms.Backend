@@ -10,6 +10,16 @@ namespace RateFilms.Domain.Convertors
         {
             if (filmDbModel == null) throw new ArgumentNullException(nameof(filmDbModel));
 
+            var previewImage = new ImageDbModel();
+            var images = new List<ImageDbModel>();
+
+            if (filmDbModel.Images != null)
+            {
+                previewImage = filmDbModel.Images.FirstOrDefault(img => img.isPreview == true);
+                images = filmDbModel.Images.Where(img => img.isPreview == false).ToList();
+            }
+             
+
             var film = new Film
             {
                 Id = filmDbModel.Id,
@@ -19,8 +29,9 @@ namespace RateFilms.Domain.Convertors
                 AgeRating = filmDbModel.AgeRating,
                 AvgRating = filmDbModel.AvgRating,
                 Duration = filmDbModel.Duration,
+                PreviewImage = PersonConvertor.ImageDbConvertImageDomain(previewImage ?? new ImageDbModel()),
                 Genre = filmDbModel.Genre.Select(g => g.Genre.ToEnum(Genre.None)),
-                Images = PersonConvertor.ImageDbListConvertImageDomainList(filmDbModel.Images)
+                Images = PersonConvertor.ImageDbListConvertImageDomainList(images)
             };
 
             return film;
@@ -31,18 +42,20 @@ namespace RateFilms.Domain.Convertors
             if (filmDbModels == null) throw new ArgumentNullException(nameof(filmDbModels));
 
             var films = filmDbModels
-                .Select(f => new Film
-                {
-                    Id = f.Id,
+                .Select(FilmDbConvertFilmDomain
+                /*{
+                    
+                    *//*Id = f.Id,
                     Name = f.Name,
                     Description = f.Description,
                     People = PersonConvertor.PersonInFilmDbListConvertPersonDomainList(f.People ?? new List<PersonInFilmDbModel>()),
                     AgeRating = f.AgeRating,
                     AvgRating = f.AvgRating,
                     Duration = f.Duration,
+                    PreviewImage = PersonConvertor.ImageDbConvertImageDomain(f.Images.FirstOrDefault(img => img.isPreview == true)),
                     Genre = f.Genre.Select(g => g.Genre.ToEnum(Genre.None)),
-                    Images = PersonConvertor.ImageDbListConvertImageDomainList(f.Images)
-                }).ToList();
+                    Images = PersonConvertor.ImageDbListConvertImageDomainList(f.Images)*//*
+                }*/).ToList();
 
             return films;
         }
@@ -50,8 +63,11 @@ namespace RateFilms.Domain.Convertors
         public static FilmDbModel FilmDomainConvertFilmDb(Film film)
         {
             if (film == null) throw new ArgumentNullException(nameof(film));
-
-            film.Images.ToList().Add(film.PreviewImage);
+            
+            if (film.Images == null)
+            {
+                film.Images = new List<Image>();
+            }
 
             var filmDb = new FilmDbModel
             {
@@ -68,7 +84,7 @@ namespace RateFilms.Domain.Convertors
                     Id = (int)g,
                     Genre = g.ToString()
                 }),
-                Images = PersonConvertor.ImageDomainListConvertImageDbList(film.Images ?? new List<Image>())
+                Images = PersonConvertor.ImageDomainListConvertImageDbList(film.Images.Append(film.PreviewImage))
             };
 
             return filmDb;
