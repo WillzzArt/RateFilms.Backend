@@ -42,20 +42,7 @@ namespace RateFilms.Domain.Convertors
             if (filmDbModels == null) throw new ArgumentNullException(nameof(filmDbModels));
 
             var films = filmDbModels
-                .Select(FilmDbConvertFilmDomain
-                /*{
-                    
-                    *//*Id = f.Id,
-                    Name = f.Name,
-                    Description = f.Description,
-                    People = PersonConvertor.PersonInFilmDbListConvertPersonDomainList(f.People ?? new List<PersonInFilmDbModel>()),
-                    AgeRating = f.AgeRating,
-                    AvgRating = f.AvgRating,
-                    Duration = f.Duration,
-                    PreviewImage = PersonConvertor.ImageDbConvertImageDomain(f.Images.FirstOrDefault(img => img.isPreview == true)),
-                    Genre = f.Genre.Select(g => g.Genre.ToEnum(Genre.None)),
-                    Images = PersonConvertor.ImageDbListConvertImageDomainList(f.Images)*//*
-                }*/).ToList();
+                .Select(FilmDbConvertFilmDomain).ToList();
 
             return films;
         }

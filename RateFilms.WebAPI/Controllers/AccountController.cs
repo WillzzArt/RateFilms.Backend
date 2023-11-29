@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure;
+using Microsoft.AspNetCore.Mvc;
 using RateFilms.Application.Services;
 using RateFilms.Domain.DTO.Authorization;
 using RateFilms.Domain.Repositories;
@@ -21,7 +22,20 @@ namespace RateFilms.WebAPI.Controllers
             _userService = userService;
         }
 
-        [HttpPost("register")]
+        [HttpPut("ChangePassword")]
+        public async Task<ActionResult> ChangePassword(LoginRequest model)
+        {
+            var result = await _userService.ChangePassword(model);
+
+            if (result == null)
+            {
+                return BadRequest(new { message = "Username not exists" });
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPost("Register")]
         public async Task<ActionResult> Register(Registration model)
         {
             var response = await _userService.Register(model);
@@ -34,7 +48,7 @@ namespace RateFilms.WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public async Task<ActionResult<string>> Login(LoginRequest model)
         {
             var response = await _userService.Authenticate(model);

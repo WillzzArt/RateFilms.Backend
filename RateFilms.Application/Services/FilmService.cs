@@ -1,4 +1,5 @@
 ﻿using RateFilms.Domain.Convertors;
+using RateFilms.Domain.DTO;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Repositories;
 
@@ -18,12 +19,16 @@ namespace RateFilms.Application.Services
         public async Task CreateFilmsAsync(Film film)
         {
             await _filmRepository.CreateAsync(FilmConvertor.FilmDomainConvertFilmDb(film));
-            //await _repository.CreateAsync(FilmConvertor.FilmDomainConvertFilmDb(film));
         }
 
         public async Task<IEnumerable<Film?>> GetFilms()
         {
             return _filmRepository.GetAllFilms();
+        }
+
+        public async Task SetFavoriteFilm(FavoriteFilm favoriteFilm, string userName)
+        {
+            await _filmRepository.SetFavoriteFilm(favoriteFilm, userName);
         }
     }
 }

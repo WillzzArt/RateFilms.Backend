@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RateFilms.Application.Services;
+using RateFilms.Domain.DTO;
 using RateFilms.Domain.Models.DomainModels;
+using System.Security.Claims;
 
 namespace RateFilms.WebAPI.Controllers
 {
@@ -22,7 +24,7 @@ namespace RateFilms.WebAPI.Controllers
         }
 
         [HttpGet("GetFilms")]
-        public async Task<IEnumerable<Film>> IndexAsync()
+        public async Task<IEnumerable<Film?>> IndexAsync()
         {
             var film = await _filmService.GetFilms();
             return film;
@@ -35,6 +37,16 @@ namespace RateFilms.WebAPI.Controllers
             await _filmService.CreateFilmsAsync(film);
 
             return Redirect("/Films/GetFilms");
+        }
+
+        [Authorize]
+        [HttpPost("SetFavoriteFilm")]
+        public async Task<IActionResult> SetFavorite(FavoriteFilm favorite)
+        {
+            ClaimsPrincipal claims = HttpContext.User;
+            await _filmService.SetFavoriteFilm(favorite, claims.Identity.Name);
+
+            return Ok();
         }
 
         [Authorize(Policy = "admin")]

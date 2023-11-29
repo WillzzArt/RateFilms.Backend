@@ -1,4 +1,5 @@
-﻿using RateFilms.Domain.Models.DomainModels;
+﻿using RateFilms.Domain.DTO;
+using RateFilms.Domain.Models.DomainModels;
 
 namespace RateFilms.Application.Services
 {
@@ -6,5 +7,6 @@ namespace RateFilms.Application.Services
     {
         Task<IEnumerable<Film?>> GetFilms();
         Task CreateFilmsAsync(Film film);
+        Task SetFavoriteFilm(FavoriteFilm favoriteFilm, string userName);
     }
 }

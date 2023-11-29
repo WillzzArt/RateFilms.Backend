@@ -9,5 +9,6 @@ namespace RateFilms.Application.Services
         Task<LoginResponse?> Register(Registration model);
         Task<IEnumerable<User>> GetAll();
         Task<User?> GetById(Guid id);
+        Task<LoginResponse?> ChangePassword(LoginRequest model);
     }
 }

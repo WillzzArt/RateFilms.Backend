@@ -26,7 +26,7 @@ namespace RateFilms.Application.Services
         {
             var user = await _userRepository.FindUser(model.UserLogin);
 
-            if (user is not null && user.Password == HashPasswordHelper.HashPassword(model.Password))
+            if (user?.Password == HashPasswordHelper.HashPassword(model.Password))
             {
                 var token = Token.CreateToken(_configuration, user);
 
@@ -69,6 +69,22 @@ namespace RateFilms.Application.Services
             var token = Token.CreateToken(_configuration, UserConvertor.UserDbConvertUserDomain(user));
 
             return new LoginResponse(UserConvertor.UserDbConvertUserDomain(user), token);
+        }
+
+        public async Task<LoginResponse?> ChangePassword(LoginRequest model)
+        {
+            model.Password = HashPasswordHelper.HashPassword(model.Password);
+            var user = await _userRepository.ChangePassword(model.UserLogin, model.Password);
+
+            if (user != null)
+            {
+                
+                var token = Token.CreateToken(_configuration, user);
+
+                return new LoginResponse(user, token);
+            }
+
+            return null;
         }
 
         public async Task<IEnumerable<User>> GetAll()

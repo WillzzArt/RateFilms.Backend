@@ -13,7 +13,7 @@ namespace RateFilms.Domain.Models.StorageModels
         public int AgeRating { get; set; }
         public IEnumerable<GenreDbModel> Genre { get; set; }
         public IEnumerable<ImageDbModel> Images { get; set; }
-        public IEnumerable<PersonInFilmDbModel>? People { get; set; }
+        public IEnumerable<PersonInFilmDbModel> People { get; set; }
 
     }
 }
