@@ -64,7 +64,7 @@ namespace RateFilms.Infrastructure.Data
                 .UsingEntity(j => j.ToTable("PersonInFilmProfession"));
 
             builder.Entity<PersonInSerialDbModel>()
-                .HasMany(f => f.Profession)
+                .HasMany(f => f.Professions)
                 .WithMany(g => g.PersonInSerials)
                 .UsingEntity(j => j.ToTable("PersonInSerialProfession"));
         }

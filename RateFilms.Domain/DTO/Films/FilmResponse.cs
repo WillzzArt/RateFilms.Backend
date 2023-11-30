@@ -1,4 +1,5 @@
-﻿using RateFilms.Domain.Models.DomainModels;
+﻿using RateFilms.Domain.DTO.People;
+using RateFilms.Domain.Models.DomainModels;
 
 namespace RateFilms.Domain.DTO.Films
 {
@@ -13,9 +14,11 @@ namespace RateFilms.Domain.DTO.Films
         public List<Image> Images { get; set; } = new List<Image>();
         public float? AvgRating { get; set; }
         public int AgeRating { get; set; }
-        public List<Person>? People { get; set; } = new List<Person>();
+        public List<PersonResponse>? People { get; set; } = new List<PersonResponse>();
+        public bool isFavorite { get; set; } = false;
+        public string? Status { get; set; } = StatusMovie.None.ToString();
 
-        public FilmResponse(Film film)
+        public FilmResponse(Film film, Favorite? favoriteFilm)
         {
             Id = film.Id;
             Name = film.Name;
@@ -39,9 +42,11 @@ namespace RateFilms.Domain.DTO.Films
             if (film.People != null && film.People.Any())
             {
                 People = film.People
-                    .Select(x => x)
+                    .Select(x => new PersonResponse(x))
                     .ToList();
             }
+            isFavorite = favoriteFilm?.IsFavorite ?? false;
+            Status = favoriteFilm?.Status.ToString() ?? StatusMovie.None.ToString();
         }
     }
 }

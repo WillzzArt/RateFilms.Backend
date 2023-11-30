@@ -27,7 +27,7 @@ namespace RateFilms.Domain.Convertors
                 Id = filmDbModel.Id,
                 Name = filmDbModel.Name,
                 Description = filmDbModel.Description,
-                People = PersonConvertor.PersonInFilmDbListConvertPersonDomainList(filmDbModel.People ?? new List<PersonInFilmDbModel>()),
+                People = PersonConvertor.PersonInMovieDbListConvertPersonDomainList(filmDbModel.People ?? new List<PersonInFilmDbModel>()),
                 AgeRating = filmDbModel.AgeRating,
                 AvgRating = filmDbModel.AvgRating,
                 Duration = filmDbModel.Duration,

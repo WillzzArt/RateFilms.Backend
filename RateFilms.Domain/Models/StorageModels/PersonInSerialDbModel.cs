@@ -9,6 +9,6 @@ namespace RateFilms.Domain.Models.StorageModels
         public PersonDbModel Person { get; set; }
         public Guid SerialId { get; set; }
         public SerialDbModel Serial { get; set; }
-        public IEnumerable<ProfessionDbModel> Profession { get; set; }
+        public IEnumerable<ProfessionDbModel> Professions { get; set; }
     }
 }

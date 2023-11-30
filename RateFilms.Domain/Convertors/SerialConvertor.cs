@@ -15,13 +15,13 @@ namespace RateFilms.Domain.Convertors
                 Id = serialDbModel.Id,
                 Name = serialDbModel.Name,
                 Description = serialDbModel.Description,
-                Duration = serialDbModel.Duration,
-                //PreviewImage = serialDbModel.PreviewImage,
+                PreviewImage = PersonConvertor.ImageDbConvertImageDomain(serialDbModel.PreviewImage ?? new ImageDbModel()),
                 AgeRating = serialDbModel.AgeRating,
                 AvgRating = serialDbModel.AvgRating,
-                SeriesCount = serialDbModel.SeriesCount,
                 Genre = serialDbModel.Genre.Select(g => g.Genre.ToEnum(Genre.None)),
                 Seasons = SeasonDbListConvertSeasonDomain(serialDbModel.Seasons),
+                RealeseDate = serialDbModel.RealeseDate,
+                People = PersonConvertor.PersonInMovieDbListConvertPersonDomainList(serialDbModel.People)
             };
 
             return serial;
@@ -38,10 +38,29 @@ namespace RateFilms.Domain.Convertors
                     AvgRating = s.AvgRating,
                     Description = s.Description,
                     Images = PersonConvertor.ImageDbListConvertImageDomainList(s.Images),
-                    RealeseDate = s.RealeseDate 
+                    RealeseDate = s.RealeseDate,
+                    Series = SeriesDbListConvertSeriesDomain(s.Series)
                 });
 
             return seasons;
+        }
+
+        public static IEnumerable<Series> SeriesDbListConvertSeriesDomain(IEnumerable<SeriesDbModel> seriesDbModels)
+        {
+            if (seriesDbModels == null) throw new ArgumentNullException(nameof(seriesDbModels));
+
+            var series = seriesDbModels
+                .Select(s => new Series
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    Duration = s.Duration,
+                    RealeseDate = s.RealeseDate,
+                    AvgRating = s.AvgRating,
+                    PreviewImage = PersonConvertor.ImageDbConvertImageDomain(s.PreviewImage ?? new ImageDbModel())
+                });
+
+            return series;
         }
     }
 }

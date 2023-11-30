@@ -21,7 +21,23 @@ namespace RateFilms.Domain.Convertors
             return actor;
         }
 
-        public static IEnumerable<Person> PersonInFilmDbListConvertPersonDomainList(IEnumerable<PersonInFilmDbModel> personDbModels)
+        public static IEnumerable<Person> PersonInMovieDbListConvertPersonDomainList(IEnumerable<PersonInFilmDbModel> personDbModels)
+        {
+            if (personDbModels == null) throw new ArgumentNullException(nameof(personDbModels));
+
+            var person = personDbModels
+                .Select(a => new Person
+                {
+                    Id = a.PersonId,
+                    Name = a.Person.Name,
+                    Age = a.Person.Age,
+                    Image = ImageDbConvertImageDomain(a.Person.Image ?? new ImageDbModel()),
+                    Professions = a.Professions.Select(p => p.Profession.ToEnum(Profession.None))
+                }).ToList();
+
+            return person;
+        }
+        public static IEnumerable<Person> PersonInMovieDbListConvertPersonDomainList(IEnumerable<PersonInSerialDbModel> personDbModels)
         {
             if (personDbModels == null) throw new ArgumentNullException(nameof(personDbModels));
 

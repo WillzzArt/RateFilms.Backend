@@ -23,7 +23,7 @@ namespace RateFilms.Application.Services
             await _filmRepository.CreateAsync(FilmConvertor.FilmDomainConvertFilmDb(film));
         }
 
-        public async Task<IEnumerable<FilmAuthorizeResponse?>> GetFilmForAuthorizeUser(string userName)
+        public async Task<IEnumerable<FilmResponse?>> GetFilmForAuthorizeUser(string userName)
         {
             var films = await _filmRepository.GetAllFilmsWithFavorite();
             var user = await _userRepository.FindUser(userName);
@@ -32,7 +32,7 @@ namespace RateFilms.Application.Services
 
             var favoriteFilmsForUser = films
                 .Select(f =>
-                    new FilmAuthorizeResponse(
+                    new FilmResponse(
                         f,
                         f.Favorites?.FirstOrDefault(x => x.User.Id == user.Id))
                     ).ToList();
@@ -44,7 +44,7 @@ namespace RateFilms.Application.Services
         {
             var films = await _filmRepository.GetAllFilms();
 
-            var filmsRespons = films.Select(f => new FilmResponse(f)).ToList();
+            var filmsRespons = films.Select(f => new FilmResponse(f, null)).ToList();
 
             return filmsRespons;
         }

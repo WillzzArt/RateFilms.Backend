@@ -3,7 +3,7 @@ using RateFilms.Domain.Models.DomainModels;
 
 namespace RateFilms.Application.Services
 {
-    public interface IFilmService
+    public interface ISerialService
     {
         Task<IEnumerable<FilmResponse?>> GetFilms();
         Task<IEnumerable<FilmResponse?>> GetFilmForAuthorizeUser(string userName);
