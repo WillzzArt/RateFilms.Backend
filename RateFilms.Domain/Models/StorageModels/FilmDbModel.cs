@@ -1,5 +1,4 @@
 ﻿using RateFilms.Domain.Models.Interfaces;
-using RateFilms.Domain.Models.StorageModels;
 
 namespace RateFilms.Domain.Models.StorageModels
 {
@@ -14,6 +13,7 @@ namespace RateFilms.Domain.Models.StorageModels
         public IEnumerable<GenreDbModel> Genre { get; set; }
         public IEnumerable<ImageDbModel> Images { get; set; }
         public IEnumerable<PersonInFilmDbModel> People { get; set; }
+        public IEnumerable<FavoriteFilmDbModel>? Favorite { get; set; }
 
     }
 }

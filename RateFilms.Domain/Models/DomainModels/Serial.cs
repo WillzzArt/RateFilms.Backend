@@ -12,5 +12,6 @@
         public int AgeRating { get; set; }
         public int? SeriesCount { get; set; }
         public IEnumerable<Season> Seasons { get; set; }
+        public IEnumerable<Favorite> Favorites { get; set; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RateFilms.Application.Services;
-using RateFilms.Domain.DTO;
+using RateFilms.Domain.DTO.Films;
 using RateFilms.Domain.Models.DomainModels;
 using System.Security.Claims;
 
@@ -23,14 +23,22 @@ namespace RateFilms.WebAPI.Controllers
             _filmService = filmService;
         }
 
+        [AllowAnonymous]
         [HttpGet("GetFilms")]
-        public async Task<IEnumerable<Film?>> IndexAsync()
+        public async Task<IActionResult> GetFilms()
         {
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                var favoriteFilm = await _filmService.GetFilmForAuthorizeUser(User.Identity.Name!);
+                return Ok(favoriteFilm);
+            }
+
             var film = await _filmService.GetFilms();
-            return film;
+
+            return Ok(film);
         }
 
-        //[Authorize(Policy = "admin")]
+        [Authorize(Policy = "admin")]
         [HttpPost("CreateFilm")]
         public async Task<IActionResult> AddFilms(Film film)
         {

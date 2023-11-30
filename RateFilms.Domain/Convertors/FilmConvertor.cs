@@ -6,7 +6,9 @@ namespace RateFilms.Domain.Convertors
 {
     public static class FilmConvertor
     {
-        public static Film FilmDbConvertFilmDomain(FilmDbModel filmDbModel)
+        public static Film FilmDbConvertFilmDomain(
+            FilmDbModel filmDbModel, 
+            IEnumerable<FavoriteFilmDbModel>? favoriteFilm = null)
         {
             if (filmDbModel == null) throw new ArgumentNullException(nameof(filmDbModel));
 
@@ -34,6 +36,17 @@ namespace RateFilms.Domain.Convertors
                 Images = PersonConvertor.ImageDbListConvertImageDomainList(images)
             };
 
+            if (favoriteFilm != null)
+            {
+                film.Favorites = favoriteFilm.Select(fFilms => new Favorite
+                {
+                    User = UserConvertor.UserDbConvertUserDomain(fFilms.User ?? new UserDbModel()),
+                    IsFavorite = fFilms.isFavorite,
+                    Status = fFilms.Status
+
+                });
+            }
+
             return film;
         }
 
@@ -42,7 +55,7 @@ namespace RateFilms.Domain.Convertors
             if (filmDbModels == null) throw new ArgumentNullException(nameof(filmDbModels));
 
             var films = filmDbModels
-                .Select(FilmDbConvertFilmDomain).ToList();
+                .Select(fDB => FilmDbConvertFilmDomain(fDB, fDB.Favorite)).ToList();
 
             return films;
         }

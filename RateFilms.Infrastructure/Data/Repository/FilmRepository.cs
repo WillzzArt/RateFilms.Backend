@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RateFilms.Domain.Convertors;
-using RateFilms.Domain.DTO;
+using RateFilms.Domain.DTO.Films;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Models.StorageModels;
 using RateFilms.Domain.Repositories;
@@ -93,9 +93,9 @@ namespace RateFilms.Infrastructure.Data.Repository
             await _context.SaveChangesAsync();
         }
 
-        public IEnumerable<Film?> GetAllFilms()
+        public async Task<IEnumerable<Film>> GetAllFilms()
         {
-            var filmsDb = _context.Film
+            var filmsDb = await _context.Film
                 .Include(f => f.People)
                     .ThenInclude(p => p.Professions)
                 .Include(f => f.People)
@@ -103,7 +103,23 @@ namespace RateFilms.Infrastructure.Data.Repository
                         .ThenInclude(p => p.Image)
                 .Include(p => p.Images)
                 .Include(p => p.Genre)
-                .ToList();
+                .ToListAsync();
+
+            return FilmConvertor.FilmDbListConvertFilmDomainList(filmsDb);
+        }
+
+        public async Task<IEnumerable<Film>> GetAllFilmsWithFavorite()
+        {
+            var filmsDb = await _context.Film
+                .Include(f => f.People)
+                    .ThenInclude(p => p.Professions)
+                .Include(f => f.People)
+                    .ThenInclude(p => p.Person)
+                        .ThenInclude(p => p.Image)
+                .Include(p => p.Images)
+                .Include(p => p.Genre)
+                .Include(f => f.Favorite)
+                .ToListAsync();
 
             return FilmConvertor.FilmDbListConvertFilmDomainList(filmsDb);
         }

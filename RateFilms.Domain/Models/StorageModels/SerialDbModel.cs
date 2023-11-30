@@ -17,5 +17,6 @@ namespace RateFilms.Domain.Models.StorageModels
         public IEnumerable<SeasonDbModel> Seasons { get; set; }
         public IEnumerable<PersonInSerialDbModel> People { get; set; }
         public IEnumerable<GenreDbModel> Genre { get; set; }
+        public IEnumerable<FavoriteSerialDbModel> Favorites { get; set; }
     }
 }
