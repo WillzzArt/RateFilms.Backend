@@ -37,17 +37,16 @@ namespace RateFilms.Application.Services
                         f.Favorites?.FirstOrDefault(x => x.User.Id == user.Id))
                     ).ToList();
 
-            /*var favoriteFilmsForUser = (from film in films
-                                   from favorite in film.Favorites
-                                   where favorite.User.Id == user.Id
-                                   select new FilmAuthorizeResponse(film, favorite)).ToList();*/
-
             return favoriteFilmsForUser;
         }
 
-        public async Task<IEnumerable<Film?>> GetFilms()
+        public async Task<IEnumerable<FilmResponse?>> GetFilms()
         {
-            return await _filmRepository.GetAllFilms();
+            var films = await _filmRepository.GetAllFilms();
+
+            var filmsRespons = films.Select(f => new FilmResponse(f)).ToList();
+
+            return filmsRespons;
         }
 
         public async Task SetFavoriteFilm(FavoriteFilm favoriteFilm, string userName)

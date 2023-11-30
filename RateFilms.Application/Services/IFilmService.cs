@@ -5,7 +5,7 @@ namespace RateFilms.Application.Services
 {
     public interface IFilmService
     {
-        Task<IEnumerable<Film?>> GetFilms();
+        Task<IEnumerable<FilmResponse?>> GetFilms();
         Task<IEnumerable<FilmAuthorizeResponse?>> GetFilmForAuthorizeUser(string userName);
         Task CreateFilmsAsync(Film film);
         Task SetFavoriteFilm(FavoriteFilm favoriteFilm, string userName);
