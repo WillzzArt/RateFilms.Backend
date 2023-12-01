@@ -62,5 +62,69 @@ namespace RateFilms.Domain.Convertors
 
             return series;
         }
+
+        public static SerialDbModel SerialDomainConvertSerialDb(Serial serial)
+        {
+            if (serial == null) throw new ArgumentNullException(nameof(serial));
+
+            var serialDb = new SerialDbModel
+            {
+                Id = serial.Id,
+                Name = serial.Name,
+                Description = serial.Description,
+                AgeRating = serial.AgeRating,
+                AvgRating = serial.AvgRating,
+                Genre = serial.Genre
+                .Select(g => new GenreDbModel
+                {
+                    Id = (int)g,
+                    Genre = g.ToString()
+                }),
+                RealeseDate = serial.RealeseDate,
+                People = PersonConvertor.PersonDomainListConvertPersonInSerialDbList(serial.People, serial.Id),
+                PreviewImageId = serial.PreviewImage?.Id,
+                PreviewImage = PersonConvertor.ImageDomainConvertImageDb(serial.PreviewImage ?? new Image()),
+                Seasons = SeasonDomainListConvertSeasonDbList(serial.Seasons)
+            };
+
+            return serialDb;
+        }
+
+        private static IEnumerable<SeasonDbModel> SeasonDomainListConvertSeasonDbList(IEnumerable<Season> seasons)
+        {
+            if (seasons == null) throw new ArgumentNullException(nameof(seasons));
+
+            var seasonsDb = seasons
+                .Select(s => new SeasonDbModel
+                {
+                    Id = s.Id,
+                    Description = s.Description,
+                    AvgRating = s.AvgRating,
+                    RealeseDate = s.RealeseDate,
+                    Images = PersonConvertor.ImageDomainListConvertImageDbList(s.Images),
+                    Series = SeriesDomainListConvertSeriesDbList(s.Series)
+                });
+
+            return seasonsDb;
+        }
+
+        private static IEnumerable<SeriesDbModel> SeriesDomainListConvertSeriesDbList(IEnumerable<Series> series)
+        {
+            if (series == null) throw new ArgumentNullException(nameof(series));
+
+            var seriesDb = series
+                .Select(s => new SeriesDbModel
+                {
+                    Id = s.Id,
+                    Duration = s.Duration,
+                    AvgRating = s.AvgRating,
+                    Name = s.Name,
+                    PreviewImage = PersonConvertor.ImageDomainConvertImageDb(s.PreviewImage),
+                    PreviewImageId = s.PreviewImage.Id,
+                    RealeseDate = s.RealeseDate
+                });
+
+            return seriesDb;
+        }
     }
 }

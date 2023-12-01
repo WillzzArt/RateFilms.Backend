@@ -1,12 +1,4 @@
-﻿using RateFilms.Application.Converters;
-using RateFilms.Application.Models;
-using RateFilms.Domain.Models.DomainModels;
-using RateFilms.Domain.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using RateFilms.Domain.Repositories;
 
 namespace RateFilms.Application.Services
 {
@@ -15,7 +7,7 @@ namespace RateFilms.Application.Services
         private readonly IBaseRepository _repository;
         private readonly IFilmRepository _filmRepository;
 
-        public MovieService(IBaseRepository baseRepository, IFilmRepository filmRepository) 
+        public MovieService(IBaseRepository baseRepository, IFilmRepository filmRepository)
         {
             _repository = baseRepository;
             _filmRepository = filmRepository;

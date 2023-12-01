@@ -9,6 +9,6 @@ namespace RateFilms.Domain.Repositories
         Task<IEnumerable<Film>> GetAllFilms();
         Task<IEnumerable<Film>> GetAllFilmsWithFavorite();
         Task CreateAsync(FilmDbModel film);
-        Task SetFavoriteFilm(FavoriteFilm favoriteFilm, string userName);
+        Task SetFavoriteFilm(FavoriteMovie favoriteFilm, string userName);
     }
 }

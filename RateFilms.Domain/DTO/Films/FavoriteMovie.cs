@@ -3,10 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RateFilms.Domain.DTO.Films
 {
-    public class FavoriteFilm
+    public class FavoriteMovie
     {
         [Required]
-        public Guid FilmId { get; set; }
+        public Guid MovieId { get; set; }
         public StatusMovie StatusMovie { get; set; } = StatusMovie.None;
         public bool IsFavorite { get; set; } = false;
     }

@@ -7,8 +7,8 @@ namespace RateFilms.Domain.Models.StorageModels
         public Guid Id { get; set; }
         public string Name { get; set; }
         public int Duration { get; set; }
-        public DateOnly RealeseDate { get; set; }
-        public Guid? ImageId { get; set; }
+        public DateTime? RealeseDate { get; set; }
+        public Guid? PreviewImageId { get; set; }
         public ImageDbModel? PreviewImage { get; set; }
         public float? AvgRating { get; set; }
         public Guid SeasonId { get; set; }

@@ -8,6 +8,7 @@ namespace RateFilms.Domain.DTO.Films
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
+        public long? RealeseDate { get; set; }
         public List<string> Genre { get; set; } = new List<string>();
         public int Duration { get; set; }
         public Image PreviewImage { get; set; }
@@ -30,6 +31,9 @@ namespace RateFilms.Domain.DTO.Films
                     .ToList();
             }
             Duration = film.Duration;
+            if (film.RealeseDate != null)
+                RealeseDate = ((DateTimeOffset)film.RealeseDate).ToUnixTimeMilliseconds();
+
             PreviewImage = film.PreviewImage;
             if (film.Images.Any())
             {

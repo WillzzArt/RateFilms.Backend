@@ -30,12 +30,13 @@ namespace RateFilms.Infrastructure.Data.Repository
                 Description = film.Description,
                 Duration = film.Duration,
                 AgeRating = film.AgeRating,
-                AvgRating = film.AvgRating
+                AvgRating = film.AvgRating,
+                ReleaseDate = film.ReleaseDate
             };
 
             await _context.Film.AddAsync(saveFilm);
 
-            if (film.People != null)
+            if (film.People.Any())
             {
                 var professions = _context.Profession.ToList();
 
@@ -70,7 +71,7 @@ namespace RateFilms.Infrastructure.Data.Repository
                 }
             }
 
-            if (film.Images != null)
+            if (film.Images.Any())
             {
                 foreach (var image in film.Images)
                 {
@@ -124,7 +125,7 @@ namespace RateFilms.Infrastructure.Data.Repository
             return FilmConvertor.FilmDbListConvertFilmDomainList(filmsDb);
         }
 
-        public async Task SetFavoriteFilm(FavoriteFilm favoriteFilm, string userName)
+        public async Task SetFavoriteFilm(FavoriteMovie favoriteFilm, string userName)
         {
             var user = _context.User.FirstOrDefault(x => x.UserName == userName);
 
@@ -134,13 +135,13 @@ namespace RateFilms.Infrastructure.Data.Repository
             }
 
             var favoriteFilmDb = await _context.FavoriteFilms
-                .FirstOrDefaultAsync(f => f.UserId == user.Id && f.FilmId == favoriteFilm.FilmId);
+                .FirstOrDefaultAsync(f => f.UserId == user.Id && f.FilmId == favoriteFilm.MovieId);
 
             if (favoriteFilmDb == null)
             {
                 var saveFavorite = new FavoriteFilmDbModel
                 {
-                    FilmId = favoriteFilm.FilmId,
+                    FilmId = favoriteFilm.MovieId,
                     UserId = user.Id,
                     Status = favoriteFilm.StatusMovie,
                     isFavorite = favoriteFilm.IsFavorite

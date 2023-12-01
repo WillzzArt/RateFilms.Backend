@@ -3,7 +3,7 @@ using RateFilms.Domain.DTO.Films;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Repositories;
 
-namespace RateFilms.Application.Services
+namespace RateFilms.Application.Services.Films
 {
     public class FilmService : IFilmService
     {
@@ -49,7 +49,7 @@ namespace RateFilms.Application.Services
             return filmsRespons;
         }
 
-        public async Task SetFavoriteFilm(FavoriteFilm favoriteFilm, string userName)
+        public async Task SetFavoriteFilm(FavoriteMovie favoriteFilm, string userName)
         {
             await _filmRepository.SetFavoriteFilm(favoriteFilm, userName);
         }

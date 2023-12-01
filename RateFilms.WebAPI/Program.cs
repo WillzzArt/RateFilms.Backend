@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using RateFilms.Application.Services;
+using RateFilms.Application.Services.Films;
+using RateFilms.Application.Services.Serials;
 using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Repositories;
 using RateFilms.Infrastructure.Data;
@@ -60,11 +62,15 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
 builder.Services.AddScoped<IBaseRepository, BaseRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
 
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddScoped<IFilmService, FilmService>();
 builder.Services.AddScoped<IFilmRepository, FilmRepository>();
+
+builder.Services.AddScoped<ISerialService, SerialService>();
+builder.Services.AddScoped<ISerialRepositoty, SerialRepository>();
 
 var connectionString = builder.Configuration.GetConnectionString("WebApiDatabase");
 

@@ -81,6 +81,33 @@ namespace RateFilms.Domain.Convertors
             return peopleDb;
         }
 
+        public static IEnumerable<PersonInSerialDbModel> PersonDomainListConvertPersonInSerialDbList(IEnumerable<Person> people, Guid serialId)
+        {
+            if (people == null) throw new ArgumentNullException(nameof(people));
+
+            var peopleDb = people
+                .Select(a => new PersonInSerialDbModel
+                {
+                    PersonId = a.Id,
+                    Person = new PersonDbModel
+                    {
+                        Id = a.Id,
+                        Age = a.Age,
+                        Name = a.Name,
+                        ImageId = a.Image?.Id,
+                        Image = ImageDomainConvertImageDb(a.Image ?? new Image())
+                    },
+                    SerialId = serialId,
+                    Professions = a.Professions.Select(p => new ProfessionDbModel
+                    {
+                        Id = (int)p,
+                        Profession = p.ToString()
+                    })
+                }).ToList();
+
+            return peopleDb;
+        }
+
         public static Image ImageDbConvertImageDomain(ImageDbModel imageDbModel)
         {
             if (imageDbModel == null) throw new ArgumentNullException(nameof(imageDbModel));
