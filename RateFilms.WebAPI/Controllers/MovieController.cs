@@ -6,7 +6,7 @@ namespace RateFilms.WebAPI.Controllers
     [ApiController]
     [Route("[controller]")]
     [Authorize]
-    public class MovieAuthorizeController : Controller
+    public class MovieController : Controller
     {
         [HttpGet]
         public IActionResult Index()

@@ -6,7 +6,9 @@ namespace RateFilms.Domain.Convertors
 {
     public static class SerialConvertor
     {
-        public static Serial SerialDbConvertSerialDomain(SerialDbModel serialDbModel)
+        public static Serial SerialDbConvertSerialDomain(
+            SerialDbModel serialDbModel,
+            IEnumerable<FavoriteSerialDbModel>? favorites = null)
         {
             if (serialDbModel == null) throw new ArgumentNullException(nameof(serialDbModel));
 
@@ -23,6 +25,18 @@ namespace RateFilms.Domain.Convertors
                 RealeseDate = serialDbModel.RealeseDate,
                 People = PersonConvertor.PersonInMovieDbListConvertPersonDomainList(serialDbModel.People)
             };
+
+            if (favorites != null)
+            {
+                serial.Favorites = favorites.Select(fSerial => new Favorite
+                {
+                    User = UserConvertor.UserDbConvertUserDomain(fSerial.User ?? new UserDbModel()),
+                    IsFavorite = fSerial.IsFavorite,
+                    Status = Enum.IsDefined(typeof(StatusMovie), fSerial.Status) 
+                        ? fSerial.Status 
+                        : StatusMovie.None,
+                });
+            }
 
             return serial;
         }
@@ -125,6 +139,17 @@ namespace RateFilms.Domain.Convertors
                 });
 
             return seriesDb;
+        }
+
+        public static IEnumerable<Serial> SerialDbListConvertSerialDomainList(IEnumerable<SerialDbModel> serials)
+        {
+            if (serials == null) throw new ArgumentNullException(nameof(serials));
+
+            var serialList = serials
+                .Select(s => SerialDbConvertSerialDomain(s, s.Favorites))
+                .ToList();
+
+            return serialList;
         }
     }
 }

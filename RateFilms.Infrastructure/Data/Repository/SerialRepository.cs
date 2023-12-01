@@ -1,4 +1,6 @@
-﻿using RateFilms.Domain.DTO.Films;
+﻿using Microsoft.EntityFrameworkCore;
+using RateFilms.Domain.Convertors;
+using RateFilms.Domain.DTO.Films;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Models.StorageModels;
 using RateFilms.Domain.Repositories;
@@ -128,17 +130,76 @@ namespace RateFilms.Infrastructure.Data.Repository
 
         public async Task<IEnumerable<Serial>> GetAllSerials()
         {
-            throw new NotImplementedException();
+            var serials = await _context.Serial
+                .Include(s => s.People)
+                    .ThenInclude(p => p.Professions)
+                .Include(f => f.People)
+                    .ThenInclude(p => p.Person)
+                        .ThenInclude(p => p.Image)
+                .Include(s => s.Seasons)
+                    .ThenInclude(s => s.Series)
+                        .ThenInclude(s => s.PreviewImage)
+                .Include(s => s.Seasons)
+                    .ThenInclude(s => s.Images)
+                .Include(s => s.PreviewImage)
+                .Include(s => s.Genre)
+                .ToListAsync();
+
+            return SerialConvertor.SerialDbListConvertSerialDomainList(serials);
         }
 
         public async Task<IEnumerable<Serial>> GetAllSerialsWithFavorite()
         {
-            throw new NotImplementedException();
+            var serials = await _context.Serial
+                .Include(s => s.People)
+                    .ThenInclude(p => p.Professions)
+                .Include(s => s.People)
+                    .ThenInclude(p => p.Person)
+                        .ThenInclude(p => p.Image)
+                .Include(s => s.Seasons)
+                    .ThenInclude(s => s.Series)
+                        .ThenInclude(s => s.PreviewImage)
+                .Include(s => s.Seasons)
+                    .ThenInclude(s => s.Images)
+                .Include(s => s.PreviewImage)
+                .Include(s => s.Genre)
+                .Include(s => s.Favorites)
+                .ToListAsync();
+
+            return SerialConvertor.SerialDbListConvertSerialDomainList(serials);
         }
 
         public async Task SetFavoriteSerial(FavoriteMovie favoriteSerial, string userName)
         {
-            throw new NotImplementedException();
+            var user = _context.User.FirstOrDefault(x => x.UserName == userName);
+
+            if (user == null)
+            {
+                throw new ArgumentException(nameof(userName));
+            }
+
+            var favoriteSerialDb = await _context.FavoriteSerials
+                .FirstOrDefaultAsync(f => f.UserId == user.Id && f.SerialId == favoriteSerial.MovieId);
+
+            if (favoriteSerialDb == null)
+            {
+                var saveFavorite = new FavoriteSerialDbModel
+                {
+                    SerialId = favoriteSerial.MovieId,
+                    UserId = user.Id,
+                    Status = favoriteSerial.StatusMovie,
+                    IsFavorite = favoriteSerial.IsFavorite
+                };
+
+                await _context.FavoriteSerials.AddAsync(saveFavorite);
+            }
+            else
+            {
+                favoriteSerialDb.Status = favoriteSerial.StatusMovie;
+                favoriteSerialDb.IsFavorite = favoriteSerial.IsFavorite;
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 }

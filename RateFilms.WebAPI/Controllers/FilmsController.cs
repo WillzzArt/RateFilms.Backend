@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RateFilms.Application.Services.Films;
-using RateFilms.Application.Services.Serials;
 using RateFilms.Domain.DTO.Films;
 using RateFilms.Domain.Models.DomainModels;
 using System.Security.Claims;
@@ -16,20 +15,16 @@ namespace RateFilms.WebAPI.Controllers
 
         private readonly IFilmService _filmService;
 
-        private readonly ISerialService _serialService;
-
         public FilmsController(
             ILogger<FilmsController> logger,
-            IFilmService filmService,
-            ISerialService serialService)
+            IFilmService filmService)
         {
             _logger = logger;
             _filmService = filmService;
-            _serialService = serialService;
         }
 
         [AllowAnonymous]
-        [HttpGet("GetFilms")]
+        [HttpGet]
         public async Task<IActionResult> GetFilms()
         {
             if (User.Identity != null && User.Identity.IsAuthenticated)
@@ -44,7 +39,7 @@ namespace RateFilms.WebAPI.Controllers
         }
 
         [Authorize(Policy = "admin")]
-        [HttpPost("CreateFilm")]
+        [HttpPost]
         public async Task<IActionResult> AddFilms(Film film)
         {
             await _filmService.CreateFilmsAsync(film);
@@ -52,30 +47,14 @@ namespace RateFilms.WebAPI.Controllers
             return Redirect("/Films/GetFilms");
         }
 
-        [HttpPost("CreateSerial")]
-        public async Task<IActionResult> AddSerials(Serial serial)
-        {
-            await _serialService.CreateSerialAsync(serial);
-
-            return Ok();
-        }
-
         [Authorize]
-        [HttpPost("SetFavoriteFilm")]
+        [HttpPost("SetFavorite")]
         public async Task<IActionResult> SetFavorite(FavoriteMovie favorite)
         {
             ClaimsPrincipal claims = HttpContext.User;
             await _filmService.SetFavoriteFilm(favorite, claims.Identity.Name);
 
             return Ok();
-        }
-
-        [Authorize(Policy = "admin")]
-        [HttpGet("GetAdmin")]
-        public IActionResult CreateFilm()
-        {
-
-            return Ok("I admin");
         }
     }
 }

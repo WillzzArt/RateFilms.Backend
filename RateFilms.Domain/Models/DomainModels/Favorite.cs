@@ -6,6 +6,6 @@ namespace RateFilms.Domain.Models.DomainModels
     {
         public User User { get; set; }
         public bool IsFavorite { get; set; } = false;
-        public StatusMovie Status { get; set; } = StatusMovie.None;
+        public StatusMovie? Status { get; set; } = StatusMovie.None;
     }
 }
