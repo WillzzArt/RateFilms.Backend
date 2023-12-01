@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using RateFilms.Application.Services;
 using RateFilms.Application.Services.Films;
+using RateFilms.Application.Services.Movirs;
 using RateFilms.Application.Services.Serials;
 using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Repositories;
@@ -71,6 +72,8 @@ builder.Services.AddScoped<IFilmRepository, FilmRepository>();
 
 builder.Services.AddScoped<ISerialService, SerialService>();
 builder.Services.AddScoped<ISerialRepositoty, SerialRepository>();
+
+builder.Services.AddScoped<IMovieService, MovieService>();
 
 var connectionString = builder.Configuration.GetConnectionString("WebApiDatabase");
 
