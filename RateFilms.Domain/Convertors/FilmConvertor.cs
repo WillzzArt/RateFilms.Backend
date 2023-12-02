@@ -43,7 +43,9 @@ namespace RateFilms.Domain.Convertors
                 {
                     User = UserConvertor.UserDbConvertUserDomain(fFilms.User ?? new UserDbModel()),
                     IsFavorite = fFilms.isFavorite,
-                    Status = fFilms.Status
+                    Status = Enum.IsDefined(typeof(StatusMovie), fFilms.Status)
+                        ? fFilms.Status
+                        : StatusMovie.None,
 
                 });
             }
