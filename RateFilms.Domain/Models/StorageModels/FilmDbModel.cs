@@ -7,7 +7,7 @@ namespace RateFilms.Domain.Models.StorageModels
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
-        public DateTime? ReleaseDate { get; set; }
+        public DateTimeOffset? ReleaseDate { get; set; }
         public int Duration { get; set; }
         public float? AvgRating { get; set; }
         public int AgeRating { get; set; }

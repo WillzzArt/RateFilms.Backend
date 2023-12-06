@@ -51,6 +51,7 @@ namespace RateFilms.Domain.Convertors
                     Id = s.Id,
                     AvgRating = s.AvgRating,
                     Description = s.Description,
+                    CountMaxSeries = s.CountMaxSeries,
                     Images = PersonConvertor.ImageDbListConvertImageDomainList(s.Images),
                     RealeseDate = s.RealeseDate,
                     Series = SeriesDbListConvertSeriesDomain(s.Series)
@@ -115,6 +116,7 @@ namespace RateFilms.Domain.Convertors
                     Description = s.Description,
                     AvgRating = s.AvgRating,
                     RealeseDate = s.RealeseDate,
+                    CountMaxSeries = s.CountMaxSeries,
                     Images = PersonConvertor.ImageDomainListConvertImageDbList(s.Images),
                     Series = SeriesDomainListConvertSeriesDbList(s.Series)
                 });

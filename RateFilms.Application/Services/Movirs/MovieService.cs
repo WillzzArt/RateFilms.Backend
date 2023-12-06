@@ -1,11 +1,10 @@
 ﻿using RateFilms.Application.Services.Films;
 using RateFilms.Application.Services.Serials;
 using RateFilms.Domain.DTO.Movies;
-using RateFilms.Domain.Repositories;
 
 namespace RateFilms.Application.Services.Movirs
 {
-    public class MovieService: IMovieService
+    public class MovieService : IMovieService
     {
         private readonly IFilmService _filmService;
         private readonly ISerialService _serialService;

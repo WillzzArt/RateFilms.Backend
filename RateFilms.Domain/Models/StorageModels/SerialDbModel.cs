@@ -1,5 +1,4 @@
-﻿using RateFilms.Domain.Models.DomainModels;
-using RateFilms.Domain.Models.Interfaces;
+﻿using RateFilms.Domain.Models.Interfaces;
 
 namespace RateFilms.Domain.Models.StorageModels
 {
@@ -8,7 +7,7 @@ namespace RateFilms.Domain.Models.StorageModels
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public DateTime? RealeseDate { get; set; }
+        public DateTimeOffset? RealeseDate { get; set; }
         public float? AvgRating { get; set; }
         public int AgeRating { get; set; }
         public Guid? PreviewImageId { get; set; }

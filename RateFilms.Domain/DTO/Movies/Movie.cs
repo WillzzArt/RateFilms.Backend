@@ -5,8 +5,8 @@ namespace RateFilms.Domain.DTO.Movies
 {
     public class Movie
     {
-        public List<FilmResponse?> Films { get; set; } = new List<FilmResponse?>();
-        public List<SerialResponse?> Serials { get; set; } = new List<SerialResponse?>();
+        public List<FilmResponse?> Films { get; set; }
+        public List<SerialResponse?> Serials { get; set; }
 
         public Movie(IEnumerable<FilmResponse?> films, IEnumerable<SerialResponse?> serials)
         {

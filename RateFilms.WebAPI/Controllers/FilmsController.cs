@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RateFilms.Application.Services.Films;
-using RateFilms.Domain.DTO.Films;
+using RateFilms.Domain.DTO;
 using RateFilms.Domain.Models.DomainModels;
 using System.Security.Claims;
 

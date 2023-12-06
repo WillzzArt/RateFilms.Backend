@@ -1,4 +1,4 @@
-﻿using RateFilms.Domain.DTO.Films;
+﻿using RateFilms.Domain.DTO;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Models.StorageModels;
 

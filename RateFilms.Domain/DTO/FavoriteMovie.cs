@@ -1,7 +1,7 @@
 ﻿using RateFilms.Domain.Models.DomainModels;
 using System.ComponentModel.DataAnnotations;
 
-namespace RateFilms.Domain.DTO.Films
+namespace RateFilms.Domain.DTO
 {
     public class FavoriteMovie
     {
