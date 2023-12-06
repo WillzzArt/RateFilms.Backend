@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RateFilms.Infrastructure.Data;
@@ -11,9 +12,11 @@ using RateFilms.Infrastructure.Data;
 namespace RateFilms.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231206160055_9.0")]
+    partial class _90
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace RateFilms.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("CommentDbModelUserDbModel", b =>
-                {
-                    b.Property<Guid>("CommentsId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UsersId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("CommentsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("CommentLikes", (string)null);
-                });
 
             modelBuilder.Entity("FilmDbModelGenreDbModel", b =>
                 {
@@ -109,9 +97,6 @@ namespace RateFilms.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("CountLike")
-                        .HasColumnType("integer");
-
                     b.Property<DateTimeOffset>("Date")
                         .HasColumnType("timestamp with time zone");
 
@@ -135,9 +120,14 @@ namespace RateFilms.Infrastructure.Migrations
                     b.Property<Guid>("CommentId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("FilmDbModelId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("FavoriteId", "CommentId");
 
                     b.HasIndex("CommentId");
+
+                    b.HasIndex("FilmDbModelId");
 
                     b.ToTable("CommentInFilm");
                 });
@@ -150,9 +140,14 @@ namespace RateFilms.Infrastructure.Migrations
                     b.Property<Guid>("CommentId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("SerialDbModelId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("FavoriteId", "CommentId");
 
                     b.HasIndex("CommentId");
+
+                    b.HasIndex("SerialDbModelId");
 
                     b.ToTable("CommentInSerial");
                 });
@@ -491,21 +486,6 @@ namespace RateFilms.Infrastructure.Migrations
                     b.ToTable("User");
                 });
 
-            modelBuilder.Entity("CommentDbModelUserDbModel", b =>
-                {
-                    b.HasOne("RateFilms.Domain.Models.StorageModels.CommentDbModel", null)
-                        .WithMany()
-                        .HasForeignKey("CommentsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RateFilms.Domain.Models.StorageModels.UserDbModel", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("FilmDbModelGenreDbModel", b =>
                 {
                     b.HasOne("RateFilms.Domain.Models.StorageModels.FilmDbModel", null)
@@ -581,6 +561,10 @@ namespace RateFilms.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("RateFilms.Domain.Models.StorageModels.FilmDbModel", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("FilmDbModelId");
+
                     b.Navigation("Comment");
 
                     b.Navigation("Favorite");
@@ -600,6 +584,10 @@ namespace RateFilms.Infrastructure.Migrations
                         .HasPrincipalKey("FavoriteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("RateFilms.Domain.Models.StorageModels.SerialDbModel", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("SerialDbModelId");
 
                     b.Navigation("Comment");
 
@@ -753,6 +741,8 @@ namespace RateFilms.Infrastructure.Migrations
 
             modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.FilmDbModel", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("Favorite");
 
                     b.Navigation("Images");
@@ -776,6 +766,8 @@ namespace RateFilms.Infrastructure.Migrations
 
             modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.SerialDbModel", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("Favorites");
 
                     b.Navigation("People");

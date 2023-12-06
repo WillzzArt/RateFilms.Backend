@@ -58,6 +58,11 @@ namespace RateFilms.Infrastructure.Data
                 .WithMany(g => g.Serials)
                 .UsingEntity(j => j.ToTable("SerialGenries"));
 
+            builder.Entity<CommentDbModel>()
+                .HasMany(f => f.Users)
+                .WithMany(u => u.Comments)
+                .UsingEntity(j => j.ToTable("CommentLikes"));
+
             builder.Entity<PersonInFilmDbModel>()
                 .HasMany(f => f.Professions)
                 .WithMany(g => g.PersonInFilms)
@@ -67,6 +72,24 @@ namespace RateFilms.Infrastructure.Data
                 .HasMany(f => f.Professions)
                 .WithMany(g => g.PersonInSerials)
                 .UsingEntity(j => j.ToTable("PersonInSerialProfession"));
+
+            builder.Entity<CommentInFilmDbModel>()
+                .HasKey(comm => new { comm.FavoriteId, comm.CommentId });
+
+            builder.Entity<CommentInFilmDbModel>()
+                .HasOne(c => c.Favorite)
+                .WithMany(f => f.Comments)
+                .HasForeignKey(c => c.FavoriteId)
+                .HasPrincipalKey(f => f.FavoriteId);
+
+            builder.Entity<CommentInSerialDbModel>()
+                .HasKey(comm => new { comm.FavoriteId, comm.CommentId });
+
+            builder.Entity<CommentInSerialDbModel>()
+                .HasOne(c => c.Favorite)
+                .WithMany(f => f.Comments)
+                .HasForeignKey(c => c.FavoriteId)
+                .HasPrincipalKey(f => f.FavoriteId);
         }
 
         public DbSet<FilmDbModel> Film { get; set; }
@@ -82,5 +105,8 @@ namespace RateFilms.Infrastructure.Data
         public DbSet<PersonInFilmDbModel> PersonInFilm { get; set; }
         public DbSet<PersonInSerialDbModel> PersonInSerials { get; set; }
         public DbSet<SeriesDbModel> Series { get; set; }
+        public DbSet<CommentInFilmDbModel> CommentInFilm { get; set; }
+        public DbSet<CommentInSerialDbModel> CommentInSerial { get; set; }
+        public DbSet<CommentDbModel> Comment { get; set; }
     }
 }
