@@ -29,7 +29,6 @@ namespace RateFilms.Domain.Convertors
                 Description = filmDbModel.Description,
                 People = PersonConvertor.PersonInMovieDbListConvertPersonDomainList(filmDbModel.People ?? new List<PersonInFilmDbModel>()),
                 AgeRating = filmDbModel.AgeRating,
-                AvgRating = filmDbModel.AvgRating,
                 Duration = filmDbModel.Duration,
                 Country = filmDbModel.Country,
                 RealeseDate = filmDbModel.ReleaseDate,
@@ -43,10 +42,11 @@ namespace RateFilms.Domain.Convertors
                 film.Favorites = favoriteFilm.Select(fFilms => new Favorite
                 {
                     User = UserConvertor.UserDbConvertUserDomain(fFilms.User ?? new UserDbModel()),
-                    IsFavorite = fFilms.isFavorite,
+                    IsFavorite = fFilms.IsFavorite,
+                    Score = fFilms.Score,
                     Status = Enum.IsDefined(typeof(StatusMovie), fFilms.Status)
                         ? fFilms.Status
-                        : StatusMovie.None,
+                        : StatusMovie.None
 
                 });
             }
@@ -80,7 +80,6 @@ namespace RateFilms.Domain.Convertors
                 Description = film.Description,
                 People = PersonConvertor.PersonDomainListConvertPersonInFilmDbList(film.People ?? new List<Person>(), film.Id),
                 AgeRating = film.AgeRating,
-                AvgRating = film.AvgRating,
                 Duration = film.Duration,
                 ReleaseDate = film.RealeseDate,
                 Country = film.Country,

@@ -13,7 +13,8 @@ namespace RateFilms.Domain.Models.StorageModels
         public Guid FilmId { get; set; }
         public FilmDbModel? Film { get; set; }
         public StatusMovie Status { get; set; }
-        public bool isFavorite { get; set; }
+        public bool IsFavorite { get; set; }
+        public int? Score { get; set; }
         public IEnumerable<CommentInFilmDbModel>? Comments { get; set; }
     }
 }

@@ -31,7 +31,6 @@ namespace RateFilms.Infrastructure.Data.Repository
                 Description = film.Description,
                 Duration = film.Duration,
                 AgeRating = film.AgeRating,
-                AvgRating = film.AvgRating,
                 ReleaseDate = film.ReleaseDate
             };
 
@@ -190,7 +189,8 @@ namespace RateFilms.Infrastructure.Data.Repository
                     FilmId = favoriteFilm.MovieId,
                     UserId = user.Id,
                     Status = favoriteFilm.StatusMovie,
-                    isFavorite = favoriteFilm.IsFavorite
+                    IsFavorite = favoriteFilm.IsFavorite,
+                    Score = favoriteFilm.Score
                 };
 
                 await _context.FavoriteFilms.AddAsync(saveFavorite);
@@ -198,7 +198,8 @@ namespace RateFilms.Infrastructure.Data.Repository
             else
             {
                 favoriteFilmDb.Status = favoriteFilm.StatusMovie;
-                favoriteFilmDb.isFavorite = favoriteFilm.IsFavorite;
+                favoriteFilmDb.IsFavorite = favoriteFilm.IsFavorite;
+                favoriteFilmDb.Score = favoriteFilm.Score;
             }
 
             await _context.SaveChangesAsync();

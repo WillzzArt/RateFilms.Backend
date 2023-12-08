@@ -30,7 +30,6 @@ namespace RateFilms.Infrastructure.Data.Repository
                 Name = serial.Name,
                 Description = serial.Description,
                 AgeRating = serial.AgeRating,
-                AvgRating = serial.AvgRating,
                 RealeseDate = serial.RealeseDate,
                 PreviewImage = serial.PreviewImage
             };
@@ -80,7 +79,6 @@ namespace RateFilms.Infrastructure.Data.Repository
                     {
                         Description = season.Description,
                         Serial = saveSerial,
-                        AvgRating = season.AvgRating,
                         RealeseDate = season.RealeseDate
                     };
 
@@ -94,7 +92,6 @@ namespace RateFilms.Infrastructure.Data.Repository
                             {
                                 Name = series.Name,
                                 Duration = series.Duration,
-                                AvgRating = series.AvgRating,
                                 RealeseDate = series.RealeseDate,
                                 Season = saveSeason,
                                 PreviewImage = series.PreviewImage
@@ -218,7 +215,8 @@ namespace RateFilms.Infrastructure.Data.Repository
                     SerialId = favoriteSerial.MovieId,
                     UserId = user.Id,
                     Status = favoriteSerial.StatusMovie,
-                    IsFavorite = favoriteSerial.IsFavorite
+                    IsFavorite = favoriteSerial.IsFavorite,
+                    Score = favoriteSerial.Score
                 };
 
                 await _context.FavoriteSerials.AddAsync(saveFavorite);

@@ -15,7 +15,7 @@ namespace RateFilms.Domain.DTO.Serials
         public long? RealeseDate { get; }
         public List<string> Genre { get; } = new List<string>();
         public Image? PreviewImage { get; }
-        public float? AvgRating { get; }
+        public double? AvgRating { get; }
         public int AgeRating { get; }
         public bool IsFavorite { get;  } = false;
         public string? Status { get; }
@@ -25,7 +25,7 @@ namespace RateFilms.Domain.DTO.Serials
         public int? CountMaxSeries { get => _countMaxSeries; }
         public long? LastReleaseSeriesDate { get; }
         public string? Country { get; }
-
+        public int? Score { get; }
 
         public SerialResponse(Serial serial, Favorite? favoriteSerial)
         {
@@ -41,7 +41,7 @@ namespace RateFilms.Domain.DTO.Serials
             }
 
             PreviewImage = serial.PreviewImage;
-            AvgRating = serial.AvgRating;
+            AvgRating = serial.GetAvgRating();
             AgeRating = serial.AgeRating;
             IsFavorite = favoriteSerial?.IsFavorite ?? false;
             Status = favoriteSerial?.Status.ToString() ?? StatusMovie.None.ToString();

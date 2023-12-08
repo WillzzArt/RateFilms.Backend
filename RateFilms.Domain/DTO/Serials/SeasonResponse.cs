@@ -17,7 +17,7 @@ namespace RateFilms.Domain.DTO.Serials
             Description = season.Description;
             if (season.RealeseDate != null) RealeseDate = ((DateTimeOffset)season.RealeseDate).ToUnixTimeMilliseconds();
             Images = season.Images.ToList();
-            AvgRating = season.AvgRating;
+            //AvgRating = season.AvgRating;
             Series = season.Series.Select(s => new SeriesResponse(s)).ToList();
         }
     }

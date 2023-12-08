@@ -8,7 +8,6 @@
         public DateTimeOffset? RealeseDate { get; set; }
         public IEnumerable<Genre> Genre { get; set; }
         public Image? PreviewImage { get; set; }
-        public float? AvgRating { get; set; }
         public int AgeRating { get; set; }
         public string? Country { get; set; }
         public IEnumerable<Season> Seasons { get; set; }
@@ -111,6 +110,28 @@
                 }
             }
 
+            return null;
+        }
+
+        public double? GetAvgRating()
+        {
+            if (Favorites != null)
+            {
+                var avgRating = 0.0;
+                if (Favorites.Any(fav => fav.Score != null))
+                {
+                    avgRating = Favorites
+                        .Where(fav => fav.Score != null)
+                        .Select(fav => (int)fav.Score!)
+                        .Average();
+                }
+
+                if (avgRating > 0)
+                {
+                    return Math.Round((double)avgRating, 2);
+                }
+
+            }
             return null;
         }
     }

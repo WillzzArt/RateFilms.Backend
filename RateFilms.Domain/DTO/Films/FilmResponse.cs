@@ -10,12 +10,13 @@ namespace RateFilms.Domain.DTO.Films
         public long? RealeseDate { get; }
         public List<string> Genre { get; } = new List<string>();
         public Image PreviewImage { get; }
-        public float? AvgRating { get; }
+        public double? AvgRating { get; }
         public int AgeRating { get; }
         public bool IsAnnouncement { get; }
         public bool isFavorite { get;  } = false;
         public string? Status { get; }
         public string? Country { get; }
+        public int? Score { get; }
 
         public FilmResponse(Film film, Favorite? favoriteFilm)
         {
@@ -33,7 +34,7 @@ namespace RateFilms.Domain.DTO.Films
                 RealeseDate = ((DateTimeOffset)film.RealeseDate).ToUnixTimeMilliseconds();
 
             PreviewImage = film.PreviewImage;
-            AvgRating = film.AvgRating;
+            AvgRating = film.GetAvgRating();
             AgeRating = film.AgeRating;
             isFavorite = favoriteFilm?.IsFavorite ?? false;
             Status = favoriteFilm?.Status.ToString() ?? StatusMovie.None.ToString();

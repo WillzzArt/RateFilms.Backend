@@ -19,7 +19,6 @@ namespace RateFilms.Domain.Convertors
                 Description = serialDbModel.Description,
                 PreviewImage = PersonConvertor.ImageDbConvertImageDomain(serialDbModel.PreviewImage ?? new ImageDbModel()),
                 AgeRating = serialDbModel.AgeRating,
-                AvgRating = serialDbModel.AvgRating,
                 Country = serialDbModel.Country,
                 Genre = serialDbModel.Genre.Select(g => g.Genre.ToEnum(Genre.None)),
                 Seasons = SeasonDbListConvertSeasonDomain(serialDbModel.Seasons ?? new List<SeasonDbModel>()),
@@ -33,9 +32,10 @@ namespace RateFilms.Domain.Convertors
                 {
                     User = UserConvertor.UserDbConvertUserDomain(fSerial.User ?? new UserDbModel()),
                     IsFavorite = fSerial.IsFavorite,
+                    Score = fSerial.Score,
                     Status = Enum.IsDefined(typeof(StatusMovie), fSerial.Status) 
                         ? fSerial.Status 
-                        : StatusMovie.None,
+                        : StatusMovie.None
                 });
             }
 
@@ -50,7 +50,6 @@ namespace RateFilms.Domain.Convertors
                 .Select(s => new Season
                 {
                     Id = s.Id,
-                    AvgRating = s.AvgRating,
                     Description = s.Description,
                     CountMaxSeries = s.CountMaxSeries,
                     Images = PersonConvertor.ImageDbListConvertImageDomainList(s.Images ?? new List<ImageDbModel>()),
@@ -72,7 +71,6 @@ namespace RateFilms.Domain.Convertors
                     Name = s.Name,
                     Duration = s.Duration,
                     RealeseDate = s.RealeseDate,
-                    AvgRating = s.AvgRating,
                     PreviewImage = PersonConvertor.ImageDbConvertImageDomain(s.PreviewImage ?? new ImageDbModel())
                 });
 
@@ -89,7 +87,6 @@ namespace RateFilms.Domain.Convertors
                 Name = serial.Name,
                 Description = serial.Description,
                 AgeRating = serial.AgeRating,
-                AvgRating = serial.AvgRating,
                 Country = serial.Country,
                 Genre = serial.Genre
                 .Select(g => new GenreDbModel
@@ -116,7 +113,6 @@ namespace RateFilms.Domain.Convertors
                 {
                     Id = s.Id,
                     Description = s.Description,
-                    AvgRating = s.AvgRating,
                     RealeseDate = s.RealeseDate,
                     CountMaxSeries = s.CountMaxSeries,
                     Images = PersonConvertor.ImageDomainListConvertImageDbList(s.Images),
@@ -135,7 +131,6 @@ namespace RateFilms.Domain.Convertors
                 {
                     Id = s.Id,
                     Duration = s.Duration,
-                    AvgRating = s.AvgRating,
                     Name = s.Name,
                     PreviewImage = PersonConvertor.ImageDomainConvertImageDb(s.PreviewImage),
                     PreviewImageId = s.PreviewImage.Id,

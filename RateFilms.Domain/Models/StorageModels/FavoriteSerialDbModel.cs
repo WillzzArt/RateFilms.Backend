@@ -14,6 +14,7 @@ namespace RateFilms.Domain.Models.StorageModels
         public SerialDbModel? Serial { get; set; }
         public StatusMovie Status { get; set; }
         public bool IsFavorite { get; set; }
+        public int? Score { get; set; }
         public IEnumerable<CommentInSerialDbModel>? Comments { get; set; }
     }
 }

@@ -9,5 +9,6 @@ namespace RateFilms.Domain.DTO
         public Guid MovieId { get; set; }
         public StatusMovie StatusMovie { get; set; } = StatusMovie.None;
         public bool IsFavorite { get; set; } = false;
+        public int? Score { get; set; }
     }
 }

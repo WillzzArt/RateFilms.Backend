@@ -9,7 +9,6 @@ namespace RateFilms.Domain.Models.StorageModels
         public string? Description { get; set; }
         public DateTimeOffset? ReleaseDate { get; set; }
         public int Duration { get; set; }
-        public float? AvgRating { get; set; }
         public int AgeRating { get; set; }
         public string? Country { get; set; }
         public IEnumerable<GenreDbModel> Genre { get; set; }

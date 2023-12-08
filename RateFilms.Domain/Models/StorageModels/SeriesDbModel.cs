@@ -10,7 +10,6 @@ namespace RateFilms.Domain.Models.StorageModels
         public DateTimeOffset? RealeseDate { get; set; }
         public Guid? PreviewImageId { get; set; }
         public ImageDbModel? PreviewImage { get; set; }
-        public float? AvgRating { get; set; }
         public Guid SeasonId { get; set; }
         public SeasonDbModel Season { get; set; }
     }

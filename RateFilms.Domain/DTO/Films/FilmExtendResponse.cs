@@ -13,12 +13,13 @@ namespace RateFilms.Domain.DTO.Films
         public int Duration { get; }
         public Image PreviewImage { get; }
         public List<Image> Images { get; } = new List<Image>();
-        public float? AvgRating { get; }
+        public double? AvgRating { get; }
         public int AgeRating { get; }
         public List<PersonResponse>? People { get; } = new List<PersonResponse>();
         public bool isFavorite { get; } = false;
         public string? Status { get; }
         public string? Country { get; }
+        public int? Score { get; }
 
         public FilmExtendResponse(Film film, Favorite? favoriteFilm)
         {
@@ -42,7 +43,7 @@ namespace RateFilms.Domain.DTO.Films
                     .Select(x => x)
                     .ToList();
             }
-            AvgRating = film.AvgRating;
+            AvgRating = film.GetAvgRating();
             AgeRating = film.AgeRating;
             if (film.People != null && film.People.Any())
             {
