@@ -225,6 +225,14 @@ namespace RateFilms.Infrastructure.Data.Repository
             {
                 favoriteSerialDb.Status = favoriteSerial.StatusMovie;
                 favoriteSerialDb.IsFavorite = favoriteSerial.IsFavorite;
+                favoriteSerialDb.Score = favoriteSerial.Score;
+
+                if (favoriteSerialDb.Status == StatusMovie.None &&
+                    favoriteSerialDb.IsFavorite == false &&
+                    favoriteSerialDb.Score == 0)
+                {
+                    _context.Remove(favoriteSerialDb);
+                }
             }
 
             await _context.SaveChangesAsync();

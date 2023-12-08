@@ -25,7 +25,6 @@ namespace RateFilms.Domain.DTO.Serials
         public int? CountMaxSeries { get => _countMaxSeries; }
         public long? LastReleaseSeriesDate { get; }
         public string? Country { get; }
-        public int? Score { get; }
 
         public SerialResponse(Serial serial, Favorite? favoriteSerial)
         {

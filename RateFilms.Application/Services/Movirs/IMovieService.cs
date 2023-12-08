@@ -6,5 +6,6 @@ namespace RateFilms.Application.Services.Movirs
     {
         Task<Movie> GetAllMovies();
         Task<Movie> GetAllMoviesForAuthorizeUser(string username);
+        Task<Movie> GetAllFavoritesMovie(string username);
     }
 }

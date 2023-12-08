@@ -31,5 +31,13 @@ namespace RateFilms.WebAPI.Controllers
 
             return Ok(movie);
         }
+
+        [Authorize]
+        [HttpGet("Favorite")]
+        public async Task<IActionResult> GetFavoriteMovies()
+        {
+            var favoriteMovie = await _movieService.GetAllFavoritesMovie(User.Identity!.Name!);
+            return Ok(favoriteMovie);
+        }
     }
 }

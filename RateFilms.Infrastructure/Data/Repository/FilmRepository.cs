@@ -200,6 +200,13 @@ namespace RateFilms.Infrastructure.Data.Repository
                 favoriteFilmDb.Status = favoriteFilm.StatusMovie;
                 favoriteFilmDb.IsFavorite = favoriteFilm.IsFavorite;
                 favoriteFilmDb.Score = favoriteFilm.Score;
+
+                if (favoriteFilmDb.Status == StatusMovie.None && 
+                    favoriteFilmDb.IsFavorite == false && 
+                    favoriteFilmDb.Score == 0)
+                {
+                    _context.Remove(favoriteFilmDb);
+                }
             }
 
             await _context.SaveChangesAsync();

@@ -1,6 +1,5 @@
 ﻿using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO;
-using RateFilms.Domain.DTO.Films;
 using RateFilms.Domain.DTO.Serials;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Repositories;
@@ -24,7 +23,7 @@ namespace RateFilms.Application.Services.Serials
             await _serialRepositoty.CreateAsync(SerialConvertor.SerialDomainConvertSerialDb(serial));
         }
 
-        
+
         public async Task<IEnumerable<SerialResponse?>> GetSerialForAuthorizeUser(string userName)
         {
             var serials = await _serialRepositoty.GetAllSerialsWithFavorite();
@@ -85,6 +84,22 @@ namespace RateFilms.Application.Services.Serials
             if (user == null) throw new ArgumentException(userName);
 
             await _serialRepositoty.SetFavoriteSerial(favoriteMovie, user);
+        }
+
+        public async Task<IEnumerable<SerialResponse>> GetAllFavoriteSerials(string userName)
+        {
+            var serials = await _serialRepositoty.GetAllSerialsWithFavorite();
+            var user = await _userRepository.FindUser(userName);
+
+            if (user == null) throw new ArgumentException(userName);
+
+            var favoriteSerialsForUser = from s in serials
+                                       where s.Favorites != null
+                                       from fav in s.Favorites!
+                                       where fav.User.Id == user.Id
+                                       select new SerialResponse(s, fav);
+
+            return favoriteSerialsForUser;
         }
     }
 }

@@ -51,7 +51,7 @@ namespace RateFilms.Application.Services.Films
             return filmsRespons;
         }
 
-        public async Task<FilmExtendResponse?> GetFilmForAuthorizeUser(Guid id, string userName)
+        public async Task<FilmExtendResponse?> GetFilmForAuthorizeUserById(Guid id, string userName)
         {
             var film = await _filmRepository.GetFilmWithFavoriteById(id);
             var user = await _userRepository.FindUser(userName);
@@ -85,6 +85,22 @@ namespace RateFilms.Application.Services.Films
             if (user == null) throw new ArgumentException(userName);
 
             await _filmRepository.SetFavoriteFilm(favoriteFilm, user);
+        }
+
+        public async Task<IEnumerable<FilmResponse>> GetAllFavoriteFilms(string userName)
+        {
+            var films = await _filmRepository.GetAllFilmsWithFavorite();
+            var user = await _userRepository.FindUser(userName);
+
+            if (user == null) throw new ArgumentException(userName);
+
+            var favoriteFilmsForUser = from f in films
+                                       where f.Favorites != null
+                                       from fav in f.Favorites!
+                                       where fav.User.Id == user.Id
+                                       select new FilmResponse(f, fav);
+
+            return favoriteFilmsForUser;
         }
     }
 }

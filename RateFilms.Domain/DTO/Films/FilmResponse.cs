@@ -16,7 +16,6 @@ namespace RateFilms.Domain.DTO.Films
         public bool isFavorite { get;  } = false;
         public string? Status { get; }
         public string? Country { get; }
-        public int? Score { get; }
 
         public FilmResponse(Film film, Favorite? favoriteFilm)
         {

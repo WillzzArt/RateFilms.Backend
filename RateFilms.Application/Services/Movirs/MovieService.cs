@@ -15,6 +15,14 @@ namespace RateFilms.Application.Services.Movirs
             _serialService = serialService;
         }
 
+        public async Task<Movie> GetAllFavoritesMovie(string username)
+        {
+            var films = await _filmService.GetAllFavoriteFilms(username);
+            var serials = await _serialService.GetAllFavoriteSerials(username);
+
+            return new Movie(films, serials);
+        }
+
         public async Task<Movie> GetAllMovies()
         {
             var films = await _filmService.GetFilms();

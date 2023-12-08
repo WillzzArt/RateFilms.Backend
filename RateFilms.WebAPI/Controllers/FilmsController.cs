@@ -44,13 +44,21 @@ namespace RateFilms.WebAPI.Controllers
         {
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
-                var favoriteFilm = await _filmService.GetFilmForAuthorizeUser(id, User.Identity.Name!);
+                var favoriteFilm = await _filmService.GetFilmForAuthorizeUserById(id, User.Identity.Name!);
                 return Ok(favoriteFilm);
             }
 
             var film = await _filmService.GetFilmById(id);
 
             return Ok(film);
+        }
+
+        [Authorize]
+        [HttpGet("Favorite")]
+        public async Task<IActionResult> GetFavoriteFilm()
+        {
+            var favoriteFilm = await _filmService.GetAllFavoriteFilms(User.Identity!.Name!);
+            return Ok(favoriteFilm);
         }
 
         [Authorize(Policy = "admin")]

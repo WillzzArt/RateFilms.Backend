@@ -12,5 +12,6 @@ namespace RateFilms.Application.Services.Serials
         Task<SerialExtendResponse?> GetSerialForAuthorizeUserById(Guid id, string userName);
         Task CreateSerialAsync(Serial film);
         Task SetFavoriteSerial(FavoriteMovie favoriteMovie, string userName);
+        Task<IEnumerable<SerialResponse>> GetAllFavoriteSerials(string userName);
     }
 }

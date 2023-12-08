@@ -57,6 +57,14 @@ namespace RateFilms.WebAPI.Controllers
         }
 
         [Authorize]
+        [HttpGet("Favorite")]
+        public async Task<IActionResult> GetFavoriteSerials()
+        {
+            var favoriteFilm = await _serialService.GetAllFavoriteSerials(User.Identity!.Name!);
+            return Ok(favoriteFilm);
+        }
+
+        [Authorize]
         [HttpPost("SetFavorite")]
         public async Task<IActionResult> SetFavoriteSerial(FavoriteMovie favorite)
         {
