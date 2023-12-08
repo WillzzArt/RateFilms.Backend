@@ -12,7 +12,7 @@ namespace RateFilms.Domain.Models.StorageModels
         public UserDbModel? User { get; set; }
         public Guid? SerialId { get; set; }
         public SerialDbModel? Serial { get; set; }
-        public StatusMovie? Status { get; set; }
+        public StatusMovie Status { get; set; }
         public bool IsFavorite { get; set; }
         public IEnumerable<CommentInSerialDbModel>? Comments { get; set; }
     }

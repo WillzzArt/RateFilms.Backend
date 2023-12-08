@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO;
+using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Models.StorageModels;
 using RateFilms.Domain.Repositories;
@@ -16,6 +17,7 @@ namespace RateFilms.Infrastructure.Data.Repository
             _context = context;
         }
 
+        //TODO
         public async Task CreateAsync(SerialDbModel serial)
         {
             if (serial == null)
@@ -35,7 +37,7 @@ namespace RateFilms.Infrastructure.Data.Repository
 
             await _context.Serial.AddAsync(saveSerial);
 
-            if(serial.People.Any())
+            if (serial.People.Any())
             {
                 var professions = _context.Profession.ToList();
 
@@ -72,7 +74,7 @@ namespace RateFilms.Infrastructure.Data.Repository
 
             if (serial.Seasons.Any())
             {
-                foreach(var season in serial.Seasons)
+                foreach (var season in serial.Seasons)
                 {
                     var saveSeason = new SeasonDbModel
                     {
@@ -131,16 +133,8 @@ namespace RateFilms.Infrastructure.Data.Repository
         public async Task<IEnumerable<Serial>> GetAllSerials()
         {
             var serials = await _context.Serial
-                .Include(s => s.People)
-                    .ThenInclude(p => p.Professions)
-                .Include(f => f.People)
-                    .ThenInclude(p => p.Person)
-                        .ThenInclude(p => p.Image)
                 .Include(s => s.Seasons)
                     .ThenInclude(s => s.Series)
-                        .ThenInclude(s => s.PreviewImage)
-                .Include(s => s.Seasons)
-                    .ThenInclude(s => s.Images)
                 .Include(s => s.PreviewImage)
                 .Include(s => s.Genre)
                 .ToListAsync();
@@ -151,6 +145,44 @@ namespace RateFilms.Infrastructure.Data.Repository
         public async Task<IEnumerable<Serial>> GetAllSerialsWithFavorite()
         {
             var serials = await _context.Serial
+                .Include(s => s.Seasons)
+                    .ThenInclude(s => s.Series)
+                .Include(s => s.PreviewImage)
+                .Include(s => s.Genre)
+                .Include(s => s.Favorites)
+                .ToListAsync();
+
+            return SerialConvertor.SerialDbListConvertSerialDomainList(serials);
+        }
+
+        public async Task<Serial?> GetSerialById(Guid serialId)
+        {
+            var serial = await _context.Serial
+                .Include(s => s.People)
+                    .ThenInclude(p => p.Professions)
+                .Include(s => s.People)
+                    .ThenInclude(p => p.Person)
+                        .ThenInclude(p => p.Image)
+                .Include(s => s.Seasons)
+                    .ThenInclude(s => s.Series)
+                        .ThenInclude(s => s.PreviewImage)
+                .Include(s => s.Seasons)
+                    .ThenInclude(s => s.Images)
+                .Include(s => s.PreviewImage)
+                .Include(s => s.Genre)
+                .FirstOrDefaultAsync(s => s.Id == serialId);
+
+            if (serial != null)
+            {
+                return SerialConvertor.SerialDbConvertSerialDomain(serial);
+            }
+
+            return null;
+        }
+
+        public async Task<Serial?> GetSerialWithFavoriteById(Guid serialId)
+        {
+            var serial = await _context.Serial
                 .Include(s => s.People)
                     .ThenInclude(p => p.Professions)
                 .Include(s => s.People)
@@ -164,20 +196,18 @@ namespace RateFilms.Infrastructure.Data.Repository
                 .Include(s => s.PreviewImage)
                 .Include(s => s.Genre)
                 .Include(s => s.Favorites)
-                .ToListAsync();
+                .FirstOrDefaultAsync(s => s.Id == serialId);
 
-            return SerialConvertor.SerialDbListConvertSerialDomainList(serials);
-        }
-
-        public async Task SetFavoriteSerial(FavoriteMovie favoriteSerial, string userName)
-        {
-            var user = _context.User.FirstOrDefault(x => x.UserName == userName);
-
-            if (user == null)
+            if (serial != null)
             {
-                throw new ArgumentException(nameof(userName));
+                return SerialConvertor.SerialDbConvertSerialDomain(serial, serial.Favorites);
             }
 
+            return null;
+        }
+
+        public async Task SetFavoriteSerial(FavoriteMovie favoriteSerial, User user)
+        {
             var favoriteSerialDb = await _context.FavoriteSerials
                 .FirstOrDefaultAsync(f => f.UserId == user.Id && f.SerialId == favoriteSerial.MovieId);
 

@@ -24,6 +24,7 @@ namespace RateFilms.Application.Services.Films
             await _filmRepository.CreateAsync(FilmConvertor.FilmDomainConvertFilmDb(film));
         }
 
+
         public async Task<IEnumerable<FilmResponse?>> GetFilmForAuthorizeUser(string userName)
         {
             var films = await _filmRepository.GetAllFilmsWithFavorite();
@@ -50,9 +51,40 @@ namespace RateFilms.Application.Services.Films
             return filmsRespons;
         }
 
+        public async Task<FilmExtendResponse?> GetFilmForAuthorizeUser(Guid id, string userName)
+        {
+            var film = await _filmRepository.GetFilmWithFavoriteById(id);
+            var user = await _userRepository.FindUser(userName);
+
+            if (user == null) throw new ArgumentException(nameof(userName));
+
+            if (film != null)
+            {
+                return new FilmExtendResponse(film, film.Favorites?.FirstOrDefault(x => x.User.Id == user.Id));
+            }
+
+            return null;
+        }
+
+        public async Task<FilmExtendResponse?> GetFilmById(Guid id)
+        {
+            var film = await _filmRepository.GetFilmById(id);
+
+            if (film != null)
+            {
+                return new FilmExtendResponse(film, null);
+            }
+
+            return null;
+        }
+
         public async Task SetFavoriteFilm(FavoriteMovie favoriteFilm, string userName)
         {
-            await _filmRepository.SetFavoriteFilm(favoriteFilm, userName);
+            var user = await _userRepository.FindUser(userName);
+
+            if (user == null) throw new ArgumentException(userName);
+
+            await _filmRepository.SetFavoriteFilm(favoriteFilm, user);
         }
     }
 }

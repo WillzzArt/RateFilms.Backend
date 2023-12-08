@@ -31,6 +31,7 @@ namespace RateFilms.Domain.Convertors
                 AgeRating = filmDbModel.AgeRating,
                 AvgRating = filmDbModel.AvgRating,
                 Duration = filmDbModel.Duration,
+                Country = filmDbModel.Country,
                 RealeseDate = filmDbModel.ReleaseDate,
                 PreviewImage = PersonConvertor.ImageDbConvertImageDomain(previewImage ?? new ImageDbModel()),
                 Genre = filmDbModel.Genre.Select(g => g.Genre.ToEnum(Genre.None)),
@@ -82,6 +83,7 @@ namespace RateFilms.Domain.Convertors
                 AvgRating = film.AvgRating,
                 Duration = film.Duration,
                 ReleaseDate = film.RealeseDate,
+                Country = film.Country,
                 Genre = film.Genre
                 .Select(g => new GenreDbModel
                 {

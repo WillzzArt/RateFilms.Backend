@@ -1,20 +1,21 @@
-﻿using RateFilms.Domain.DTO.People;
-using RateFilms.Domain.Models.DomainModels;
+﻿using RateFilms.Domain.Models.DomainModels;
 
 namespace RateFilms.Domain.DTO.Films
 {
     public class FilmResponse
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string? Description { get; set; }
-        public long? RealeseDate { get; set; }
-        public List<string> Genre { get; set; } = new List<string>();
-        public Image PreviewImage { get; set; }
-        public float? AvgRating { get; set; }
-        public int AgeRating { get; set; }
-        public bool isFavorite { get; set; } = false;
-        public string? Status { get; set; }
+        public Guid Id { get; }
+        public string Name { get; }
+        public string? Description { get; }
+        public long? RealeseDate { get; }
+        public List<string> Genre { get; } = new List<string>();
+        public Image PreviewImage { get; }
+        public float? AvgRating { get; }
+        public int AgeRating { get; }
+        public bool IsAnnouncement { get; }
+        public bool isFavorite { get;  } = false;
+        public string? Status { get; }
+        public string? Country { get; }
 
         public FilmResponse(Film film, Favorite? favoriteFilm)
         {
@@ -36,6 +37,8 @@ namespace RateFilms.Domain.DTO.Films
             AgeRating = film.AgeRating;
             isFavorite = favoriteFilm?.IsFavorite ?? false;
             Status = favoriteFilm?.Status.ToString() ?? StatusMovie.None.ToString();
+            IsAnnouncement = film.IsAnnouncement();
+            Country = film.Country;
         }
     }
 }

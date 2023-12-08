@@ -9,8 +9,8 @@ namespace RateFilms.Domain.Models.StorageModels
         public string? Description { get; set; }
         public float? AvgRating { get; set; }
         public int? CountMaxSeries { get; set; }
-        public Guid? SerialId { get; set; }
-        public SerialDbModel? Serial { get; set; }
+        public Guid SerialId { get; set; }
+        public SerialDbModel Serial { get; set; }
         public IEnumerable<ImageDbModel> Images { get; set; }
         public IEnumerable<SeriesDbModel> Series { get; set; }
     }

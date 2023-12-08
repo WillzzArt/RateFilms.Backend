@@ -1,5 +1,6 @@
 ﻿using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO;
+using RateFilms.Domain.DTO.Films;
 using RateFilms.Domain.DTO.Serials;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Repositories;
@@ -23,6 +24,7 @@ namespace RateFilms.Application.Services.Serials
             await _serialRepositoty.CreateAsync(SerialConvertor.SerialDomainConvertSerialDb(serial));
         }
 
+        
         public async Task<IEnumerable<SerialResponse?>> GetSerialForAuthorizeUser(string userName)
         {
             var serials = await _serialRepositoty.GetAllSerialsWithFavorite();
@@ -49,9 +51,40 @@ namespace RateFilms.Application.Services.Serials
             return res;
         }
 
+        public async Task<SerialExtendResponse?> GetSerialById(Guid id)
+        {
+            var serial = await _serialRepositoty.GetSerialById(id);
+
+            if (serial != null)
+            {
+                return new SerialExtendResponse(serial, null);
+            }
+
+            return null;
+        }
+
+        public async Task<SerialExtendResponse?> GetSerialForAuthorizeUserById(Guid id, string userName)
+        {
+            var serial = await _serialRepositoty.GetSerialWithFavoriteById(id);
+            var user = await _userRepository.FindUser(userName);
+
+            if (user == null) throw new ArgumentException(nameof(userName));
+
+            if (serial != null)
+            {
+                return new SerialExtendResponse(serial, serial.Favorites?.FirstOrDefault(x => x.User.Id == user.Id));
+            }
+
+            return null;
+        }
+
         public async Task SetFavoriteSerial(FavoriteMovie favoriteMovie, string userName)
         {
-            await _serialRepositoty.SetFavoriteSerial(favoriteMovie, userName);
+            var user = await _userRepository.FindUser(userName);
+
+            if (user == null) throw new ArgumentException(userName);
+
+            await _serialRepositoty.SetFavoriteSerial(favoriteMovie, user);
         }
     }
 }

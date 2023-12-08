@@ -5,19 +5,20 @@ namespace RateFilms.Domain.DTO.Films
 {
     public class FilmExtendResponse
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string? Description { get; set; }
-        public long? RealeseDate { get; set; }
-        public List<string> Genre { get; set; } = new List<string>();
-        public int Duration { get; set; }
-        public Image PreviewImage { get; set; }
-        public List<Image> Images { get; set; } = new List<Image>();
-        public float? AvgRating { get; set; }
-        public int AgeRating { get; set; }
-        public List<PersonResponse>? People { get; set; } = new List<PersonResponse>();
-        public bool isFavorite { get; set; } = false;
-        public string? Status { get; set; }
+        public Guid Id { get; }
+        public string Name { get; }
+        public string? Description { get; }
+        public long? RealeseDate { get; }
+        public List<string> Genre { get; } = new List<string>();
+        public int Duration { get; }
+        public Image PreviewImage { get; }
+        public List<Image> Images { get; } = new List<Image>();
+        public float? AvgRating { get; }
+        public int AgeRating { get; }
+        public List<PersonResponse>? People { get; } = new List<PersonResponse>();
+        public bool isFavorite { get; } = false;
+        public string? Status { get; }
+        public string? Country { get; }
 
         public FilmExtendResponse(Film film, Favorite? favoriteFilm)
         {
@@ -51,6 +52,7 @@ namespace RateFilms.Domain.DTO.Films
             }
             isFavorite = favoriteFilm?.IsFavorite ?? false;
             Status = favoriteFilm?.Status.ToString() ?? StatusMovie.None.ToString();
+            Country = film.Country;
         }
     }
 }

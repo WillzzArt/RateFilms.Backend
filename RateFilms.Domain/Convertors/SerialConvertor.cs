@@ -20,10 +20,11 @@ namespace RateFilms.Domain.Convertors
                 PreviewImage = PersonConvertor.ImageDbConvertImageDomain(serialDbModel.PreviewImage ?? new ImageDbModel()),
                 AgeRating = serialDbModel.AgeRating,
                 AvgRating = serialDbModel.AvgRating,
+                Country = serialDbModel.Country,
                 Genre = serialDbModel.Genre.Select(g => g.Genre.ToEnum(Genre.None)),
-                Seasons = SeasonDbListConvertSeasonDomain(serialDbModel.Seasons),
+                Seasons = SeasonDbListConvertSeasonDomain(serialDbModel.Seasons ?? new List<SeasonDbModel>()),
                 RealeseDate = serialDbModel.RealeseDate,
-                People = PersonConvertor.PersonInMovieDbListConvertPersonDomainList(serialDbModel.People)
+                People = PersonConvertor.PersonInMovieDbListConvertPersonDomainList(serialDbModel.People ?? new List<PersonInSerialDbModel>())
             };
 
             if (favorites != null)
@@ -52,9 +53,9 @@ namespace RateFilms.Domain.Convertors
                     AvgRating = s.AvgRating,
                     Description = s.Description,
                     CountMaxSeries = s.CountMaxSeries,
-                    Images = PersonConvertor.ImageDbListConvertImageDomainList(s.Images),
+                    Images = PersonConvertor.ImageDbListConvertImageDomainList(s.Images ?? new List<ImageDbModel>()),
                     RealeseDate = s.RealeseDate,
-                    Series = SeriesDbListConvertSeriesDomain(s.Series)
+                    Series = SeriesDbListConvertSeriesDomain(s.Series ?? new List<SeriesDbModel>())
                 });
 
             return seasons;
@@ -89,6 +90,7 @@ namespace RateFilms.Domain.Convertors
                 Description = serial.Description,
                 AgeRating = serial.AgeRating,
                 AvgRating = serial.AvgRating,
+                Country = serial.Country,
                 Genre = serial.Genre
                 .Select(g => new GenreDbModel
                 {

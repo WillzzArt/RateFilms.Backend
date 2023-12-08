@@ -38,6 +38,21 @@ namespace RateFilms.WebAPI.Controllers
             return Ok(film);
         }
 
+        [AllowAnonymous]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetFilmById(Guid id)
+        {
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                var favoriteFilm = await _filmService.GetFilmForAuthorizeUser(id, User.Identity.Name!);
+                return Ok(favoriteFilm);
+            }
+
+            var film = await _filmService.GetFilmById(id);
+
+            return Ok(film);
+        }
+
         [Authorize(Policy = "admin")]
         [HttpPost]
         public async Task<IActionResult> AddFilms(Film film)

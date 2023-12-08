@@ -8,6 +8,8 @@ namespace RateFilms.Application.Services.Serials
     {
         Task<IEnumerable<SerialResponse?>> GetSerials();
         Task<IEnumerable<SerialResponse?>> GetSerialForAuthorizeUser(string userName);
+        Task<SerialExtendResponse?> GetSerialById(Guid id);
+        Task<SerialExtendResponse?> GetSerialForAuthorizeUserById(Guid id, string userName);
         Task CreateSerialAsync(Serial film);
         Task SetFavoriteSerial(FavoriteMovie favoriteMovie, string userName);
     }

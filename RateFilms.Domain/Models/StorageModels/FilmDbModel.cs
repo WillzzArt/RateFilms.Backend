@@ -11,6 +11,7 @@ namespace RateFilms.Domain.Models.StorageModels
         public int Duration { get; set; }
         public float? AvgRating { get; set; }
         public int AgeRating { get; set; }
+        public string? Country { get; set; }
         public IEnumerable<GenreDbModel> Genre { get; set; }
         public IEnumerable<ImageDbModel> Images { get; set; }
         public IEnumerable<PersonInFilmDbModel> People { get; set; }

@@ -41,6 +41,21 @@ namespace RateFilms.WebAPI.Controllers
             return Ok(serial);
         }
 
+        [AllowAnonymous]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetSerialById(Guid id)
+        {
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                var favoriteSerial = await _serialService.GetSerialForAuthorizeUserById(id, User.Identity.Name!);
+                return Ok(favoriteSerial);
+            }
+
+            var serial = await _serialService.GetSerialById(id);
+
+            return Ok(serial);
+        }
+
         [Authorize]
         [HttpPost("SetFavorite")]
         public async Task<IActionResult> SetFavoriteSerial(FavoriteMovie favorite)
