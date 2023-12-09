@@ -1,4 +1,6 @@
-﻿namespace RateFilms.Domain.Models.Authorization
+﻿using RateFilms.Domain.Models.DomainModels;
+
+namespace RateFilms.Domain.Models.Authorization
 {
     public class User
     {
@@ -10,5 +12,6 @@
         public string? Phone { get; set; }
         public string Password { get; set; }
         public Role Role { get; set; }
+        public Image? Image { get; set; }
     }
 }

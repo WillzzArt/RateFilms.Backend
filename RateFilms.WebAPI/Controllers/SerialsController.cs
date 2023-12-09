@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RateFilms.Application.Services.Serials;
-using RateFilms.Domain.DTO;
+using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.Models.DomainModels;
 
 namespace RateFilms.WebAPI.Controllers

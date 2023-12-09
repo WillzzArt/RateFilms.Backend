@@ -8,7 +8,6 @@ namespace RateFilms.Domain.Models.StorageModels
         public string Text { get; set; }
         public DateTimeOffset Date { get; set; }
         public bool IsEdit { get; set; }
-        public int CountLike { get; set; }
         public IEnumerable<UserDbModel> Users { get; set; }
     }
 }

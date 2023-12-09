@@ -15,11 +15,14 @@ namespace RateFilms.Domain.DTO.Films
         public List<Image> Images { get; } = new List<Image>();
         public double? AvgRating { get; }
         public int AgeRating { get; }
-        public List<PersonResponse>? People { get; } = new List<PersonResponse>();
+        public List<PersonResponse> People { get; } = new List<PersonResponse>();
         public bool isFavorite { get; } = false;
         public string? Status { get; }
         public string? Country { get; }
-        public int? Score { get; }
+        public int? UserRating { get; }
+        public IEnumerable<CommentResponse>? Comments { get; }
+        public Dictionary<int, int>? Ratings { get; }
+        public Dictionary<string, int>? StatusOfPeople { get; }
 
         public FilmExtendResponse(Film film, Favorite? favoriteFilm)
         {
@@ -43,7 +46,7 @@ namespace RateFilms.Domain.DTO.Films
                     .Select(x => x)
                     .ToList();
             }
-            AvgRating = film.GetAvgRating();
+            AvgRating = Favorite.GetAvgRating(film.Favorites);
             AgeRating = film.AgeRating;
             if (film.People != null && film.People.Any())
             {
@@ -54,6 +57,9 @@ namespace RateFilms.Domain.DTO.Films
             isFavorite = favoriteFilm?.IsFavorite ?? false;
             Status = favoriteFilm?.Status.ToString() ?? StatusMovie.None.ToString();
             Country = film.Country;
+            UserRating = favoriteFilm?.Score;
+            Ratings = Favorite.GetRatings(film.Favorites);
+            StatusOfPeople = Favorite.GetStatusOfPeople(film.Favorites);
         }
     }
 }

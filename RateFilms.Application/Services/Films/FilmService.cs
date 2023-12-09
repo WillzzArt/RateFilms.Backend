@@ -1,6 +1,6 @@
 ﻿using RateFilms.Domain.Convertors;
-using RateFilms.Domain.DTO;
 using RateFilms.Domain.DTO.Films;
+using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Repositories;
 
@@ -44,7 +44,7 @@ namespace RateFilms.Application.Services.Films
 
         public async Task<IEnumerable<FilmResponse?>> GetFilms()
         {
-            var films = await _filmRepository.GetAllFilms();
+            var films = await _filmRepository.GetAllFilmsWithFavorite();
 
             var filmsRespons = films.Select(f => new FilmResponse(f, null)).ToList();
 
@@ -68,7 +68,7 @@ namespace RateFilms.Application.Services.Films
 
         public async Task<FilmExtendResponse?> GetFilmById(Guid id)
         {
-            var film = await _filmRepository.GetFilmById(id);
+            var film = await _filmRepository.GetFilmWithFavoriteById(id);
 
             if (film != null)
             {

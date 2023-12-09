@@ -16,6 +16,7 @@ namespace RateFilms.Domain.DTO.Films
         public bool isFavorite { get;  } = false;
         public string? Status { get; }
         public string? Country { get; }
+        public int? UserRating { get; }
 
         public FilmResponse(Film film, Favorite? favoriteFilm)
         {
@@ -33,12 +34,13 @@ namespace RateFilms.Domain.DTO.Films
                 RealeseDate = ((DateTimeOffset)film.RealeseDate).ToUnixTimeMilliseconds();
 
             PreviewImage = film.PreviewImage;
-            AvgRating = film.GetAvgRating();
+            AvgRating = Favorite.GetAvgRating(film.Favorites);
             AgeRating = film.AgeRating;
             isFavorite = favoriteFilm?.IsFavorite ?? false;
             Status = favoriteFilm?.Status.ToString() ?? StatusMovie.None.ToString();
             IsAnnouncement = film.IsAnnouncement();
             Country = film.Country;
+            UserRating = favoriteFilm?.Score;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using RateFilms.Domain.Models.Authorization;
+using RateFilms.Domain.Models.DomainModels;
 
 namespace RateFilms.Domain.DTO.Authorization
 {
@@ -10,6 +11,7 @@ namespace RateFilms.Domain.DTO.Authorization
         public string Email { get; set; }
         public int? Age { get; set; }
         public string? Phone { get; set; }
+        public Image? Image { get; set; }
         public string Token { get; set; }
 
         public LoginResponse(User user, string token)
@@ -20,6 +22,7 @@ namespace RateFilms.Domain.DTO.Authorization
             Email = user.Email;
             Age = user.Age;
             Phone = user.Phone;
+            Image = user.Image;
             Token = token;
         }
     }

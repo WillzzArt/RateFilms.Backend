@@ -1,4 +1,5 @@
 ﻿using RateFilms.Domain.Models.Authorization;
+using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Models.StorageModels;
 
 namespace RateFilms.Domain.Convertors
@@ -18,7 +19,8 @@ namespace RateFilms.Domain.Convertors
                 Password = userDbModel.Password,
                 Phone = userDbModel.Phone,
                 Role = userDbModel.Role,
-                UserName = userDbModel.UserName
+                UserName = userDbModel.UserName,
+                Image = PersonConvertor.ImageDbConvertImageDomain(userDbModel.Image ?? new ImageDbModel())
             };
 
             return user;
@@ -37,7 +39,8 @@ namespace RateFilms.Domain.Convertors
                 Email = user.Email,
                 Password = user.Password,
                 Phone = user.Phone,
-                Role = user.Role
+                Role = user.Role,
+                Image = PersonConvertor.ImageDomainConvertImageDb(user.Image ?? new Image())
             };
 
             return userDb;
@@ -48,17 +51,7 @@ namespace RateFilms.Domain.Convertors
             if (userDbModels == null) throw new ArgumentNullException(nameof(userDbModels));
 
             var users = userDbModels
-                .Select(u => new User
-                {
-                    Id = u.Id,
-                    Age = u.Age,
-                    Email = u.Email,
-                    Name = u.Name,
-                    Password = u.Password,
-                    Phone = u.Phone,
-                    Role = u.Role,
-                    UserName = u.UserName
-                });
+                .Select(UserDbConvertUserDomain);
 
             return users;
         }

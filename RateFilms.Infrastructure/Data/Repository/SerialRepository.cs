@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RateFilms.Domain.Convertors;
-using RateFilms.Domain.DTO;
+using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Models.StorageModels;
@@ -127,18 +127,6 @@ namespace RateFilms.Infrastructure.Data.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Serial>> GetAllSerials()
-        {
-            var serials = await _context.Serial
-                .Include(s => s.Seasons)
-                    .ThenInclude(s => s.Series)
-                .Include(s => s.PreviewImage)
-                .Include(s => s.Genre)
-                .ToListAsync();
-
-            return SerialConvertor.SerialDbListConvertSerialDomainList(serials);
-        }
-
         public async Task<IEnumerable<Serial>> GetAllSerialsWithFavorite()
         {
             var serials = await _context.Serial
@@ -150,31 +138,6 @@ namespace RateFilms.Infrastructure.Data.Repository
                 .ToListAsync();
 
             return SerialConvertor.SerialDbListConvertSerialDomainList(serials);
-        }
-
-        public async Task<Serial?> GetSerialById(Guid serialId)
-        {
-            var serial = await _context.Serial
-                .Include(s => s.People)
-                    .ThenInclude(p => p.Professions)
-                .Include(s => s.People)
-                    .ThenInclude(p => p.Person)
-                        .ThenInclude(p => p.Image)
-                .Include(s => s.Seasons)
-                    .ThenInclude(s => s.Series)
-                        .ThenInclude(s => s.PreviewImage)
-                .Include(s => s.Seasons)
-                    .ThenInclude(s => s.Images)
-                .Include(s => s.PreviewImage)
-                .Include(s => s.Genre)
-                .FirstOrDefaultAsync(s => s.Id == serialId);
-
-            if (serial != null)
-            {
-                return SerialConvertor.SerialDbConvertSerialDomain(serial);
-            }
-
-            return null;
         }
 
         public async Task<Serial?> GetSerialWithFavoriteById(Guid serialId)

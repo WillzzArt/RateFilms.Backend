@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RateFilms.Domain.Convertors;
-using RateFilms.Domain.DTO;
+using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Models.StorageModels;
@@ -94,39 +94,8 @@ namespace RateFilms.Infrastructure.Data.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Film>> GetAllFilms()
-        {
-            /*var filmsDb = await _context.Film
-                .Include(f => f.People)
-                    .ThenInclude(p => p.Professions)
-                .Include(f => f.People)
-                    .ThenInclude(p => p.Person)
-                        .ThenInclude(p => p.Image)
-                .Include(p => p.Images)
-                .Include(p => p.Genre)
-                .ToListAsync();*/
-
-            var filmsDb = await _context.Film
-                .Include(f => f.Images)
-                .Include(f => f.Genre)
-                .ToListAsync();
-
-            return FilmConvertor.FilmDbListConvertFilmDomainList(filmsDb);
-        }
-
         public async Task<IEnumerable<Film>> GetAllFilmsWithFavorite()
         {
-            /*var filmsDb = await _context.Film
-                .Include(f => f.People)
-                    .ThenInclude(p => p.Professions)
-                .Include(f => f.People)
-                    .ThenInclude(p => p.Person)
-                        .ThenInclude(p => p.Image)
-                .Include(p => p.Images)
-                .Include(p => p.Genre)
-                .Include(f => f.Favorite)
-                .ToListAsync();*/
-
             var filmsDb = await _context.Film
                 .Include(p => p.Images)
                 .Include(p => p.Genre)
@@ -134,26 +103,6 @@ namespace RateFilms.Infrastructure.Data.Repository
                 .ToListAsync();
 
             return FilmConvertor.FilmDbListConvertFilmDomainList(filmsDb);
-        }
-
-        public async Task<Film?> GetFilmById(Guid filmId)
-        {
-            var filmDb = await _context.Film
-                .Include(f => f.People)
-                    .ThenInclude(p => p.Professions)
-                .Include(f => f.People)
-                    .ThenInclude(p => p.Person)
-                        .ThenInclude(p => p.Image)
-                .Include(p => p.Images)
-                .Include(p => p.Genre)
-                .FirstOrDefaultAsync(f => f.Id == filmId);
-
-            if (filmDb != null)
-            {
-                return FilmConvertor.FilmDbConvertFilmDomain(filmDb);
-            }
-
-            return null;
         }
 
         public async Task<Film?> GetFilmWithFavoriteById(Guid filmId)
@@ -201,8 +150,8 @@ namespace RateFilms.Infrastructure.Data.Repository
                 favoriteFilmDb.IsFavorite = favoriteFilm.IsFavorite;
                 favoriteFilmDb.Score = favoriteFilm.Score;
 
-                if (favoriteFilmDb.Status == StatusMovie.None && 
-                    favoriteFilmDb.IsFavorite == false && 
+                if (favoriteFilmDb.Status == StatusMovie.None &&
+                    favoriteFilmDb.IsFavorite == false &&
                     favoriteFilmDb.Score == 0)
                 {
                     _context.Remove(favoriteFilmDb);

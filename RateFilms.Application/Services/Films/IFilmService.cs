@@ -1,5 +1,5 @@
-﻿using RateFilms.Domain.DTO;
-using RateFilms.Domain.DTO.Films;
+﻿using RateFilms.Domain.DTO.Films;
+using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.Models.DomainModels;
 
 namespace RateFilms.Application.Services.Films

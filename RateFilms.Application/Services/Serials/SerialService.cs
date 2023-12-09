@@ -1,5 +1,5 @@
 ﻿using RateFilms.Domain.Convertors;
-using RateFilms.Domain.DTO;
+using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.DTO.Serials;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Repositories;
@@ -43,7 +43,7 @@ namespace RateFilms.Application.Services.Serials
 
         public async Task<IEnumerable<SerialResponse?>> GetSerials()
         {
-            var serials = await _serialRepositoty.GetAllSerials();
+            var serials = await _serialRepositoty.GetAllSerialsWithFavorite();
 
             var res = serials.Select(s => new SerialResponse(s, null));
 
@@ -52,7 +52,7 @@ namespace RateFilms.Application.Services.Serials
 
         public async Task<SerialExtendResponse?> GetSerialById(Guid id)
         {
-            var serial = await _serialRepositoty.GetSerialById(id);
+            var serial = await _serialRepositoty.GetSerialWithFavoriteById(id);
 
             if (serial != null)
             {

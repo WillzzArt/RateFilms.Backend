@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RateFilms.Infrastructure.Data;
@@ -11,9 +12,11 @@ using RateFilms.Infrastructure.Data;
 namespace RateFilms.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231209144610_10.2")]
+    partial class _102
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -463,9 +466,6 @@ namespace RateFilms.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("ImageId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
@@ -487,8 +487,6 @@ namespace RateFilms.Infrastructure.Migrations
 
                     b.HasIndex("Email")
                         .IsUnique();
-
-                    b.HasIndex("ImageId");
 
                     b.HasIndex("UserName")
                         .IsUnique();
@@ -746,15 +744,6 @@ namespace RateFilms.Infrastructure.Migrations
                     b.Navigation("PreviewImage");
 
                     b.Navigation("Season");
-                });
-
-            modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.UserDbModel", b =>
-                {
-                    b.HasOne("RateFilms.Domain.Models.StorageModels.ImageDbModel", "Image")
-                        .WithMany()
-                        .HasForeignKey("ImageId");
-
-                    b.Navigation("Image");
                 });
 
             modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.FavoriteFilmDbModel", b =>

@@ -1,4 +1,4 @@
-﻿using RateFilms.Domain.DTO;
+﻿using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Models.StorageModels;
@@ -11,23 +11,10 @@ namespace RateFilms.Domain.Repositories
     public interface ISerialRepositoty
     {
         /// <summary>
-        /// Ищет все сериалы в базе данных
-        /// </summary>
-        /// <returns>Список сериалов</returns>
-        Task<IEnumerable<Serial>> GetAllSerials();
-
-        /// <summary>
         /// Ищет все сериалы в базе данных включая в модель таблицу Favorite
         /// </summary>
         /// <returns>Список сериалов</returns>
         Task<IEnumerable<Serial>> GetAllSerialsWithFavorite();
-
-        /// <summary>
-        /// Находит сериал по его уникальному ключу
-        /// </summary>
-        /// <param name="serialId">Уникальный ключ сериала</param>
-        /// <returns>Модель сериала</returns>
-        Task<Serial?> GetSerialById(Guid serialId);
 
         /// <summary>
         /// Находит сериал по его уникальному ключу включая таблицу Favorite

@@ -28,7 +28,10 @@ namespace RateFilms.Domain.DTO.Serials
         public int? CountMaxSeries { get => _countMaxSeries; }
         public long? LastReleaseSeriesDate { get; }
         public string? Country { get; }
-        public int? Score { get; }
+        public int? UserRating { get; }
+        public IEnumerable<CommentResponse>? Comments { get; }
+        public Dictionary<int, int>? Ratings { get; }
+        public Dictionary<string, int>? StatusOfPeople { get; }
 
         public SerialExtendResponse(Serial serial, Favorite? favoriteSerial)
         {
@@ -44,7 +47,7 @@ namespace RateFilms.Domain.DTO.Serials
             }
 
             PreviewImage = serial.PreviewImage;
-            AvgRating = serial.GetAvgRating();
+            AvgRating = Favorite.GetAvgRating(serial.Favorites);
             AgeRating = serial.AgeRating;
             Seasons = serial.Seasons.Select(s => new SeasonResponse(s)).ToList();
             People = serial.People.Select(p => new PersonResponse(p)).ToList();
@@ -53,6 +56,9 @@ namespace RateFilms.Domain.DTO.Serials
             serial.CountSeries(out _isAnnouncement, out _isOngoing, out _countMaxSeries, out _countSeriesLeft);
             LastReleaseSeriesDate = serial.GetLastReleaseSeriesDate(IsAnnouncement);
             Country = serial.Country;
+            UserRating = favoriteSerial?.Score;
+            Ratings = Favorite.GetRatings(serial.Favorites);
+            StatusOfPeople = Favorite.GetStatusOfPeople(serial.Favorites);
         }
     }
 }
