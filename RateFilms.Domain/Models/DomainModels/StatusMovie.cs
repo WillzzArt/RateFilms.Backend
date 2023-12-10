@@ -3,9 +3,9 @@
     public enum StatusMovie
     {
         None,
-        Watching,
-        InPlans,
-        Watched,
+        Looking,
+        InThePlans,
+        Viewed,
         Postponed,
         Abandoned
     }

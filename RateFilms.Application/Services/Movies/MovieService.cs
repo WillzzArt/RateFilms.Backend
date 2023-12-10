@@ -2,7 +2,7 @@
 using RateFilms.Application.Services.Serials;
 using RateFilms.Domain.DTO.Movies;
 
-namespace RateFilms.Application.Services.Movirs
+namespace RateFilms.Application.Services.Movies
 {
     public class MovieService : IMovieService
     {

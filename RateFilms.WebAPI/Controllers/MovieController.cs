@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RateFilms.Application.Services.Movirs;
+using RateFilms.Application.Services.Movies;
 
 namespace RateFilms.WebAPI.Controllers
 {

@@ -30,6 +30,7 @@ namespace RateFilms.Domain.Convertors
             {
                 serial.Favorites = favorites.Select(fSerial => new Favorite
                 {
+                    Id = fSerial.FavoriteId,
                     User = UserConvertor.UserDbConvertUserDomain(fSerial.User ?? new UserDbModel()),
                     IsFavorite = fSerial.IsFavorite,
                     Score = fSerial.Score,

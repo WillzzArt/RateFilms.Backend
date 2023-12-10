@@ -4,10 +4,12 @@ namespace RateFilms.Domain.Models.DomainModels
 {
     public class Favorite
     {
+        public Guid Id { get; set; }
         public User User { get; set; }
         public bool IsFavorite { get; set; } = false;
         public StatusMovie Status { get; set; } = StatusMovie.None;
         public int? Score { get; set; }
+        public IEnumerable<Comment> Comments { get; set; }
 
         /// <summary>
         /// Высчитывает средний рейтинг по списку избранных

@@ -1,6 +1,6 @@
 ﻿using RateFilms.Domain.DTO.Movies;
 
-namespace RateFilms.Application.Services.Movirs
+namespace RateFilms.Application.Services.Movies
 {
     public interface IMovieService
     {

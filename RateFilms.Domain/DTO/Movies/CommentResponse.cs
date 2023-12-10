@@ -1,7 +1,7 @@
 ﻿using RateFilms.Domain.DTO.People;
 using RateFilms.Domain.Models.DomainModels;
 
-namespace RateFilms.Domain.DTO
+namespace RateFilms.Domain.DTO.Movies
 {
     public class CommentResponse
     {

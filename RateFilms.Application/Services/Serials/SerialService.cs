@@ -1,4 +1,5 @@
-﻿using RateFilms.Domain.Convertors;
+﻿using RateFilms.Application.Services.Movies;
+using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.DTO.Serials;
 using RateFilms.Domain.Models.DomainModels;
@@ -10,13 +11,15 @@ namespace RateFilms.Application.Services.Serials
     {
         private readonly ISerialRepositoty _serialRepositoty;
         private readonly IUserRepository _userRepository;
-
+        private readonly ICommentService _commentService;
         public SerialService(
             ISerialRepositoty serialRepositoty,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            ICommentService commentService)
         {
             _serialRepositoty = serialRepositoty;
             _userRepository = userRepository;
+            _commentService = commentService;
         }
         public async Task CreateSerialAsync(Serial serial)
         {
@@ -53,10 +56,11 @@ namespace RateFilms.Application.Services.Serials
         public async Task<SerialExtendResponse?> GetSerialById(Guid id)
         {
             var serial = await _serialRepositoty.GetSerialWithFavoriteById(id);
+            var comment = await _commentService.GetCommentsInSerial(id, 5);
 
             if (serial != null)
             {
-                return new SerialExtendResponse(serial, null);
+                return new SerialExtendResponse(serial, null, comment);
             }
 
             return null;
@@ -64,14 +68,16 @@ namespace RateFilms.Application.Services.Serials
 
         public async Task<SerialExtendResponse?> GetSerialForAuthorizeUserById(Guid id, string userName)
         {
-            var serial = await _serialRepositoty.GetSerialWithFavoriteById(id);
             var user = await _userRepository.FindUser(userName);
-
             if (user == null) throw new ArgumentException(nameof(userName));
+
+            var serial = await _serialRepositoty.GetSerialWithFavoriteById(id);
+
+            var comment = await _commentService.GetCommentsInSerial(id, 5);
 
             if (serial != null)
             {
-                return new SerialExtendResponse(serial, serial.Favorites?.FirstOrDefault(x => x.User.Id == user.Id));
+                return new SerialExtendResponse(serial, serial.Favorites?.FirstOrDefault(x => x.User.Id == user.Id), comment);
             }
 
             return null;

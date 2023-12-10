@@ -1,4 +1,5 @@
-﻿using RateFilms.Domain.DTO.People;
+﻿using RateFilms.Domain.DTO.Movies;
+using RateFilms.Domain.DTO.People;
 using RateFilms.Domain.Models.DomainModels;
 
 namespace RateFilms.Domain.DTO.Films
@@ -24,7 +25,7 @@ namespace RateFilms.Domain.DTO.Films
         public Dictionary<int, int>? Ratings { get; }
         public Dictionary<string, int>? StatusOfPeople { get; }
 
-        public FilmExtendResponse(Film film, Favorite? favoriteFilm)
+        public FilmExtendResponse(Film film, Favorite? favoriteFilm, IEnumerable<CommentResponse> comments)
         {
             Id = film.Id;
             Name = film.Name;
@@ -60,6 +61,7 @@ namespace RateFilms.Domain.DTO.Films
             UserRating = favoriteFilm?.Score;
             Ratings = Favorite.GetRatings(film.Favorites);
             StatusOfPeople = Favorite.GetStatusOfPeople(film.Favorites);
+            Comments = comments;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using RateFilms.Domain.Convertors;
+﻿using RateFilms.Application.Services.Movies;
+using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO.Films;
 using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.Models.DomainModels;
@@ -10,13 +11,16 @@ namespace RateFilms.Application.Services.Films
     {
         private readonly IFilmRepository _filmRepository;
         private readonly IUserRepository _userRepository;
+        private readonly ICommentService _commentService;
 
         public FilmService(
             IFilmRepository filmRepository,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            ICommentService commentSerivice)
         {
             _filmRepository = filmRepository;
             _userRepository = userRepository;
+            _commentService = commentSerivice;
         }
 
         public async Task CreateFilmsAsync(Film film)
@@ -53,14 +57,16 @@ namespace RateFilms.Application.Services.Films
 
         public async Task<FilmExtendResponse?> GetFilmForAuthorizeUserById(Guid id, string userName)
         {
-            var film = await _filmRepository.GetFilmWithFavoriteById(id);
             var user = await _userRepository.FindUser(userName);
-
             if (user == null) throw new ArgumentException(nameof(userName));
+
+            var film = await _filmRepository.GetFilmWithFavoriteById(id);
+
+            var comment = await _commentService.GetCommentsInFilm(id, 5);
 
             if (film != null)
             {
-                return new FilmExtendResponse(film, film.Favorites?.FirstOrDefault(x => x.User.Id == user.Id));
+                return new FilmExtendResponse(film, film.Favorites?.FirstOrDefault(x => x.User.Id == user.Id), comment);
             }
 
             return null;
@@ -69,10 +75,11 @@ namespace RateFilms.Application.Services.Films
         public async Task<FilmExtendResponse?> GetFilmById(Guid id)
         {
             var film = await _filmRepository.GetFilmWithFavoriteById(id);
+            var comment = await _commentService.GetCommentsInFilm(id, 5);
 
             if (film != null)
             {
-                return new FilmExtendResponse(film, null);
+                return new FilmExtendResponse(film, null, comment);
             }
 
             return null;

@@ -90,6 +90,14 @@ namespace RateFilms.Infrastructure.Data
                 .WithMany(f => f.Comments)
                 .HasForeignKey(c => c.FavoriteId)
                 .HasPrincipalKey(f => f.FavoriteId);
+
+            builder.Entity<CommentDbModel>()
+                .HasOne(c => c.CommentInFilm)
+                .WithOne(c => c.Comment);
+
+            builder.Entity<CommentDbModel>()
+                .HasOne(c => c.CommentInSerial)
+                .WithOne(c => c.Comment);
         }
 
         public DbSet<FilmDbModel> Film { get; set; }

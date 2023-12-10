@@ -9,7 +9,6 @@ namespace RateFilms.Domain.Models.DomainModels
         public DateTimeOffset Date { get; set; }
         public bool IsEdit { get; set; }
         public User User { get; set; }
-        public IEnumerable<User> Users { get; set; }
-        public int CountLike { get => Users.Count(); }
+        public int CountLike { get; set; }
     }
 }

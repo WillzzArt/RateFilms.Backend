@@ -1,4 +1,5 @@
-﻿using RateFilms.Domain.DTO.People;
+﻿using RateFilms.Domain.DTO.Movies;
+using RateFilms.Domain.DTO.People;
 using RateFilms.Domain.Models.DomainModels;
 
 namespace RateFilms.Domain.DTO.Serials
@@ -33,7 +34,7 @@ namespace RateFilms.Domain.DTO.Serials
         public Dictionary<int, int>? Ratings { get; }
         public Dictionary<string, int>? StatusOfPeople { get; }
 
-        public SerialExtendResponse(Serial serial, Favorite? favoriteSerial)
+        public SerialExtendResponse(Serial serial, Favorite? favoriteSerial, IEnumerable<CommentResponse> comments)
         {
             Id = serial.Id;
             Name = serial.Name;
@@ -59,6 +60,7 @@ namespace RateFilms.Domain.DTO.Serials
             UserRating = favoriteSerial?.Score;
             Ratings = Favorite.GetRatings(serial.Favorites);
             StatusOfPeople = Favorite.GetStatusOfPeople(serial.Favorites);
+            Comments = comments;
         }
     }
 }
