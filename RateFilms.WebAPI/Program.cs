@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using RateFilms.Application.Option;
 using RateFilms.Application.Services;
 using RateFilms.Application.Services.Films;
 using RateFilms.Application.Services.Movies;
@@ -78,6 +79,8 @@ builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICommentService, CommentService>();
+
+builder.Services.Configure<TokenOptions>(config.GetSection("JwtSettings"));
 
 var connectionString = builder.Configuration.GetConnectionString("WebApiDatabase");
 

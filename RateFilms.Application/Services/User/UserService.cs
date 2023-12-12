@@ -1,11 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using RateFilms.Application.JWTApp;
+using RateFilms.Application.Option;
 using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO.Authorization;
 using RateFilms.Domain.Helpers;
 using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.StorageModels;
 using RateFilms.Domain.Repositories;
-using RateFilms.WebAPI.JWT;
 
 namespace RateFilms.Application.Services
 {
@@ -13,13 +16,13 @@ namespace RateFilms.Application.Services
     {
         private readonly IBaseRepository _baseRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IConfiguration _configuration;
+        private readonly TokenOptions _tokenOption;
 
-        public UserService(IBaseRepository baseRepository, IConfiguration configuration, IUserRepository userRepository)
+        public UserService(IBaseRepository baseRepository, IOptions<TokenOptions> tokenOption, IUserRepository userRepository)
         {
             _baseRepository = baseRepository;
             _userRepository = userRepository;
-            _configuration = configuration;
+            _tokenOption = tokenOption.Value;
         }
 
         public async Task<LoginResponse?> Authenticate(LoginRequest model)
@@ -28,7 +31,7 @@ namespace RateFilms.Application.Services
 
             if (user?.Password == HashPasswordHelper.HashPassword(model.Password))
             {
-                var token = Token.CreateToken(_configuration, user);
+                var token = Token.CreateToken(_tokenOption, user);
 
                 return new LoginResponse(user, token);
             }
@@ -66,7 +69,7 @@ namespace RateFilms.Application.Services
                 return null;
             }
 
-            var token = Token.CreateToken(_configuration, UserConvertor.UserDbConvertUserDomain(user));
+            var token = Token.CreateToken(_tokenOption, UserConvertor.UserDbConvertUserDomain(user));
 
             return new LoginResponse(UserConvertor.UserDbConvertUserDomain(user), token);
         }
@@ -78,28 +81,13 @@ namespace RateFilms.Application.Services
 
             if (user != null)
             {
-                
-                var token = Token.CreateToken(_configuration, user);
+
+                var token = Token.CreateToken(_tokenOption, user);
 
                 return new LoginResponse(user, token);
             }
 
             return null;
-        }
-
-        public async Task<IEnumerable<User>> GetAll()
-        {
-            var user = await _baseRepository.GetAllAsync<UserDbModel>();
-            return UserConvertor.UserDbListConvertUserDomainList(user);
-        }
-
-        public async Task<User?> GetById(Guid id)
-        {
-            var user = await _baseRepository.FindByIdAsync<UserDbModel>(id);
-
-            if (user == null) return null;
-
-            return UserConvertor.UserDbConvertUserDomain(user);
         }
     }
 }

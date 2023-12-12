@@ -1,8 +1,6 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using RateFilms.Application.Services;
 using RateFilms.Domain.DTO.Authorization;
-using RateFilms.Domain.Repositories;
 
 namespace RateFilms.WebAPI.Controllers
 {
