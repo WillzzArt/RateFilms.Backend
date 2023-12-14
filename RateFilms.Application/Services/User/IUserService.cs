@@ -7,5 +7,6 @@ namespace RateFilms.Application.Services
         Task<LoginResponse?> Authenticate(LoginRequest model);
         Task<LoginResponse?> Register(Registration model);
         Task<LoginResponse?> ChangePassword(LoginRequest model);
+        Task UpdateUser(UserExtendedResponse user, string username);
     }
 }

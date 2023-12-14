@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using RateFilms.Application.JWTApp;
 using RateFilms.Application.Option;
@@ -88,6 +87,11 @@ namespace RateFilms.Application.Services
             }
 
             return null;
+        }
+
+        public async Task UpdateUser(UserExtendedResponse user, string username)
+        {
+            await _userRepository.UpdateUser(user, username);
         }
     }
 }
