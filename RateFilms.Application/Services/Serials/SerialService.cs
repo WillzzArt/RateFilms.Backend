@@ -23,6 +23,16 @@ namespace RateFilms.Application.Services.Serials
         }
         public async Task CreateSerialAsync(Serial serial)
         {
+            if (serial.Seasons.Any(s => s.RealeseDate < serial.RealeseDate))
+            {
+                throw new ArgumentOutOfRangeException(nameof(serial.Seasons));
+            }
+
+            if (serial.Seasons.Any(s => s.Series.Any(sSeries => sSeries.RealeseDate < s.RealeseDate)))
+            {
+                throw new ArgumentOutOfRangeException("series");
+            }
+
             await _serialRepositoty.CreateAsync(SerialConvertor.SerialDomainConvertSerialDb(serial));
         }
 

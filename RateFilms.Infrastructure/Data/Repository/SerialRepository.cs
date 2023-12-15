@@ -31,100 +31,99 @@ namespace RateFilms.Infrastructure.Data.Repository
                 Description = serial.Description,
                 AgeRating = serial.AgeRating,
                 RealeseDate = serial.RealeseDate,
-                PreviewImage = serial.PreviewImage
+                PreviewImage = serial.PreviewImage,
+                Country = serial.Country
             };
 
             await _context.Serial.AddAsync(saveSerial);
 
-            if (serial.People.Any())
-            {
-                var professions = _context.Profession.ToList();
+            await SavePerson(serial.People, saveSerial);
+            await SaveSeason(serial.Seasons, saveSerial);
+            await SaveGenre(serial.Genre, saveSerial);            
 
-                foreach (var person in serial.People)
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task SavePerson(IEnumerable<PersonInSerialDbModel> people, SerialDbModel saveSerial)
+        {
+            var professions = _context.Profession.ToList();
+
+            foreach (var person in people)
+            {
+                var savePersInSerial = new PersonInSerialDbModel
                 {
-                    var savePersInSerial = new PersonInSerialDbModel
+                    Serial = saveSerial,
+                    PersonId = person.PersonId
+                };
+
+                if (person.PersonId == Guid.Empty)
+                {
+                    var savePerson = new PersonDbModel
                     {
-                        Serial = saveSerial,
-                        PersonId = person.PersonId
+                        Age = person.Person.Age,
+                        Image = person.Person.Image,
+                        Name = person.Person.Name
                     };
 
-                    if (person.PersonId != Guid.Empty)
-                    {
-                        await _context.PersonInSerials.AddAsync(savePersInSerial);
-                    }
-                    else if (person.Person.Image?.Id == Guid.Empty)
-                    {
-                        var savePerson = new PersonDbModel
-                        {
-                            Age = person.Person.Age,
-                            Image = person.Person.Image,
-                            Name = person.Person.Name
-                        };
-
-                        await _context.Person.AddAsync(savePerson);
-                        savePersInSerial.Person = savePerson;
-                        await _context.PersonInSerials.AddAsync(savePersInSerial);
-                    }
-
-                    savePersInSerial.Professions = professions
-                            .Where(p => person.Professions.Any(prof => prof.Id == p.Id)).ToList();
+                    await _context.Person.AddAsync(savePerson);
+                    savePersInSerial.Person = savePerson;
                 }
-            }
 
-            if (serial.Seasons.Any())
+                await _context.PersonInSerials.AddAsync(savePersInSerial);
+                savePersInSerial.Professions = professions
+                        .Where(p => person.Professions.Any(prof => prof.Id == p.Id)).ToList();
+            }
+        }
+
+        private async Task SaveSeason(IEnumerable<SeasonDbModel> seasons, SerialDbModel saveSerial)
+        {
+            foreach (var season in seasons)
             {
-                foreach (var season in serial.Seasons)
+                var saveSeason = new SeasonDbModel
                 {
-                    var saveSeason = new SeasonDbModel
+                    Description = season.Description,
+                    Serial = saveSerial,
+                    RealeseDate = season.RealeseDate
+                };
+
+                await _context.Season.AddAsync(saveSeason);
+
+                foreach (var series in season.Series)
+                {
+                    var saveSeries = new SeriesDbModel
                     {
-                        Description = season.Description,
-                        Serial = saveSerial,
-                        RealeseDate = season.RealeseDate
+                        Name = series.Name,
+                        Duration = series.Duration,
+                        RealeseDate = series.RealeseDate,
+                        Season = saveSeason,
+                        PreviewImage = series.PreviewImage
                     };
 
-                    await _context.Season.AddAsync(saveSeason);
+                    await _context.Series.AddAsync(saveSeries);
+                }
 
-                    if (season.Series.Any())
+                foreach (var image in season.Images)
+                {
+                    if (image.Id == Guid.Empty)
                     {
-                        foreach (var series in season.Series)
-                        {
-                            var saveSeries = new SeriesDbModel
-                            {
-                                Name = series.Name,
-                                Duration = series.Duration,
-                                RealeseDate = series.RealeseDate,
-                                Season = saveSeason,
-                                PreviewImage = series.PreviewImage
-                            };
-
-                            await _context.Series.AddAsync(saveSeries);
-                        }
-                    }
-
-                    if (season.Images.Any())
-                    {
-                        foreach (var image in season.Images)
-                        {
-                            if (image.Id == Guid.Empty)
-                            {
-                                image.Season = saveSeason;
-                                await _context.Image.AddAsync(image);
-                            }
-                        }
+                        image.Season = saveSeason;
+                        await _context.Image.AddAsync(image);
                     }
                 }
             }
+        }
 
+        private async Task SaveGenre(IEnumerable<GenreDbModel> genres, SerialDbModel saveSerial)
+        {
             var genries = new List<GenreDbModel>();
 
-            foreach (var genre in serial.Genre)
+            foreach (var genre in genres)
             {
-                genries.Add(_context.Genre.Find(genre.Id));
+                var genreData = await _context.Genre.FindAsync(genre.Id);
+                genries.Add(genreData!);
             }
 
             saveSerial.Genre = genries;
-
-            await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<Serial>> GetAllSerialsWithFavorite()

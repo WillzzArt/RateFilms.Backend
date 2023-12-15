@@ -67,7 +67,8 @@ namespace RateFilms.WebAPI.Controllers
         {
             await _filmService.CreateFilmsAsync(film);
 
-            return Redirect("/Films/GetFilms");
+            return Ok();
+            //return Redirect("/Films");
         }
 
         [Authorize]
@@ -75,7 +76,7 @@ namespace RateFilms.WebAPI.Controllers
         public async Task<IActionResult> SetFavorite(FavoriteMovie favorite)
         {
             ClaimsPrincipal claims = HttpContext.User;
-            await _filmService.SetFavoriteFilm(favorite, claims.Identity.Name);
+            await _filmService.SetFavoriteFilm(favorite, claims.Identity!.Name!);
 
             return Ok();
         }

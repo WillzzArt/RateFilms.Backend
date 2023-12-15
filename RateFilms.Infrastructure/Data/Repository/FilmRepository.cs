@@ -31,67 +31,74 @@ namespace RateFilms.Infrastructure.Data.Repository
                 Description = film.Description,
                 Duration = film.Duration,
                 AgeRating = film.AgeRating,
-                ReleaseDate = film.ReleaseDate
+                ReleaseDate = film.ReleaseDate,
+                Country = film.Country
             };
 
             await _context.Film.AddAsync(saveFilm);
 
-            if (film.People.Any())
-            {
-                var professions = _context.Profession.ToList();
+            await SavePerson(film.People, saveFilm);
+            await SaveGenre(film.Genre, saveFilm);
+            await SavaImage(film.Images, saveFilm);
 
-                foreach (var person in film.People)
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task SavePerson(IEnumerable<PersonInFilmDbModel> people, FilmDbModel saveFilm)
+        {
+            var professions = _context.Profession.ToList();
+
+            foreach (var person in people)
+            {
+                var savePersInFilm = new PersonInFilmDbModel
                 {
-                    var savePersInFilm = new PersonInFilmDbModel
+                    Film = saveFilm,
+                    PersonId = person.PersonId
+                };
+
+                if (person.PersonId == Guid.Empty)
+                {
+                    var savePerson = new PersonDbModel
                     {
-                        Film = saveFilm,
-                        PersonId = person.PersonId
+                        Age = person.Person.Age,
+                        Image = person.Person.Image,
+                        Name = person.Person.Name
                     };
 
-                    if (person.PersonId != Guid.Empty)
-                    {
-                        await _context.PersonInFilm.AddAsync(savePersInFilm);
-                    }
-                    else if (person.Person.Image?.Id == Guid.Empty)
-                    {
-                        var savePerson = new PersonDbModel
-                        {
-                            Age = person.Person.Age,
-                            Image = person.Person.Image,
-                            Name = person.Person.Name
-                        };
-
-                        await _context.Person.AddAsync(savePerson);
-                        savePersInFilm.Person = savePerson;
-                        await _context.PersonInFilm.AddAsync(savePersInFilm);
-                    }
-
-                    savePersInFilm.Professions = professions
-                            .Where(p => person.Professions.Any(prof => prof.Id == p.Id)).ToList();
+                    await _context.Person.AddAsync(savePerson);
+                    savePersInFilm.Person = savePerson;
                 }
-            }
 
-            if (film.Images.Any())
+                await _context.PersonInFilm.AddAsync(savePersInFilm);
+
+                savePersInFilm.Professions = professions
+                        .Where(p => person.Professions.Any(prof => prof.Id == p.Id)).ToList();
+            }
+        }
+
+        private async Task SavaImage(IEnumerable<ImageDbModel> images, FilmDbModel saveFilm)
+        {
+            foreach (var image in images)
             {
-                foreach (var image in film.Images)
+                if (image.Id == Guid.Empty)
                 {
-                    if (image.Id == Guid.Empty)
-                    {
-                        image.Film = saveFilm;
-                        await _context.Image.AddAsync(image);
-                    }
+                    image.Film = saveFilm;
+                    await _context.Image.AddAsync(image);
                 }
             }
+        }
+
+        private async Task SaveGenre(IEnumerable<GenreDbModel> genres, FilmDbModel saveFilm)
+        {
             var genries = new List<GenreDbModel>();
 
-            foreach (var genre in film.Genre)
+            foreach (var genre in genres)
             {
-                genries.Add(_context.Genre.Find(genre.Id));
+                var genreData = await _context.Genre.FindAsync(genre.Id);
+                genries.Add(genreData!);
             }
 
             saveFilm.Genre = genries;
-
-            await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<Film>> GetAllFilmsWithFavorite()
