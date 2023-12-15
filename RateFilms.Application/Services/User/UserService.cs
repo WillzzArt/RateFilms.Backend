@@ -89,9 +89,22 @@ namespace RateFilms.Application.Services
             return null;
         }
 
-        public async Task UpdateUser(UserExtendedResponse user, string username)
+        public async Task<string?> UpdateUser(UserExtendedResponse user, string username)
         {
-            await _userRepository.UpdateUser(user, username);
+            var isChangedToken = await _userRepository.UpdateUser(user, username);
+
+            if (isChangedToken)
+            {
+                var newUser = await _userRepository.FindUser(user.UserName);
+                if (newUser != null)
+                {
+                    var token = Token.CreateToken(_tokenOption, newUser);
+                    return token;
+                }
+                else throw new ArgumentException(nameof(user));
+            }
+
+            return null;
         }
     }
 }

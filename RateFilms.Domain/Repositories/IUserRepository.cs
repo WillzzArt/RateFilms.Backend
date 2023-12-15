@@ -7,6 +7,6 @@ namespace RateFilms.Domain.Repositories
     {
         Task<User?> FindUser(string userLogin);
         Task<User?> ChangePassword(string userLogin, string password);
-        Task UpdateUser(UserExtendedResponse user, string username);
+        Task<bool> UpdateUser(UserExtendedResponse user, string username);
     }
 }

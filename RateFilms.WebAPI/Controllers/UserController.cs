@@ -20,7 +20,11 @@ namespace RateFilms.WebAPI.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateUserData(UserExtendedResponse user)
         {
-            await _userService.UpdateUser(user, User.Identity!.Name!);
+            var token = await _userService.UpdateUser(user, User.Identity!.Name!);
+            if (token != null)
+            {
+                return Ok(token);
+            }
 
             return Ok();
         }

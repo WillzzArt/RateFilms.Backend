@@ -41,7 +41,7 @@ namespace RateFilms.Infrastructure.Data.Repository
             return UserConvertor.UserDbConvertUserDomain(user);
         }
 
-        public async Task UpdateUser(UserExtendedResponse user, string username)
+        public async Task<bool> UpdateUser(UserExtendedResponse user, string username)
         {
             if (string.IsNullOrWhiteSpace(user.UserName) ||
                 string.IsNullOrWhiteSpace(user.Email)) throw new ArgumentException(nameof(user));
@@ -50,6 +50,10 @@ namespace RateFilms.Infrastructure.Data.Repository
 
             if (userData == null) throw new ArgumentException(nameof(user));
             if (userData.UserName != username) throw new ArgumentException(nameof(user));
+
+            var res = false;
+
+            if (userData.Email != user.Email || userData.UserName != user.UserName) res = true;
 
             userData.UserName = user.UserName;
             userData.Email = user.Email;
@@ -71,6 +75,7 @@ namespace RateFilms.Infrastructure.Data.Repository
             }
 
             await _context.SaveChangesAsync();
+            return res;
         }
     }
 }
