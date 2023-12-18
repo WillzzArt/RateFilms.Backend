@@ -15,5 +15,12 @@ namespace RateFilms.Domain.DTO.People
             Username = user.Username;
             Image = user.Image;
         }
+
+        public UserMini(Guid id, string username, Image? image)
+        {
+            Id = id;
+            Username = username;
+            Image = image;
+        }
     }
 }

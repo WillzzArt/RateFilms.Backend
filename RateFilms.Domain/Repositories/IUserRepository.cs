@@ -1,4 +1,5 @@
 ﻿using RateFilms.Domain.DTO.Authorization;
+using RateFilms.Domain.DTO.People;
 using RateFilms.Domain.Models.Authorization;
 
 namespace RateFilms.Domain.Repositories
@@ -9,5 +10,6 @@ namespace RateFilms.Domain.Repositories
         Task<User?> FindUserWithImage(string username);
         Task<User?> ChangePassword(string userLogin, string password);
         Task<bool> UpdateUser(UserExtendedResponse user, string username);
+        Task<IEnumerable<UserMini>> FindUsersByUsername(string username);
     }
 }

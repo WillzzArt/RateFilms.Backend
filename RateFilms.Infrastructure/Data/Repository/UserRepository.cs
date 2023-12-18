@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO.Authorization;
+using RateFilms.Domain.DTO.People;
 using RateFilms.Domain.Models.Authorization;
+using RateFilms.Domain.Models.StorageModels;
 using RateFilms.Domain.Repositories;
 
 namespace RateFilms.Infrastructure.Data.Repository
@@ -47,6 +49,19 @@ namespace RateFilms.Infrastructure.Data.Repository
             if (user == null) return null;
 
             return UserConvertor.UserDbConvertUserDomain(user);
+        }
+
+        public async Task<IEnumerable<UserMini>> FindUsersByUsername(string username)
+        {
+            var users = await _context.User
+                .Where(u => u.UserName.ToLower().Contains(username.ToLower()))
+                .Select(u => new UserMini(
+                    u.Id, 
+                    u.UserName, 
+                    PersonConvertor.ImageDbConvertImageDomain(u.Image ?? new ImageDbModel())))
+                .ToListAsync();
+
+            return users;
         }
 
         public async Task<bool> UpdateUser(UserExtendedResponse user, string username)

@@ -59,5 +59,16 @@ namespace RateFilms.WebAPI.Controllers
                 }
             }
         }
+
+        [AllowAnonymous]
+        [HttpGet("FindUsers")]
+        public async Task<IActionResult> SearchUsers(string username)
+        {
+            if (string.IsNullOrWhiteSpace(username)) return BadRequest();
+
+            var users = await _userService.FIndUsers(username);
+
+            return Ok(users);
+        }
     }
 }

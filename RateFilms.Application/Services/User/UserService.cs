@@ -4,7 +4,7 @@ using RateFilms.Application.JWTApp;
 using RateFilms.Application.Option;
 using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO.Authorization;
-using RateFilms.Domain.DTO.Movies;
+using RateFilms.Domain.DTO.People;
 using RateFilms.Domain.Helpers;
 using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.DomainModels;
@@ -21,8 +21,8 @@ namespace RateFilms.Application.Services
         private readonly TokenOptions _tokenOption;
 
         public UserService(
-            IBaseRepository baseRepository, 
-            IOptions<TokenOptions> tokenOption, 
+            IBaseRepository baseRepository,
+            IOptions<TokenOptions> tokenOption,
             IUserRepository userRepository,
             IFavoriteRepository favoriteRepository)
         {
@@ -151,6 +151,11 @@ namespace RateFilms.Application.Services
 
             return null;
 
+        }
+
+        public async Task<IEnumerable<UserMini>> FIndUsers(string username)
+        {
+            return await _userRepository.FindUsersByUsername(username);
         }
     }
 }
