@@ -8,5 +8,6 @@ namespace RateFilms.Application.Services
         Task<LoginResponse?> Register(Registration model);
         Task<LoginResponse?> ChangePassword(LoginRequest model);
         Task<string?> UpdateUser(UserExtendedResponse user, string username);
+        Task<UserExtendedResponse?> FindUserForProfile(string username);
     }
 }

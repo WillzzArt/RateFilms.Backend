@@ -43,21 +43,30 @@ namespace RateFilms.Domain.Models.DomainModels
         /// </summary>
         /// <param name="favorites">Список избранных фильма или серила</param>
         /// <returns>Словарь с ключем "оценка" и значением "количество людей"</returns>
-        public static Dictionary<int, int>? GetRatings(IEnumerable<Favorite>? favorites)
+        public static Dictionary<int, int> GetRatings(IEnumerable<Favorite>? favorites)
         {
+            var ratings = new Dictionary<int, int>(4)
+            {
+                { 1, 0 },
+                { 2, 0 },
+                { 3, 0 },
+                { 4, 0 },
+                { 5, 0 }
+            };
+
             if (favorites != null)
             {
-                var ratings = new Dictionary<int, int>(4);
+                //var ratings = new Dictionary<int, int>(4);
 
                 for (var i = 1; i <= 5; i++)
                 {
-                    ratings.Add(i, favorites.Where(x => x.Score != null && x.Score == i).Count());
-                }
+                    ratings[i] = favorites.Where(x => x.Score != null && x.Score == i).Count();
 
-                return ratings;
+                    //ratings.Add(i, favorites.Where(x => x.Score != null && x.Score == i).Count());
+                }
             }
 
-            return null;
+            return ratings;
         }
 
         /// <summary>
@@ -65,21 +74,30 @@ namespace RateFilms.Domain.Models.DomainModels
         /// </summary>
         /// <param name="favorites">Список избранных фильма или серила</param>
         /// <returns>Словарь с ключем "категория" и значением "количество людей"</returns>
-        public static Dictionary<string, int>? GetStatusOfPeople(IEnumerable<Favorite>? favorites)
+        public static Dictionary<string, int> GetStatusOfPeople(IEnumerable<Favorite>? favorites)
         {
+            var statuses = new Dictionary<string, int>(5)
+            {
+                { StatusMovie.Looking.ToString(), 0 },
+                { StatusMovie.InThePlans.ToString(), 0 },
+                { StatusMovie.Viewed.ToString(), 0 },
+                { StatusMovie.Postponed.ToString(), 0 },
+                { StatusMovie.Abandoned.ToString(), 0 }
+            };
+
             if (favorites != null)
             {
-                var statuses = new Dictionary<string, int>(5);
-
+                //var statuses = new Dictionary<string, int>(5);
                 for (var i = 1; i <= 5; i++)
                 {
-                    statuses.Add(
+                    statuses[((StatusMovie)i).ToString()] = favorites.Where(x => x.Status == (StatusMovie)i).Count();
+
+                    /*statuses.Add(
                         ((StatusMovie)i).ToString(),
-                        favorites.Where(x => x.Status == (StatusMovie)i).Count());
+                        favorites.Where(x => x.Status == (StatusMovie)i).Count());*/
                 }
-                return statuses;
             }
-            return null;
+            return statuses;
         }
     }
 }

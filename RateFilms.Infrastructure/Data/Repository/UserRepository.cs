@@ -2,7 +2,6 @@
 using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO.Authorization;
 using RateFilms.Domain.Models.Authorization;
-using RateFilms.Domain.Models.StorageModels;
 using RateFilms.Domain.Repositories;
 
 namespace RateFilms.Infrastructure.Data.Repository
@@ -41,9 +40,18 @@ namespace RateFilms.Infrastructure.Data.Repository
             return UserConvertor.UserDbConvertUserDomain(user);
         }
 
+        public async Task<User?> FindUserWithImage(string username)
+        {
+            var user = await _context.User.Include(u => u.Image).FirstOrDefaultAsync(u => u.UserName == username);
+
+            if (user == null) return null;
+
+            return UserConvertor.UserDbConvertUserDomain(user);
+        }
+
         public async Task<bool> UpdateUser(UserExtendedResponse user, string username)
         {
-            if (string.IsNullOrWhiteSpace(user.UserName) ||
+            if (string.IsNullOrWhiteSpace(user.Username) ||
                 string.IsNullOrWhiteSpace(user.Email)) throw new ArgumentException(nameof(user));
 
             var userData = await _context.User.FirstOrDefaultAsync(u => u.Id == user.Id);
@@ -53,9 +61,9 @@ namespace RateFilms.Infrastructure.Data.Repository
 
             var res = false;
 
-            if (userData.Email != user.Email || userData.UserName != user.UserName) res = true;
+            if (userData.Email != user.Email || userData.UserName != user.Username) res = true;
 
-            userData.UserName = user.UserName;
+            userData.UserName = user.Username;
             userData.Email = user.Email;
             userData.Age = user.Age ?? userData.Age;
             userData.Phone = user.Phone ?? userData.Phone;
@@ -65,13 +73,13 @@ namespace RateFilms.Infrastructure.Data.Repository
             {
                 if (userData.ImageId != null)
                 {
-                    var img = await _context.Image.FirstAsync(x => x.Id ==  userData.ImageId);
+                    var img = await _context.Image.FirstAsync(x => x.Id == userData.ImageId);
                     userData.ImageId = null;
                     _context.Image.Remove(img);
                 }
-                
+
                 userData.Image = PersonConvertor.ImageDomainConvertImageDb(user.Image);
-                
+
             }
 
             await _context.SaveChangesAsync();

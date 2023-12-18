@@ -28,5 +28,36 @@ namespace RateFilms.WebAPI.Controllers
 
             return Ok();
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUser(string? username)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    var authorizeUser = await _userService.FindUserForProfile(User.Identity.Name!);
+                    return Ok(authorizeUser);
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            else
+            {
+                var user = await _userService.FindUserForProfile(username);
+
+                if (user != null)
+                {
+                    return Ok(user);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+        }
     }
 }

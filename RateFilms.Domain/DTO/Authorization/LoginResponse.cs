@@ -12,7 +12,7 @@ namespace RateFilms.Domain.DTO.Authorization
         public LoginResponse(User user, string token)
         {
             Id = user.Id;
-            UserName = user.UserName;
+            UserName = user.Username;
             Token = token;
             Role = user.Role.ToString();
         }

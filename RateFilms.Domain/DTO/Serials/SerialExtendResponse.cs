@@ -32,7 +32,7 @@ namespace RateFilms.Domain.DTO.Serials
         public int? UserRating { get; }
         public IEnumerable<CommentResponse>? Comments { get; }
         public Dictionary<int, int>? Ratings { get; }
-        public Dictionary<string, int>? StatusOfPeople { get; }
+        public Dictionary<string, int> StatusOfPeople { get; }
 
         public SerialExtendResponse(Serial serial, Favorite? favoriteSerial, IEnumerable<CommentResponse> comments)
         {

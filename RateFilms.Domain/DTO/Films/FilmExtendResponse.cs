@@ -23,7 +23,7 @@ namespace RateFilms.Domain.DTO.Films
         public int? UserRating { get; }
         public IEnumerable<CommentResponse>? Comments { get; }
         public Dictionary<int, int>? Ratings { get; }
-        public Dictionary<string, int>? StatusOfPeople { get; }
+        public Dictionary<string, int> StatusOfPeople { get; }
 
         public FilmExtendResponse(Film film, Favorite? favoriteFilm, IEnumerable<CommentResponse> comments)
         {

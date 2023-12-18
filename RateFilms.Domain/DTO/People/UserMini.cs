@@ -12,7 +12,7 @@ namespace RateFilms.Domain.DTO.People
         public UserMini(User user)
         {
             Id = user.Id;
-            Username = user.UserName;
+            Username = user.Username;
             Image = user.Image;
         }
     }

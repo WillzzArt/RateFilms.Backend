@@ -4,8 +4,10 @@ using RateFilms.Application.JWTApp;
 using RateFilms.Application.Option;
 using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO.Authorization;
+using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.Helpers;
 using RateFilms.Domain.Models.Authorization;
+using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Models.StorageModels;
 using RateFilms.Domain.Repositories;
 
@@ -15,13 +17,19 @@ namespace RateFilms.Application.Services
     {
         private readonly IBaseRepository _baseRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IFavoriteRepository _favoriteRepository;
         private readonly TokenOptions _tokenOption;
 
-        public UserService(IBaseRepository baseRepository, IOptions<TokenOptions> tokenOption, IUserRepository userRepository)
+        public UserService(
+            IBaseRepository baseRepository, 
+            IOptions<TokenOptions> tokenOption, 
+            IUserRepository userRepository,
+            IFavoriteRepository favoriteRepository)
         {
             _baseRepository = baseRepository;
             _userRepository = userRepository;
             _tokenOption = tokenOption.Value;
+            _favoriteRepository = favoriteRepository;
         }
 
         public async Task<LoginResponse?> Authenticate(LoginRequest model)
@@ -95,7 +103,7 @@ namespace RateFilms.Application.Services
 
             if (isChangedToken)
             {
-                var newUser = await _userRepository.FindUser(user.UserName);
+                var newUser = await _userRepository.FindUser(user.Username);
                 if (newUser != null)
                 {
                     var token = Token.CreateToken(_tokenOption, newUser);
@@ -105,6 +113,44 @@ namespace RateFilms.Application.Services
             }
 
             return null;
+        }
+
+        public async Task<UserExtendedResponse?> FindUserForProfile(string username)
+        {
+            var user = await _userRepository.FindUserWithImage(username);
+
+            if (user != null)
+            {
+                var favoriteFilm = await _favoriteRepository.FindFavoriteFilms(user.Id);
+                var faviriteSerial = await _favoriteRepository.FindFavoriteSerials(user.Id);
+
+                var favMovie = new List<Favorite>();
+
+                foreach (var fav in favoriteFilm)
+                {
+                    favMovie.Add(new Favorite
+                    {
+                        IsFavorite = fav.IsFavorite,
+                        Score = fav.Score,
+                        Status = fav.Status
+                    });
+                }
+
+                foreach (var fav in faviriteSerial)
+                {
+                    favMovie.Add(new Favorite
+                    {
+                        IsFavorite = fav.IsFavorite,
+                        Score = fav.Score,
+                        Status = fav.Status
+                    });
+                }
+
+                return new UserExtendedResponse(user, favMovie);
+            }
+
+            return null;
+
         }
     }
 }
