@@ -20,7 +20,7 @@ namespace RateFilms.Domain.Convertors
                 Phone = userDbModel.Phone,
                 Role = userDbModel.Role,
                 Username = userDbModel.UserName,
-                Image = PersonConvertor.ImageDbConvertImageDomain(userDbModel.Image ?? new ImageDbModel())
+                Image = PersonConvertor.ImageDbConvertImageDomain(userDbModel.Image)
             };
 
             return user;
@@ -40,7 +40,7 @@ namespace RateFilms.Domain.Convertors
                 Password = user.Password,
                 Phone = user.Phone,
                 Role = user.Role,
-                Image = PersonConvertor.ImageDomainConvertImageDb(user.Image ?? new Image())
+                Image = PersonConvertor.ImageDomainConvertImageDb(user.Image)
             };
 
             return userDb;

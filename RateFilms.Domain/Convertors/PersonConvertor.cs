@@ -31,7 +31,7 @@ namespace RateFilms.Domain.Convertors
                     Id = a.PersonId,
                     Name = a.Person.Name,
                     Age = a.Person.Age,
-                    Image = ImageDbConvertImageDomain(a.Person.Image ?? new ImageDbModel()),
+                    Image = ImageDbConvertImageDomain(a.Person.Image),
                     Professions = a.Professions.Select(p => p.Profession.ToEnum(Profession.None))
                 }).ToList();
 
@@ -47,7 +47,7 @@ namespace RateFilms.Domain.Convertors
                     Id = a.PersonId,
                     Name = a.Person.Name,
                     Age = a.Person.Age,
-                    Image = ImageDbConvertImageDomain(a.Person.Image ?? new ImageDbModel()),
+                    Image = ImageDbConvertImageDomain(a.Person.Image),
                     Professions = a.Professions.Select(p => p.Profession.ToEnum(Profession.None))
                 }).ToList();
 
@@ -68,7 +68,7 @@ namespace RateFilms.Domain.Convertors
                         Age = a.Age,
                         Name = a.Name,
                         ImageId = a.Image?.Id,
-                        Image = ImageDomainConvertImageDb(a.Image ?? new Image())
+                        Image = ImageDomainConvertImageDb(a.Image)
                     },
                     FilmId = filmId,
                     Professions = a.Professions.Select(p => new ProfessionDbModel
@@ -95,7 +95,7 @@ namespace RateFilms.Domain.Convertors
                         Age = a.Age,
                         Name = a.Name,
                         ImageId = a.Image?.Id,
-                        Image = ImageDomainConvertImageDb(a.Image ?? new Image())
+                        Image = ImageDomainConvertImageDb(a.Image)
                     },
                     SerialId = serialId,
                     Professions = a.Professions.Select(p => new ProfessionDbModel
@@ -108,9 +108,10 @@ namespace RateFilms.Domain.Convertors
             return peopleDb;
         }
 
-        public static Image ImageDbConvertImageDomain(ImageDbModel imageDbModel)
+        public static Image? ImageDbConvertImageDomain(ImageDbModel? imageDbModel)
         {
-            if (imageDbModel == null) throw new ArgumentNullException(nameof(imageDbModel));
+            //if (imageDbModel == null) throw new ArgumentNullException(nameof(imageDbModel));
+            if (imageDbModel == null) return null;
 
             var image = new Image
             {
@@ -122,9 +123,9 @@ namespace RateFilms.Domain.Convertors
             return image;
         }
 
-        public static ImageDbModel ImageDomainConvertImageDb(Image image)
+        public static ImageDbModel? ImageDomainConvertImageDb(Image? image)
         {
-            if (image == null) throw new ArgumentNullException(nameof(image));
+            if (image == null) return null;
 
             var imageDb = new ImageDbModel
             {

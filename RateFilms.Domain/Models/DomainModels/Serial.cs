@@ -7,7 +7,7 @@
         public string Description { get; set; }
         public DateTimeOffset? RealeseDate { get; set; }
         public IEnumerable<Genre> Genre { get; set; }
-        public Image? PreviewImage { get; set; }
+        public Image PreviewImage { get; set; }
         public int AgeRating { get; set; }
         public string? Country { get; set; }
         public IEnumerable<Season> Seasons { get; set; }

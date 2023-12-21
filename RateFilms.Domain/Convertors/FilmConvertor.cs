@@ -32,7 +32,7 @@ namespace RateFilms.Domain.Convertors
                 Duration = filmDbModel.Duration,
                 Country = filmDbModel.Country,
                 RealeseDate = filmDbModel.ReleaseDate,
-                PreviewImage = PersonConvertor.ImageDbConvertImageDomain(previewImage ?? new ImageDbModel()),
+                PreviewImage = PersonConvertor.ImageDbConvertImageDomain(previewImage)!,
                 Genre = filmDbModel.Genre.Select(g => g.Genre.ToEnum(Genre.None)),
                 Images = PersonConvertor.ImageDbListConvertImageDomainList(images)
             };

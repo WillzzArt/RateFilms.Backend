@@ -9,14 +9,14 @@ namespace RateFilms.Domain.DTO.Serials
         private bool _isAnnouncement;
         private bool _isOngoing;
         private int _countSeriesLeft;
-        private int? _countMaxSeries;
+        private int? _countSeriesMax;
 
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public long? RealeseDate { get; set; }
+        public long? ReleaseDate { get; set; }
         public List<string> Genre { get; set; } = new List<string>();
-        public Image? PreviewImage { get; set; }
+        public Image PreviewImage { get; set; }
         public double? AvgRating { get; set; }
         public int AgeRating { get; set; }
         public List<SeasonResponse> Seasons { get; set; }
@@ -26,8 +26,8 @@ namespace RateFilms.Domain.DTO.Serials
         public bool IsAnnouncement { get => _isAnnouncement; }
         public bool IsOngoing { get => _isOngoing; }
         public int CountSeriesLeft { get => _countSeriesLeft; }
-        public int? CountMaxSeries { get => _countMaxSeries; }
-        public long? LastReleaseSeriesDate { get; }
+        public int? CountSeriesMax { get => _countSeriesMax; }
+        public long? LastSeriesReleaseDate { get; }
         public string? Country { get; }
         public int? UserRating { get; }
         public IEnumerable<CommentResponse>? Comments { get; }
@@ -39,7 +39,7 @@ namespace RateFilms.Domain.DTO.Serials
             Id = serial.Id;
             Name = serial.Name;
             Description = serial.Description;
-            if (serial.RealeseDate != null) RealeseDate = ((DateTimeOffset)serial.RealeseDate).ToUnixTimeMilliseconds();
+            if (serial.RealeseDate != null) ReleaseDate = ((DateTimeOffset)serial.RealeseDate).ToUnixTimeMilliseconds();
             if (serial.Genre.Any())
             {
                 Genre = serial.Genre
@@ -54,8 +54,8 @@ namespace RateFilms.Domain.DTO.Serials
             People = serial.People.Select(p => new PersonResponse(p)).ToList();
             isFavorite = favoriteSerial?.IsFavorite ?? false;
             Status = favoriteSerial?.Status.ToString() ?? StatusMovie.None.ToString();
-            serial.CountSeries(out _isAnnouncement, out _isOngoing, out _countMaxSeries, out _countSeriesLeft);
-            LastReleaseSeriesDate = serial.GetLastReleaseSeriesDate(IsAnnouncement);
+            serial.CountSeries(out _isAnnouncement, out _isOngoing, out _countSeriesMax, out _countSeriesLeft);
+            LastSeriesReleaseDate = serial.GetLastReleaseSeriesDate(IsAnnouncement);
             Country = serial.Country;
             UserRating = favoriteSerial?.Score;
             Ratings = Favorite.GetRatings(serial.Favorites);

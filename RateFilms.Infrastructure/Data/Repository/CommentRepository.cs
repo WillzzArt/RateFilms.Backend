@@ -82,7 +82,15 @@ namespace RateFilms.Infrastructure.Data.Repository
         public async Task<IEnumerable<Comment>> GetCommentsInFilm(Guid FilmId, int count)
         {
             var commentsInFav = await _context.FavoriteFilms.Where(fav => fav.FilmId == FilmId && fav.Comments != null)
-                .Select(x => new { comments = x.Comments!.ToList(), user = x.User }).ToListAsync();
+                .Select(x => new { 
+                    comments = x.Comments!.ToList(), 
+                    user = new UserDbModel 
+                    {
+                        Id = x.User.Id,
+                        UserName = x.User.UserName,
+                        Image = x.User.Image
+
+                    }}).ToListAsync();
 
             var comment = from commInFav in commentsInFav
                           from comm in commInFav.comments
@@ -100,10 +108,20 @@ namespace RateFilms.Infrastructure.Data.Repository
             return comment.Take(count);
         }
 
+        //TODO подгрузка картинки
         public async Task<IEnumerable<Comment>> GetCommentsInSerial(Guid SerialId, int count)
         {
             var commentsInFav = await _context.FavoriteSerials.Where(fav => fav.SerialId == SerialId && fav.Comments != null)
-                .Select(x => new { comments = x.Comments!.ToList(), user = x.User }).ToListAsync();
+                .Select(x => new
+                {
+                    comments = x.Comments!.ToList(),
+                    user = new UserDbModel
+                    {
+                        Id = x.User.Id,
+                        UserName = x.User.UserName,
+                        Image = x.User.Image
+                    }
+                }).ToListAsync();
 
             var comment = from commInFav in commentsInFav
                           from comm in commInFav.comments

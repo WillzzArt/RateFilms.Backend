@@ -8,16 +8,17 @@ namespace RateFilms.Domain.DTO.Films
     {
         public Guid Id { get; }
         public string Name { get; }
-        public string? Description { get; }
-        public long? RealeseDate { get; }
+        public string Description { get; }
+        public long? ReleaseDate { get; }
         public List<string> Genre { get; } = new List<string>();
         public int Duration { get; }
         public Image PreviewImage { get; }
-        public List<Image> Images { get; } = new List<Image>();
+        public List<Image>? Images { get; }
         public double? AvgRating { get; }
         public int AgeRating { get; }
         public List<PersonResponse> People { get; } = new List<PersonResponse>();
         public bool isFavorite { get; } = false;
+        public bool IsAnnouncement { get; }
         public string? Status { get; }
         public string? Country { get; }
         public int? UserRating { get; }
@@ -38,7 +39,7 @@ namespace RateFilms.Domain.DTO.Films
             }
             Duration = film.Duration;
             if (film.RealeseDate != null)
-                RealeseDate = ((DateTimeOffset)film.RealeseDate).ToUnixTimeMilliseconds();
+                ReleaseDate = ((DateTimeOffset)film.RealeseDate).ToUnixTimeMilliseconds();
 
             PreviewImage = film.PreviewImage;
             if (film.Images.Any())
@@ -62,6 +63,7 @@ namespace RateFilms.Domain.DTO.Films
             Ratings = Favorite.GetRatings(film.Favorites);
             StatusOfPeople = Favorite.GetStatusOfPeople(film.Favorites);
             Comments = comments;
+            IsAnnouncement = film.IsAnnouncement();
         }
     }
 }

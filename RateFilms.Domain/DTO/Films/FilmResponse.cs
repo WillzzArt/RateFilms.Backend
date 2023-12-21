@@ -6,15 +6,15 @@ namespace RateFilms.Domain.DTO.Films
     {
         public Guid Id { get; }
         public string Name { get; }
-        public string? Description { get; }
-        public long? RealeseDate { get; }
+        public string Description { get; }
+        public long? ReleaseDate { get; }
         public List<string> Genre { get; } = new List<string>();
         public Image PreviewImage { get; }
         public double? AvgRating { get; }
         public int AgeRating { get; }
         public bool IsAnnouncement { get; }
         public bool isFavorite { get;  } = false;
-        public string? Status { get; }
+        public string Status { get; }
         public string? Country { get; }
         public int? UserRating { get; }
 
@@ -31,7 +31,7 @@ namespace RateFilms.Domain.DTO.Films
             }
 
             if (film.RealeseDate != null)
-                RealeseDate = ((DateTimeOffset)film.RealeseDate).ToUnixTimeMilliseconds();
+                ReleaseDate = ((DateTimeOffset)film.RealeseDate).ToUnixTimeMilliseconds();
 
             PreviewImage = film.PreviewImage;
             AvgRating = Favorite.GetAvgRating(film.Favorites);

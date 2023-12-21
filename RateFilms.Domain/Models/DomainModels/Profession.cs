@@ -5,6 +5,13 @@
         None,
         Actor,
         Autor,
-        Director
+        Director,
+        Manager,
+        Screenwriter,
+        Operator,
+        Producer,
+        ProductionDesigner,
+        Editor,
+        Composer
     }
 }

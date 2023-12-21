@@ -72,7 +72,7 @@ namespace RateFilms.Domain.Convertors
                     Name = s.Name,
                     Duration = s.Duration,
                     RealeseDate = s.RealeseDate,
-                    PreviewImage = PersonConvertor.ImageDbConvertImageDomain(s.PreviewImage ?? new ImageDbModel())
+                    PreviewImage = PersonConvertor.ImageDbConvertImageDomain(s.PreviewImage)!
                 });
 
             return series;
@@ -98,7 +98,7 @@ namespace RateFilms.Domain.Convertors
                 RealeseDate = serial.RealeseDate,
                 People = PersonConvertor.PersonDomainListConvertPersonInSerialDbList(serial.People, serial.Id),
                 PreviewImageId = serial.PreviewImage?.Id,
-                PreviewImage = PersonConvertor.ImageDomainConvertImageDb(serial.PreviewImage ?? new Image()),
+                PreviewImage = PersonConvertor.ImageDomainConvertImageDb(serial.PreviewImage),
                 Seasons = SeasonDomainListConvertSeasonDbList(serial.Seasons)
             };
 

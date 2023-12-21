@@ -9,7 +9,7 @@ namespace RateFilms.Domain.Models.StorageModels
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid FavoriteId { get; set; }
         public Guid UserId { get; set; }
-        public UserDbModel? User { get; set; }
+        public UserDbModel User { get; set; }
         public Guid FilmId { get; set; }
         public FilmDbModel? Film { get; set; }
         public StatusMovie Status { get; set; }

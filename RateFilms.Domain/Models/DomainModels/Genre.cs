@@ -5,6 +5,14 @@
         None,
         Action,
         Fantasy,
-        Horror
+        Horror,
+        Adventure,
+        Animated,
+        Comedy,
+        Drama,
+        Thriller,
+        Historical,
+        Romance,
+        Crime
     }
 }

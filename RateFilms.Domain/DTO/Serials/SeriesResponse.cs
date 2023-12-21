@@ -7,7 +7,7 @@ namespace RateFilms.Domain.DTO.Serials
         public Guid Id { get; set; }
         public string Name { get; set; }
         public int Duration { get; set; }
-        public long? RealeseDate { get; set; }
+        public long? ReleaseDate { get; set; }
         public Image PreviewImage { get; set; }
         public float? AvgRating { get; set; }
 
@@ -16,7 +16,7 @@ namespace RateFilms.Domain.DTO.Serials
             Id = series.Id;
             Name = series.Name;
             Duration = series.Duration;
-            if (series.RealeseDate != null) RealeseDate = ((DateTimeOffset)series.RealeseDate).ToUnixTimeMilliseconds();
+            if (series.RealeseDate != null) ReleaseDate = ((DateTimeOffset)series.RealeseDate).ToUnixTimeMilliseconds();
             PreviewImage = series.PreviewImage;
             //AvgRating = series.AvgRating;
         }

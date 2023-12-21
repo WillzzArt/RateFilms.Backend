@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace RateFilms.Domain.DTO.Movies
+﻿namespace RateFilms.Domain.DTO.Movies
 {
     public class CommentRequest
     {
