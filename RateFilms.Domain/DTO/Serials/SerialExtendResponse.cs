@@ -11,13 +11,14 @@ namespace RateFilms.Domain.DTO.Serials
         private int _countSeriesLeft;
         private int? _countSeriesMax;
 
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public long? ReleaseDate { get; set; }
-        public List<string> Genre { get; set; } = new List<string>();
-        public Image PreviewImage { get; set; }
-        public double? AvgRating { get; set; }
+        public Guid Id { get; }
+        public string Name { get; }
+        public string Description { get; }
+        public long? ReleaseDate { get; }
+        public List<string> Genre { get; } = new List<string>();
+        public Image PreviewImage { get; }
+        public double? AvgRating { get; }
+        public int CountFavorite { get; }
         public int AgeRating { get; set; }
         public List<SeasonResponse> Seasons { get; set; }
         public List<PersonResponse> People { get; set; }
@@ -49,6 +50,7 @@ namespace RateFilms.Domain.DTO.Serials
 
             PreviewImage = serial.PreviewImage;
             AvgRating = Favorite.GetAvgRating(serial.Favorites);
+            CountFavorite = Favorite.GetCountFavorite(serial.Favorites);
             AgeRating = serial.AgeRating;
             Seasons = serial.Seasons.Select(s => new SeasonResponse(s)).ToList();
             People = serial.People.Select(p => new PersonResponse(p)).ToList();

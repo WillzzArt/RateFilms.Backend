@@ -15,6 +15,7 @@ namespace RateFilms.Domain.DTO.Films
         public Image PreviewImage { get; }
         public List<Image>? Images { get; }
         public double? AvgRating { get; }
+        public int CountFavorite { get; }
         public int AgeRating { get; }
         public List<PersonResponse> People { get; } = new List<PersonResponse>();
         public bool isFavorite { get; } = false;
@@ -49,6 +50,7 @@ namespace RateFilms.Domain.DTO.Films
                     .ToList();
             }
             AvgRating = Favorite.GetAvgRating(film.Favorites);
+            CountFavorite = Favorite.GetCountFavorite(film.Favorites);
             AgeRating = film.AgeRating;
             if (film.People != null && film.People.Any())
             {

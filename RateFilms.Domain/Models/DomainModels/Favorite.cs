@@ -38,6 +38,15 @@ namespace RateFilms.Domain.Models.DomainModels
             return null;
         }
 
+        public static int GetCountFavorite(IEnumerable<Favorite>? favorites)
+        {
+            if (favorites != null)
+            {
+                return favorites.Where(x => x.IsFavorite).Count();
+            }
+            return 0;
+        }
+
         /// <summary>
         /// Считает оценки людей
         /// </summary>
@@ -61,8 +70,6 @@ namespace RateFilms.Domain.Models.DomainModels
                 for (var i = 1; i <= 5; i++)
                 {
                     ratings[i] = favorites.Where(x => x.Score != null && x.Score == i).Count();
-
-                    //ratings.Add(i, favorites.Where(x => x.Score != null && x.Score == i).Count());
                 }
             }
 
@@ -91,10 +98,6 @@ namespace RateFilms.Domain.Models.DomainModels
                 for (var i = 1; i <= 5; i++)
                 {
                     statuses[((StatusMovie)i).ToString()] = favorites.Where(x => x.Status == (StatusMovie)i).Count();
-
-                    /*statuses.Add(
-                        ((StatusMovie)i).ToString(),
-                        favorites.Where(x => x.Status == (StatusMovie)i).Count());*/
                 }
             }
             return statuses;
