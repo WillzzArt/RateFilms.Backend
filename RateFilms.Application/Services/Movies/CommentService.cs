@@ -1,4 +1,6 @@
-﻿using RateFilms.Domain.DTO.Movies;
+﻿using RateFilms.Domain.Convertors;
+using RateFilms.Domain.DTO.Movies;
+using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Models.StorageModels;
 using RateFilms.Domain.Repositories;
 
@@ -20,16 +22,35 @@ namespace RateFilms.Application.Services.Movies
             _favoriteRepository = favoriteRepository;
         }
 
-        public async Task<IEnumerable<CommentResponse>> GetCommentsInFilm(Guid filmId, int count)
+        public async Task<IEnumerable<CommentResponse>> GetCommentsInFilm(Guid filmId, int count, string? username)
         {
-            var comments = await _commentRepository.GetCommentsInFilm(filmId, count);
+            IEnumerable<Comment> comments;
+            if (username != null)
+            {
+                var user = await _userRepository.FindUser(username);
+                comments = await _commentRepository.GetCommentsInFilm(filmId, count, user?.Id);
+            }
+            else
+            {
+                comments = await _commentRepository.GetCommentsInFilm(filmId, count, null);
+            }
+            
 
             return comments.Select(c => new CommentResponse(c));
         }
 
-        public async Task<IEnumerable<CommentResponse>> GetCommentsInSerial(Guid filmId, int count)
+        public async Task<IEnumerable<CommentResponse>> GetCommentsInSerial(Guid filmId, int count, string? username)
         {
-            var comments = await _commentRepository.GetCommentsInSerial(filmId, count);
+            IEnumerable<Comment> comments;
+            if (username != null)
+            {
+                var user = await _userRepository.FindUser(username);
+                comments = await _commentRepository.GetCommentsInSerial(filmId, count, user?.Id);
+            }
+            else
+            {
+                comments = await _commentRepository.GetCommentsInSerial(filmId, count, null);
+            }
 
             return comments.Select(c => new CommentResponse(c));
         }
@@ -80,6 +101,15 @@ namespace RateFilms.Application.Services.Movies
         public Task UpdateComment(CommentRequest commentRequest, string username)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<bool> ChangeLikeOnComment(Guid commentId, string username)
+        {
+            var user = await _userRepository.FindUser(username);
+
+            if (user == null) throw new ArgumentException(nameof(username));
+
+            return await _commentRepository.SetLikedComment(commentId, user.Id);
         }
     }
 }

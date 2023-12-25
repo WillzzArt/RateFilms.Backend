@@ -45,10 +45,15 @@ namespace RateFilms.WebAPI.Controllers
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 var favoriteFilm = await _filmService.GetFilmForAuthorizeUserById(id, User.Identity.Name!);
+
+                if (favoriteFilm == null) return NotFound();
+
                 return Ok(favoriteFilm);
             }
 
             var film = await _filmService.GetFilmById(id);
+
+            if (film == null) return NotFound();
 
             return Ok(film);
         }

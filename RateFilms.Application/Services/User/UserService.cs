@@ -153,7 +153,7 @@ namespace RateFilms.Application.Services
 
         }
 
-        public async Task<IEnumerable<UserMini>> FIndUsers(string username)
+        public async Task<IEnumerable<UserMini>> FindUsers(string username)
         {
             return await _userRepository.FindUsersByUsername(username);
         }

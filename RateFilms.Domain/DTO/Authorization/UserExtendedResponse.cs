@@ -14,6 +14,11 @@ namespace RateFilms.Domain.DTO.Authorization
         public string? Phone { get; set; }
         public Dictionary<string, int> StatisticStatus { get; set; }
 
+        public UserExtendedResponse()
+        {
+            StatisticStatus = new Dictionary<string, int>();
+        }
+
         public UserExtendedResponse(User user, IEnumerable<Favorite> favorites)
         {
             Id = user.Id;

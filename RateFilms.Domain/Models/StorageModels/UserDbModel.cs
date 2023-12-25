@@ -17,6 +17,6 @@ namespace RateFilms.Domain.Models.StorageModels
         public ImageDbModel? Image { get; set; }
         public IEnumerable<FavoriteFilmDbModel>? FavoriteFilms { get; set; }
         public IEnumerable<FavoriteSerialDbModel>? FavoriteSerials { get; set; }
-        public IEnumerable<CommentDbModel> Comments { get; set; }
+        public IEnumerable<CommentUserDbModel> Comments { get; set; }
     }
 }

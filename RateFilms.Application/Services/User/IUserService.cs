@@ -10,6 +10,6 @@ namespace RateFilms.Application.Services
         Task<LoginResponse?> ChangePassword(LoginRequest model);
         Task<string?> UpdateUser(UserExtendedResponse user, string username);
         Task<UserExtendedResponse?> FindUserForProfile(string username);
-        Task<IEnumerable<UserMini>> FIndUsers(string username);
+        Task<IEnumerable<UserMini>> FindUsers(string username);
     }
 }

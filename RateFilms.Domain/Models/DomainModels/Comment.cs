@@ -10,5 +10,6 @@ namespace RateFilms.Domain.Models.DomainModels
         public bool IsEdit { get; set; }
         public User User { get; set; }
         public int CountLike { get; set; }
+        public bool IsLiked { get; set; }
     }
 }

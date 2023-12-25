@@ -13,6 +13,7 @@
         Thriller,
         Historical,
         Romance,
-        Crime
+        Crime,
+        Anime
     }
 }

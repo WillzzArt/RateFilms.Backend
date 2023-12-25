@@ -66,7 +66,7 @@ namespace RateFilms.WebAPI.Controllers
         {
             if (string.IsNullOrWhiteSpace(username)) return BadRequest();
 
-            var users = await _userService.FIndUsers(username);
+            var users = await _userService.FindUsers(username);
 
             return Ok(users);
         }

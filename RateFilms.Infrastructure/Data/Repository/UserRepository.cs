@@ -58,7 +58,7 @@ namespace RateFilms.Infrastructure.Data.Repository
                 .Select(u => new UserMini(
                     u.Id, 
                     u.UserName, 
-                    PersonConvertor.ImageDbConvertImageDomain(u.Image ?? new ImageDbModel())))
+                    PersonConvertor.ImageDbConvertImageDomain(u.Image)))
                 .ToListAsync();
 
             return users;

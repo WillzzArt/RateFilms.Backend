@@ -33,10 +33,15 @@ namespace RateFilms.WebAPI.Controllers
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 var favoriteSerial = await _serialService.GetSerialForAuthorizeUser(User.Identity.Name!);
+
+                if (favoriteSerial == null) return NotFound();
+
                 return Ok(favoriteSerial);
             }
 
             var serial = await _serialService.GetSerials();
+
+            if (serial == null) return NotFound();
 
             return Ok(serial);
         }

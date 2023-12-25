@@ -35,15 +35,46 @@ namespace RateFilms.WebAPI.Controllers
         [HttpGet("CommentInFilm")]
         public async Task<IActionResult> GetCommentInFilm(Guid filmId, int count)
         {
-            var comment = await _commentSerivice.GetCommentsInFilm(filmId, count);
-            return Ok(comment);
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                var comments = await _commentSerivice.GetCommentsInFilm(filmId, count, User.Identity.Name);
+                return Ok(comments);
+            }
+            else
+            {
+                var comments = await _commentSerivice.GetCommentsInFilm(filmId, count, null);
+                return Ok(comments);
+            }
+            
         }
 
         [HttpGet("CommentInSerial")]
         public async Task<IActionResult> GetCommentInSerial(Guid serialId, int count)
         {
-            var comment = await _commentSerivice.GetCommentsInSerial(serialId, count);
-            return Ok(comment);
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                var comments = await _commentSerivice.GetCommentsInSerial(serialId, count, User.Identity.Name);
+                return Ok(comments);
+            }
+            else
+            {
+                var comments = await _commentSerivice.GetCommentsInSerial(serialId, count, null);
+                return Ok(comments);
+            }
         }
+
+        [Authorize]
+        [HttpPut("{commentId}")]
+        public async Task<IActionResult> LikeComment(Guid commentId)
+        {
+            var isUpdate = await _commentSerivice.ChangeLikeOnComment(commentId, User.Identity!.Name!);
+            if (isUpdate)
+            {
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+        
     }
 }

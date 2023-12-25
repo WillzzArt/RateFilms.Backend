@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO.Movies;
+using RateFilms.Domain.Helpers;
 using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Models.StorageModels;
@@ -176,8 +177,8 @@ namespace RateFilms.Infrastructure.Data.Repository
                 {
                     SerialId = favoriteSerial.MovieId,
                     UserId = user.Id,
-                    Status = favoriteSerial.StatusMovie,
-                    IsFavorite = favoriteSerial.IsFavorite,
+                    Status = favoriteSerial.StatusMovie.ToEnum(StatusMovie.None),
+                    IsFavorite = favoriteSerial.IsFavorite ?? false,
                     Score = favoriteSerial.Score
                 };
 
@@ -185,9 +186,11 @@ namespace RateFilms.Infrastructure.Data.Repository
             }
             else
             {
-                favoriteSerialDb.Status = favoriteSerial.StatusMovie;
-                favoriteSerialDb.IsFavorite = favoriteSerial.IsFavorite;
-                favoriteSerialDb.Score = favoriteSerial.Score;
+                favoriteSerialDb.Status = favoriteSerial.StatusMovie != null 
+                    ? favoriteSerial.StatusMovie.ToEnum(StatusMovie.None) 
+                    : favoriteSerialDb.Status;
+                favoriteSerialDb.IsFavorite = favoriteSerial.IsFavorite ?? favoriteSerialDb.IsFavorite;
+                favoriteSerialDb.Score = favoriteSerial.Score ?? favoriteSerialDb.Score;
 
                 if (favoriteSerialDb.Status == StatusMovie.None &&
                     favoriteSerialDb.IsFavorite == false &&

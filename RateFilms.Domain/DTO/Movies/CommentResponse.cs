@@ -10,6 +10,7 @@ namespace RateFilms.Domain.DTO.Movies
         public long Date { get; }
         public int CountLike { get;  }
         public UserMini User {  get; }
+        public bool IsLiked { get; }
 
         public CommentResponse(Comment comment)
         {
@@ -18,6 +19,7 @@ namespace RateFilms.Domain.DTO.Movies
             Date = comment.Date.ToUnixTimeMilliseconds();
             CountLike = comment.CountLike;
             User = new UserMini(comment.User);
+            IsLiked = comment.IsLiked;
         }
 
     }

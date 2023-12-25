@@ -58,10 +58,8 @@ namespace RateFilms.Infrastructure.Data
                 .WithMany(g => g.Serials)
                 .UsingEntity(j => j.ToTable("SerialGenries"));
 
-            builder.Entity<CommentDbModel>()
-                .HasMany(f => f.Users)
-                .WithMany(u => u.Comments)
-                .UsingEntity(j => j.ToTable("CommentLikes"));
+            builder.Entity<CommentUserDbModel>()
+                .HasKey(c => new { c.UserId, c.CommentId });
 
             builder.Entity<PersonInFilmDbModel>()
                 .HasMany(f => f.Professions)
@@ -116,5 +114,6 @@ namespace RateFilms.Infrastructure.Data
         public DbSet<CommentInFilmDbModel> CommentInFilm { get; set; }
         public DbSet<CommentInSerialDbModel> CommentInSerial { get; set; }
         public DbSet<CommentDbModel> Comment { get; set; }
+        public DbSet<CommentUserDbModel> UserComment { get; set; }
     }
 }
