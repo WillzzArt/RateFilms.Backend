@@ -1,4 +1,4 @@
-﻿using RateFilms.Domain.Helpers;
+﻿using RateFilms.Common.Helpers;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Models.StorageModels;
 

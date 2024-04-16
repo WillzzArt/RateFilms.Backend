@@ -2,10 +2,10 @@
 using Microsoft.Extensions.Options;
 using RateFilms.Application.JWTApp;
 using RateFilms.Application.Option;
+using RateFilms.Common.Helpers;
 using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO.Authorization;
 using RateFilms.Domain.DTO.People;
-using RateFilms.Domain.Helpers;
 using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Models.StorageModels;

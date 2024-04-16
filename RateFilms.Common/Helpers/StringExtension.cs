@@ -1,4 +1,4 @@
-﻿namespace RateFilms.Domain.Helpers
+﻿namespace RateFilms.Common.Helpers
 {
     public static class StringExtension
     {
