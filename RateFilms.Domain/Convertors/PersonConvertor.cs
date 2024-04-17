@@ -117,7 +117,10 @@ namespace RateFilms.Domain.Convertors
             {
                 Id = imageDbModel.Id,
                 Url = imageDbModel.Url,
-                isPreview = imageDbModel.isPreview
+                isPreview = imageDbModel.isPreview,
+                Name = imageDbModel.Name,
+                Img = imageDbModel.Img
+                
             };
 
             return image;
@@ -131,7 +134,9 @@ namespace RateFilms.Domain.Convertors
             {
                 Id = image.Id,
                 Url = image.Url,
-                isPreview = image.isPreview
+                isPreview = image.isPreview,
+                Name = image.Name,
+                Img = image.Img
             };
 
             return imageDb;
@@ -146,7 +151,9 @@ namespace RateFilms.Domain.Convertors
                 {
                     Id = img.Id,
                     Url = img.Url,
-                    isPreview = img.isPreview
+                    isPreview = img.isPreview,
+                    Name = img.Name,
+                    Img = img.Img
                 }).ToList();
 
             return images;
@@ -161,7 +168,9 @@ namespace RateFilms.Domain.Convertors
                 {
                     Id = img.Id,
                     Url = img.Url,
-                    isPreview = img.isPreview
+                    isPreview = img.isPreview,
+                    Name = img.Name,
+                    Img = img.Img
                 }).ToList();
 
             return images;
