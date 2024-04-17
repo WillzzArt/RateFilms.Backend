@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\RateFilms.Common\RateFilms.Common.csproj" />
     <ProjectReference Include="..\RateFilms.Infrastructure\RateFilms.Infrastructure.csproj" />
   </ItemGroup>
 

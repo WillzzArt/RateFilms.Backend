@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RateFilms.Application\RateFilms.Application.csproj" />
+    <ProjectReference Include="..\RateFilms.Common\RateFilms.Common.csproj" />
   </ItemGroup>
 
 </Project>

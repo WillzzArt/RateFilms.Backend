@@ -21,6 +21,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RateFilms.WebAPI", "RateFil
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RateFilms.Infrastructure", "RateFilms.Infrastructure\RateFilms.Infrastructure.csproj", "{5639EEDF-E9F8-4F81-9691-6B25931553B7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{3AF95EAD-6665-457D-9E98-A65FBF1980B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RateFilms.Common", "RateFilms.Common\RateFilms.Common.csproj", "{50289351-22A9-459C-98DE-BC9645D4BEEC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +47,10 @@ Global
 		{5639EEDF-E9F8-4F81-9691-6B25931553B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5639EEDF-E9F8-4F81-9691-6B25931553B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5639EEDF-E9F8-4F81-9691-6B25931553B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50289351-22A9-459C-98DE-BC9645D4BEEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50289351-22A9-459C-98DE-BC9645D4BEEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50289351-22A9-459C-98DE-BC9645D4BEEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50289351-22A9-459C-98DE-BC9645D4BEEC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,6 +60,7 @@ Global
 		{D36B3B3B-CF1E-44B8-B1DE-76EB2083106A} = {0E15EE86-3342-4671-BB36-73C1D0E49E8A}
 		{D136FC35-6011-40E3-ACC6-AF8225C9470F} = {15E846B8-5B0E-4BB7-895D-F033B2DAA944}
 		{5639EEDF-E9F8-4F81-9691-6B25931553B7} = {DB2C821D-2268-4F11-B10D-3141960962FE}
+		{50289351-22A9-459C-98DE-BC9645D4BEEC} = {3AF95EAD-6665-457D-9E98-A65FBF1980B3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C25D0468-F71A-4923-B265-752F2CE7A114}
