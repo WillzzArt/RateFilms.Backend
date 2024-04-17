@@ -11,5 +11,7 @@ namespace RateFilms.Domain.Models.StorageModels
         public Guid? SeasonId { get; set; }
         public SeasonDbModel? Season { get; set; }
         public bool isPreview { get; set; }
+        public string? Name {  get; set; }
+        public byte[] Img { get; set; }
     }
 }
