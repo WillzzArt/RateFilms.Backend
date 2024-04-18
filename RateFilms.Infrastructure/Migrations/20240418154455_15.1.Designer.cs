@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RateFilms.Infrastructure.Data;
@@ -11,9 +12,11 @@ using RateFilms.Infrastructure.Data;
 namespace RateFilms.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240418154455_15.1")]
+    partial class _151
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -99,9 +102,6 @@ namespace RateFilms.Infrastructure.Migrations
 
                     b.Property<bool>("IsEdit")
                         .HasColumnType("boolean");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Text")
                         .IsRequired()
@@ -371,6 +371,38 @@ namespace RateFilms.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Profession");
+                });
+
+            modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.ReviewDbModel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("CountLike")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsLiked")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("status")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ReviewDbModel");
                 });
 
             modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.SeasonDbModel", b =>
@@ -727,6 +759,17 @@ namespace RateFilms.Infrastructure.Migrations
                     b.Navigation("Serial");
                 });
 
+            modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.ReviewDbModel", b =>
+                {
+                    b.HasOne("RateFilms.Domain.Models.StorageModels.UserDbModel", "User")
+                        .WithMany("Reviews")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.SeasonDbModel", b =>
                 {
                     b.HasOne("RateFilms.Domain.Models.StorageModels.SerialDbModel", "Serial")
@@ -831,6 +874,8 @@ namespace RateFilms.Infrastructure.Migrations
                     b.Navigation("FavoriteFilms");
 
                     b.Navigation("FavoriteSerials");
+
+                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }

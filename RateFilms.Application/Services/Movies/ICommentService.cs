@@ -4,8 +4,8 @@ namespace RateFilms.Application.Services.Movies
 {
     public interface ICommentService
     {
-        Task CreateCommentInFilm(CommentRequest commentRequest, string username);
-        Task CreateCommentInSerial(CommentRequest commentRequest, string username);
+        Task CreateComment(CommentRequest commentRequest, string username, bool isFilm);
+        Task PublishReview(Guid reviewId, string username, bool isFilm, bool isPublish = false);
         Task UpdateComment(CommentRequest commentRequest, string username);
         Task DeleteComment(CommentRequest commentRequest, string username);
         Task<IEnumerable<CommentResponse>> GetCommentsInFilm(Guid filmId, int count, string? username);

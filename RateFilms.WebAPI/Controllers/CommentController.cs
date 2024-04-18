@@ -20,7 +20,7 @@ namespace RateFilms.WebAPI.Controllers
         [HttpPost("CommentInFilm")]
         public async Task<IActionResult> CreateCommentInFilm(CommentRequest comment)
         {
-            await _commentSerivice.CreateCommentInFilm(comment, User.Identity!.Name!);
+            await _commentSerivice.CreateComment(comment, User.Identity!.Name!, true);
             return Ok();
         }
 
@@ -28,7 +28,7 @@ namespace RateFilms.WebAPI.Controllers
         [HttpPost("CommentInSerial")]
         public async Task<IActionResult> CreateCommentInSerial(CommentRequest comment)
         {
-            await _commentSerivice.CreateCommentInSerial(comment, User.Identity!.Name!);
+            await _commentSerivice.CreateComment(comment, User.Identity!.Name!, false);
             return Ok();
         }
 
@@ -75,6 +75,23 @@ namespace RateFilms.WebAPI.Controllers
 
             return BadRequest();
         }
-        
+
+        [Authorize]
+        [HttpPut("ChangeReviewStatus")]
+        public async Task<IActionResult> ChangeReviewStatusInFilm(Guid reviewId, bool isFilm)
+        {
+            await _commentSerivice.PublishReview(reviewId, User.Identity!.Name!, isFilm);
+
+            return Ok();
+        }
+
+        [Authorize(Policy = "admin")]
+        [HttpPut("PublishReview")]
+        public async Task<IActionResult> PublishReviewInFilm(Guid reviewId, bool isFilm, bool isPublish)
+        {
+            await _commentSerivice.PublishReview(reviewId, User.Identity!.Name!, isFilm, isPublish);
+
+            return Ok();
+        }
     }
 }
