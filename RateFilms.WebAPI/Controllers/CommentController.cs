@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RateFilms.Application.Services.Movies;
 using RateFilms.Domain.DTO.Movies;
+using RateFilms.Domain.Models.DomainModels;
 
 namespace RateFilms.WebAPI.Controllers
 {
@@ -92,6 +93,24 @@ namespace RateFilms.WebAPI.Controllers
             await _commentSerivice.PublishReview(adminNote, User.Identity!.Name!);
 
             return Ok();
+        }
+
+        [Authorize(Policy = "admin")]
+        [HttpGet("UnpublishedReviews")]
+        public async Task<IActionResult> GetUnpublishedReviews(Guid movieId, bool isFilm, string reviewStatus)
+        {
+            var reviews = await _commentSerivice.GetReviewsInMovie(movieId, 20, reviewStatus, isFilm);
+
+            return Ok(reviews);
+        }
+
+        [Authorize]
+        [HttpGet("UsersReviews")]
+        public async Task<IActionResult> GetUsersReviews(Guid movieId, bool isFilm)
+        {
+            var reviews = await _commentSerivice.GetReviewsInMovie(movieId, 20, "none", isFilm, User.Identity!.Name!);
+
+            return Ok(reviews);
         }
     }
 }

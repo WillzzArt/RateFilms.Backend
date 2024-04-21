@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RateFilms.Domain.Convertors;
-using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Models.StorageModels;
@@ -260,7 +259,7 @@ namespace RateFilms.Infrastructure.Data.Repository
                 _context.AdminNote.Remove(review);
                 await _context.SaveChangesAsync();
             }
-            
+
         }
     }
 }
