@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RateFilms.Domain.Convertors;
+using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Models.StorageModels;
@@ -233,6 +234,33 @@ namespace RateFilms.Infrastructure.Data.Repository
 
             await _context.SaveChangesAsync();
 
+        }
+
+        public async Task CreateNoteToReview(Guid userId, Guid reviewId, string note)
+        {
+            var noteToReview = new AdminNoteDbModel
+            {
+                UserId = userId,
+                ReviewId = reviewId,
+                Note = note,
+                Date = DateTime.UtcNow
+            };
+
+            await _context.AdminNote.AddAsync(noteToReview);
+            await _context.SaveChangesAsync();
+
+        }
+
+        public async Task DeleteNoteToReview(Guid userId, Guid reviewId)
+        {
+            var review = await _context.AdminNote.FirstOrDefaultAsync(x => x.UserId == userId && x.ReviewId == reviewId);
+
+            if (review != null)
+            {
+                _context.AdminNote.Remove(review);
+                await _context.SaveChangesAsync();
+            }
+            
         }
     }
 }

@@ -85,7 +85,7 @@ namespace RateFilms.Application.Services.Movies
             await _commentRepository.CreateCommentAsync(commentDb, user.Id, commentRequest.MovieId);
         }
 
-        public async Task PublishReview(Guid reviewId, string username, bool isFilm, bool isPublish = false)
+        public async Task ChangeReviewStatus(Guid reviewId, string username, bool isFilm)
         {
             var review = await _commentRepository.FindCommentById(reviewId, isFilm);
 
@@ -93,39 +93,80 @@ namespace RateFilms.Application.Services.Movies
 
             if (user == null) throw new ArgumentException(nameof(username));
 
-            switch (review.Status)
+            if (review.User.Id == user.Id)
             {
-                case ReviewStatus.None:
-                    {
-                        throw new ArgumentException(nameof(reviewId));
-                    }
-                case ReviewStatus.Unsent:
-                    {
-                        if (review.User.Id == user.Id)
-                            review.Status = ReviewStatus.Unpublished;
-                        break;
-                    }
-                case ReviewStatus.Unpublished:
-                    {
-                        if (user.Role == Role.Admin)
+                switch (review.Status)
+                {
+                    case ReviewStatus.None:
                         {
-                            if (isPublish)
+                            throw new ArgumentException(nameof(reviewId));
+                        }
+                    case ReviewStatus.Unsent:
+                        {
+                            review.Status = ReviewStatus.Unpublished;
+                            break;
+                        }
+                    case ReviewStatus.Canseled:
+                        {
+                            review.Status = ReviewStatus.Unsent;
+                            break;
+                        }
+                }
+
+                await _commentRepository.SetNewReviewStatus(review);
+            }
+        }
+
+        public async Task PublishReview(AdminNote adminNote, string username)
+        {
+            var user = await _userRepository.FindUser(username);
+
+            if (user == null) throw new ArgumentException(nameof(username));
+
+            if (user.Role == Role.Admin)
+            {
+                var review = await _commentRepository.FindCommentById(adminNote.ReviewId, adminNote.IsFilm);
+
+                switch (review.Status)
+                {
+                    case ReviewStatus.None:
+                        {
+                            throw new ArgumentException(nameof(adminNote.ReviewId));
+                        }
+                    case ReviewStatus.Unpublished:
+                        {
+                            if (adminNote.IsPublish)
                                 review.Status = ReviewStatus.Published;
                             else
+                            {
+                                if (string.IsNullOrWhiteSpace(adminNote.Note)) throw new ArgumentNullException(adminNote.Note);
+
+                                await _commentRepository.CreateNoteToReview(user.Id, adminNote.ReviewId, adminNote.Note);
+
                                 review.Status = ReviewStatus.Canseled;
+                            }
+
+                            break;
                         }
+                    case ReviewStatus.Canseled:
+                        {
+                            await _commentRepository.DeleteNoteToReview(user.Id, adminNote.ReviewId);
+                            review.Status = ReviewStatus.Published;
+                            break;
+                        }
+                    case ReviewStatus.Published:
+                        {
+                            if (string.IsNullOrWhiteSpace(adminNote.Note)) throw new ArgumentNullException(adminNote.Note);
 
-                        break;
-                    }
-                case ReviewStatus.Canseled:
-                    {
-                        if (review.User.Id == user.Id)
-                            review.Status = ReviewStatus.Unsent;
-                        break;
-                    }
+                            await _commentRepository.CreateNoteToReview(user.Id, adminNote.ReviewId, adminNote.Note);
+
+                            review.Status = ReviewStatus.Canseled;
+                            break;
+                        }
+                }
+
+                await _commentRepository.SetNewReviewStatus(review);
             }
-
-            await _commentRepository.SetNewReviewStatus(review);
         }
 
         public Task DeleteComment(CommentRequest commentRequest, string username)

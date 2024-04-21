@@ -80,16 +80,16 @@ namespace RateFilms.WebAPI.Controllers
         [HttpPut("ChangeReviewStatus")]
         public async Task<IActionResult> ChangeReviewStatusInFilm(Guid reviewId, bool isFilm)
         {
-            await _commentSerivice.PublishReview(reviewId, User.Identity!.Name!, isFilm);
+            await _commentSerivice.ChangeReviewStatus(reviewId, User.Identity!.Name!, isFilm);
 
             return Ok();
         }
 
         [Authorize(Policy = "admin")]
         [HttpPut("PublishReview")]
-        public async Task<IActionResult> PublishReviewInFilm(Guid reviewId, bool isFilm, bool isPublish)
+        public async Task<IActionResult> PublishReviewInFilm(AdminNote adminNote)
         {
-            await _commentSerivice.PublishReview(reviewId, User.Identity!.Name!, isFilm, isPublish);
+            await _commentSerivice.PublishReview(adminNote, User.Identity!.Name!);
 
             return Ok();
         }
