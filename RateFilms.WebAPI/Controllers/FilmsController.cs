@@ -85,5 +85,15 @@ namespace RateFilms.WebAPI.Controllers
 
             return Ok();
         }
+
+        [Authorize(Policy = "admin")]
+        [HttpGet("GetFilmsWithUncheckedReview")]
+        public async Task<IActionResult> GetFilmsWithUncheckedReview()
+        {
+            var film = await _filmService.GetFilmsWithUncheckedReview();
+
+            return Ok(film);
+        }
+        
     }
 }

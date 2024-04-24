@@ -117,5 +117,14 @@ namespace RateFilms.Application.Services.Serials
 
             return favoriteSerialsForUser;
         }
+
+        public async Task<IEnumerable<SerialResponse>> GetSerialsWithUncheckedReview()
+        {
+            var serials = await _serialRepositoty.GetSerialsWithUncheckedReview();
+
+            var res = serials.Select(s => new SerialResponse(s, null));
+
+            return res;
+        }
     }
 }

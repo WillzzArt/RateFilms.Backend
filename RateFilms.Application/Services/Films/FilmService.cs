@@ -109,5 +109,14 @@ namespace RateFilms.Application.Services.Films
 
             return favoriteFilmsForUser;
         }
+
+        public async Task<IEnumerable<FilmResponse>> GetFilmsWithUncheckedReview()
+        {
+            var films = await _filmRepository.GetFilmsWithUncheckedReview();
+
+            var filmsRespons = films.Select(f => new FilmResponse(f, null)).ToList();
+
+            return filmsRespons;
+        }
     }
 }

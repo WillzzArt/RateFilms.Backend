@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RateFilms.Common.Helpers;
 using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO.Movies;
-using RateFilms.Common.Helpers;
 using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Models.StorageModels;
@@ -105,8 +105,8 @@ namespace RateFilms.Infrastructure.Data.Repository
         public async Task<IEnumerable<Film>> GetAllFilmsWithFavorite()
         {
             var filmsDb = await _context.Film
-                .Include(p => p.Images)
-                .Include(p => p.Genre)
+                .Include(f => f.Images)
+                .Include(f => f.Genre)
                 .Include(f => f.Favorite)
                 .ToListAsync();
 
@@ -169,6 +169,30 @@ namespace RateFilms.Infrastructure.Data.Repository
             }
 
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Film>> GetFilmsWithUncheckedReview()
+        {
+            var films = new HashSet<Film>();
+
+
+            var idList = await _context.Comment
+            .Where(c => c.Status == ReviewStatus.Unpublished && c.CommentInFilm != null)
+            .Select(c => c.CommentInFilm!.Favorite!.FilmId)
+            .ToListAsync();
+
+            foreach (var id in idList)
+            {
+                var film = await _context.Film
+                    .Include(f => f.Images)
+                    .Include(f => f.Genre)
+                    .Include(f => f.Favorite)
+                    .FirstOrDefaultAsync(c => c.Id == id);
+
+                films.Add(FilmConvertor.FilmDbConvertFilmDomain(film!, film!.Favorite));
+            }
+
+            return films;
         }
     }
 }

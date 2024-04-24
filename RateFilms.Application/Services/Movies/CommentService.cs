@@ -166,7 +166,7 @@ namespace RateFilms.Application.Services.Movies
                                 review.Status = ReviewStatus.Published;
                             else
                             {
-                                if (string.IsNullOrWhiteSpace(adminNote.Note)) throw new ArgumentNullException(adminNote.Note);
+                                if (string.IsNullOrWhiteSpace(adminNote.Note)) throw new ArgumentNullException(nameof(adminNote.Note));
 
                                 await _commentRepository.CreateNoteToReview(user.Id, adminNote.ReviewId, adminNote.Note);
 
@@ -183,7 +183,7 @@ namespace RateFilms.Application.Services.Movies
                         }
                     case ReviewStatus.Published:
                         {
-                            if (string.IsNullOrWhiteSpace(adminNote.Note)) throw new ArgumentNullException(adminNote.Note);
+                            if (string.IsNullOrWhiteSpace(adminNote.Note)) throw new ArgumentNullException(nameof(adminNote.Note));
 
                             await _commentRepository.CreateNoteToReview(user.Id, adminNote.ReviewId, adminNote.Note);
 

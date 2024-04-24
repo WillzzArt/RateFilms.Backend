@@ -38,5 +38,13 @@ namespace RateFilms.Application.Services.Movies
 
             return new Movie(films, serils);
         }
+
+        public async Task<Movie> GetMoviesWithUncheckedReview()
+        {
+            var films = await _filmService.GetFilmsWithUncheckedReview();
+            var serils = await _serialService.GetSerialsWithUncheckedReview();
+
+            return new Movie(films, serils);
+        }
     }
 }

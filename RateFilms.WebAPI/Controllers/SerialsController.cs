@@ -77,5 +77,14 @@ namespace RateFilms.WebAPI.Controllers
 
             return Ok();
         }
+
+        [Authorize(Policy = "admin")]
+        [HttpGet("GetSerialsWithUncheckedReview")]
+        public async Task<IActionResult> GetSerialsWithUncheckedReview()
+        {
+            var serials = await _serialService.GetSerialsWithUncheckedReview();
+
+            return Ok(serials);
+        }
     }
 }

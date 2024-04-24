@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RateFilms.Common.Helpers;
 using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO.Movies;
-using RateFilms.Common.Helpers;
 using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Models.StorageModels;
@@ -40,7 +40,7 @@ namespace RateFilms.Infrastructure.Data.Repository
 
             await SavePerson(serial.People, saveSerial);
             await SaveSeason(serial.Seasons, saveSerial);
-            await SaveGenre(serial.Genre, saveSerial);            
+            await SaveGenre(serial.Genre, saveSerial);
 
             await _context.SaveChangesAsync();
         }
@@ -186,8 +186,8 @@ namespace RateFilms.Infrastructure.Data.Repository
             }
             else
             {
-                favoriteSerialDb.Status = favoriteSerial.StatusMovie != null 
-                    ? favoriteSerial.StatusMovie.ToEnum(StatusMovie.None) 
+                favoriteSerialDb.Status = favoriteSerial.StatusMovie != null
+                    ? favoriteSerial.StatusMovie.ToEnum(StatusMovie.None)
                     : favoriteSerialDb.Status;
                 favoriteSerialDb.IsFavorite = favoriteSerial.IsFavorite ?? favoriteSerialDb.IsFavorite;
                 favoriteSerialDb.Score = favoriteSerial.Score ?? favoriteSerialDb.Score;
@@ -201,6 +201,32 @@ namespace RateFilms.Infrastructure.Data.Repository
             }
 
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Serial>> GetSerialsWithUncheckedReview()
+        {
+            var serials = new HashSet<Serial>();
+
+
+            var idList = await _context.Comment
+            .Where(c => c.Status == ReviewStatus.Unpublished && c.CommentInSerial != null)
+            .Select(c => c.CommentInSerial!.Favorite!.SerialId)
+            .ToListAsync();
+
+            foreach (var id in idList)
+            {
+                var serial = await _context.Serial
+                    .Include(s => s.Seasons)
+                        .ThenInclude(s => s.Series)
+                    .Include(s => s.PreviewImage)
+                    .Include(s => s.Genre)
+                    .Include(s => s.Favorites)
+                    .FirstOrDefaultAsync(c => c.Id == id);
+
+                serials.Add(SerialConvertor.SerialDbConvertSerialDomain(serial!, serial!.Favorites));
+            }
+
+            return serials;
         }
     }
 }
