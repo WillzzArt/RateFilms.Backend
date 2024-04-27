@@ -66,7 +66,7 @@ namespace RateFilms.Application.Services.Serials
         public async Task<SerialExtendResponse?> GetSerialById(Guid id)
         {
             var serial = await _serialRepositoty.GetSerialWithFavoriteById(id);
-            var comment = await _commentService.GetCommentsInSerial(id, 5, null);
+            var comment = await _commentService.GetCommentsInSerial(id, 5, 1, null);
 
             if (serial != null)
             {
@@ -83,7 +83,7 @@ namespace RateFilms.Application.Services.Serials
 
             var serial = await _serialRepositoty.GetSerialWithFavoriteById(id);
 
-            var comment = await _commentService.GetCommentsInSerial(id, 5, userName);
+            var comment = await _commentService.GetCommentsInSerial(id, 5, 1, userName);
 
             if (serial != null)
             {

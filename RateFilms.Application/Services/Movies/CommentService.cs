@@ -24,52 +24,60 @@ namespace RateFilms.Application.Services.Movies
             _favoriteRepository = favoriteRepository;
         }
 
-        public async Task<IEnumerable<CommentResponse>> GetCommentsInFilm(Guid filmId, int count, string? username)
+        public async Task<IEnumerable<CommentResponse>> GetCommentsInFilm(Guid filmId, int countComm, int countReview, string? username)
         {
             IEnumerable<Comment> comments;
+            var resComment = new List<CommentResponse>();
+
             if (username != null)
             {
                 var user = await _userRepository.FindUser(username);
-                comments = await _commentRepository.GetCommentsInFilm(filmId, count, user?.Id);
+                comments = await _commentRepository.GetCommentsInFilm(filmId, user?.Id);
             }
             else
             {
-                comments = await _commentRepository.GetCommentsInFilm(filmId, count, null);
+                comments = await _commentRepository.GetCommentsInFilm(filmId, null);
             }
 
-            return comments.Where(c => c.Status == ReviewStatus.None || c.Status == ReviewStatus.Published)
-                .Select(c => new CommentResponse(c));
+            resComment.AddRange(comments.Where(c => c.Status == ReviewStatus.None).Take(countComm).Select(c => new CommentResponse(c)));
+            resComment.AddRange(comments.Where(c => c.Status == ReviewStatus.Published).Take(countReview).Select(c => new CommentResponse(c)));
+
+            return resComment;
         }
 
-        public async Task<IEnumerable<CommentResponse>> GetCommentsInSerial(Guid serialId, int count, string? username)
+        public async Task<IEnumerable<CommentResponse>> GetCommentsInSerial(Guid serialId, int countComm, int countReview, string? username)
         {
             IEnumerable<Comment> comments;
+            var resComment = new List<CommentResponse>();
+
             if (username != null)
             {
                 var user = await _userRepository.FindUser(username);
-                comments = await _commentRepository.GetCommentsInSerial(serialId, count, user?.Id);
+                comments = await _commentRepository.GetCommentsInSerial(serialId, user?.Id);
             }
             else
             {
-                comments = await _commentRepository.GetCommentsInSerial(serialId, count, null);
+                comments = await _commentRepository.GetCommentsInSerial(serialId, null);
             }
 
-            return comments.Where(c => c.Status == ReviewStatus.None || c.Status == ReviewStatus.Published)
-                .Select(c => new CommentResponse(c));
+            resComment.AddRange(comments.Where(c => c.Status == ReviewStatus.None).Take(countComm).Select(c => new CommentResponse(c)));
+            resComment.AddRange(comments.Where(c => c.Status == ReviewStatus.Published).Take(countReview).Select(c => new CommentResponse(c)));
+
+            return resComment;
         }
 
-        public async Task<IEnumerable<CommentResponse>> GetReviewsInMovie(Guid movieId, int count, string status, bool isFilm, string? username = null)
+        public async Task<IEnumerable<CommentResponse>> GetUncheckedReviewsInMovie(Guid movieId, int count, string status, bool isFilm, string? username = null)
         {
             IEnumerable<Comment> review;
 
             if (isFilm)
-                review = await _commentRepository.GetCommentsInFilm(movieId, count, null);
+                review = await _commentRepository.GetCommentsInFilm(movieId, null);
             else
-                review = await _commentRepository.GetCommentsInSerial(movieId, count, null);
+                review = await _commentRepository.GetCommentsInSerial(movieId, null);
 
             if (username == null)
             {
-                return review.Where(c => c.Status == status.ToEnum(ReviewStatus.None)).Select(c => new CommentResponse(c));
+                return review.Where(c => c.Status == status.ToEnum(ReviewStatus.None)).Take(count).Select(c => new CommentResponse(c));
             }
             else
             {
@@ -77,7 +85,7 @@ namespace RateFilms.Application.Services.Movies
 
                 if (user == null) throw new ArgumentException(nameof(username));
 
-                return review.Where(c => (c.Status == ReviewStatus.Unsent || c.Status == ReviewStatus.Canseled) && c.User.Id == user.Id)
+                return review.Where(c => (c.Status == ReviewStatus.Unsent || c.Status == ReviewStatus.Canсeled) && c.User.Id == user.Id).Take(count)
                 .Select(c => new CommentResponse(c));
             }
             
@@ -133,7 +141,7 @@ namespace RateFilms.Application.Services.Movies
                             review.Status = ReviewStatus.Unpublished;
                             break;
                         }
-                    case ReviewStatus.Canseled:
+                    case ReviewStatus.Canсeled:
                         {
                             review.Status = ReviewStatus.Unsent;
                             break;
@@ -170,12 +178,12 @@ namespace RateFilms.Application.Services.Movies
 
                                 await _commentRepository.CreateNoteToReview(user.Id, adminNote.ReviewId, adminNote.Note);
 
-                                review.Status = ReviewStatus.Canseled;
+                                review.Status = ReviewStatus.Canсeled;
                             }
 
                             break;
                         }
-                    case ReviewStatus.Canseled:
+                    case ReviewStatus.Canсeled:
                         {
                             await _commentRepository.DeleteNoteToReview(user.Id, adminNote.ReviewId);
                             review.Status = ReviewStatus.Published;
@@ -187,7 +195,7 @@ namespace RateFilms.Application.Services.Movies
 
                             await _commentRepository.CreateNoteToReview(user.Id, adminNote.ReviewId, adminNote.Note);
 
-                            review.Status = ReviewStatus.Canseled;
+                            review.Status = ReviewStatus.Canсeled;
                             break;
                         }
                 }

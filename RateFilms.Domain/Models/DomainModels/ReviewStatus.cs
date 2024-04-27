@@ -5,7 +5,7 @@
         None,
         Unsent,
         Unpublished,
-        Canseled,
+        Canсeled,
         Published
     }
 }

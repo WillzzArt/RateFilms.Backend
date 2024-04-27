@@ -121,7 +121,7 @@ namespace RateFilms.Infrastructure.Data.Repository
             return commentDomain;
         }
 
-        public async Task<IEnumerable<Comment>> GetCommentsInFilm(Guid filmId, int count, Guid? userId)
+        public async Task<IEnumerable<Comment>> GetCommentsInFilm(Guid filmId, Guid? userId)
         {
             var commentsInFav = await _context.FavoriteFilms.Where(fav => fav.FilmId == filmId && fav.Comments != null)
                 .Select(x => new
@@ -159,10 +159,10 @@ namespace RateFilms.Infrastructure.Data.Repository
                               IsLiked = isLiked
                           };
 
-            return comment.Take(count);
+            return comment;
         }
 
-        public async Task<IEnumerable<Comment>> GetCommentsInSerial(Guid serialId, int count, Guid? userId)
+        public async Task<IEnumerable<Comment>> GetCommentsInSerial(Guid serialId, Guid? userId)
         {
             var commentsInFav = await _context.FavoriteSerials.Where(fav => fav.SerialId == serialId && fav.Comments != null)
                 .Select(x => new
@@ -199,7 +199,7 @@ namespace RateFilms.Infrastructure.Data.Repository
                               IsLiked = isLiked
                           };
 
-            return comment.Take(count);
+            return comment;
         }
 
         public async Task<bool> SetLikedComment(Guid commentId, Guid userId)
