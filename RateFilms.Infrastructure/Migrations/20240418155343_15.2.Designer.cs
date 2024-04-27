@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RateFilms.Infrastructure.Data;
@@ -11,9 +12,11 @@ using RateFilms.Infrastructure.Data;
 namespace RateFilms.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240418155343_15.2")]
+    partial class _152
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,29 +91,6 @@ namespace RateFilms.Infrastructure.Migrations
                     b.ToTable("PersonInSerialProfession", (string)null);
                 });
 
-            modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.AdminNoteDbModel", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ReviewId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("Date")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Note")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("UserId", "ReviewId");
-
-                    b.HasIndex("ReviewId")
-                        .IsUnique();
-
-                    b.ToTable("NoteToReview");
-                });
-
             modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.CommentDbModel", b =>
                 {
                     b.Property<Guid>("Id")
@@ -123,12 +103,12 @@ namespace RateFilms.Infrastructure.Migrations
                     b.Property<bool>("IsEdit")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("status")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -591,25 +571,6 @@ namespace RateFilms.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.AdminNoteDbModel", b =>
-                {
-                    b.HasOne("RateFilms.Domain.Models.StorageModels.CommentDbModel", "Review")
-                        .WithOne("AdminNote")
-                        .HasForeignKey("RateFilms.Domain.Models.StorageModels.AdminNoteDbModel", "ReviewId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RateFilms.Domain.Models.StorageModels.UserDbModel", "User")
-                        .WithMany("AdminNotes")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Review");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.CommentInFilmDbModel", b =>
                 {
                     b.HasOne("RateFilms.Domain.Models.StorageModels.CommentDbModel", "Comment")
@@ -817,8 +778,6 @@ namespace RateFilms.Infrastructure.Migrations
 
             modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.CommentDbModel", b =>
                 {
-                    b.Navigation("AdminNote");
-
                     b.Navigation("CommentInFilm");
 
                     b.Navigation("CommentInSerial");
@@ -870,8 +829,6 @@ namespace RateFilms.Infrastructure.Migrations
 
             modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.UserDbModel", b =>
                 {
-                    b.Navigation("AdminNotes");
-
                     b.Navigation("Comments");
 
                     b.Navigation("FavoriteFilms");

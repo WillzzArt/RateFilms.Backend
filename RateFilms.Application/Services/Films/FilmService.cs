@@ -62,7 +62,7 @@ namespace RateFilms.Application.Services.Films
 
             var film = await _filmRepository.GetFilmWithFavoriteById(id);
 
-            var comment = await _commentService.GetCommentsInFilm(id, 5, userName);
+            var comment = await _commentService.GetCommentsInFilm(id, 5, 1, userName);
 
             if (film != null)
             {
@@ -75,7 +75,7 @@ namespace RateFilms.Application.Services.Films
         public async Task<FilmExtendResponse?> GetFilmById(Guid id)
         {
             var film = await _filmRepository.GetFilmWithFavoriteById(id);
-            var comment = await _commentService.GetCommentsInFilm(id, 5, null);
+            var comment = await _commentService.GetCommentsInFilm(id, 5, 1, null);
 
             if (film != null)
             {
@@ -108,6 +108,15 @@ namespace RateFilms.Application.Services.Films
                                        select new FilmResponse(f, fav);
 
             return favoriteFilmsForUser;
+        }
+
+        public async Task<IEnumerable<FilmResponse>> GetFilmsWithUncheckedReview()
+        {
+            var films = await _filmRepository.GetFilmsWithUncheckedReview();
+
+            var filmsRespons = films.Select(f => new FilmResponse(f, null)).ToList();
+
+            return filmsRespons;
         }
     }
 }

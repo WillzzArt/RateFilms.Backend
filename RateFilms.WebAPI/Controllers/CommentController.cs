@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RateFilms.Application.Services.Movies;
 using RateFilms.Domain.DTO.Movies;
+using RateFilms.Domain.Models.DomainModels;
 
 namespace RateFilms.WebAPI.Controllers
 {
@@ -20,7 +21,7 @@ namespace RateFilms.WebAPI.Controllers
         [HttpPost("CommentInFilm")]
         public async Task<IActionResult> CreateCommentInFilm(CommentRequest comment)
         {
-            await _commentSerivice.CreateCommentInFilm(comment, User.Identity!.Name!);
+            await _commentSerivice.CreateComment(comment, User.Identity!.Name!, true);
             return Ok();
         }
 
@@ -28,37 +29,37 @@ namespace RateFilms.WebAPI.Controllers
         [HttpPost("CommentInSerial")]
         public async Task<IActionResult> CreateCommentInSerial(CommentRequest comment)
         {
-            await _commentSerivice.CreateCommentInSerial(comment, User.Identity!.Name!);
+            await _commentSerivice.CreateComment(comment, User.Identity!.Name!, false);
             return Ok();
         }
 
         [HttpGet("CommentInFilm")]
-        public async Task<IActionResult> GetCommentInFilm(Guid filmId, int count)
+        public async Task<IActionResult> GetCommentInFilm(Guid filmId, int countComm, int countReview)
         {
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
-                var comments = await _commentSerivice.GetCommentsInFilm(filmId, count, User.Identity.Name);
+                var comments = await _commentSerivice.GetCommentsInFilm(filmId, countComm, countReview, User.Identity.Name);
                 return Ok(comments);
             }
             else
             {
-                var comments = await _commentSerivice.GetCommentsInFilm(filmId, count, null);
+                var comments = await _commentSerivice.GetCommentsInFilm(filmId, countComm, countReview, null);
                 return Ok(comments);
             }
             
         }
 
         [HttpGet("CommentInSerial")]
-        public async Task<IActionResult> GetCommentInSerial(Guid serialId, int count)
+        public async Task<IActionResult> GetCommentInSerial(Guid serialId, int countComm, int countReview)
         {
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
-                var comments = await _commentSerivice.GetCommentsInSerial(serialId, count, User.Identity.Name);
+                var comments = await _commentSerivice.GetCommentsInSerial(serialId, countComm, countReview, User.Identity.Name);
                 return Ok(comments);
             }
             else
             {
-                var comments = await _commentSerivice.GetCommentsInSerial(serialId, count, null);
+                var comments = await _commentSerivice.GetCommentsInSerial(serialId, countComm, countReview, null);
                 return Ok(comments);
             }
         }
@@ -75,6 +76,41 @@ namespace RateFilms.WebAPI.Controllers
 
             return BadRequest();
         }
-        
+
+        [Authorize]
+        [HttpPut("ChangeReviewStatus")]
+        public async Task<IActionResult> ChangeReviewStatusInFilm(Guid reviewId, bool isFilm)
+        {
+            await _commentSerivice.ChangeReviewStatus(reviewId, User.Identity!.Name!, isFilm);
+
+            return Ok();
+        }
+
+        [Authorize(Policy = "admin")]
+        [HttpPut("PublishReview")]
+        public async Task<IActionResult> PublishReviewInFilm(AdminNote adminNote)
+        {
+            await _commentSerivice.PublishReview(adminNote, User.Identity!.Name!);
+
+            return Ok();
+        }
+
+        [Authorize(Policy = "admin")]
+        [HttpGet("UnpublishedReviews")]
+        public async Task<IActionResult> GetUnpublishedReviews(Guid movieId, bool isFilm, string reviewStatus)
+        {
+            var reviews = await _commentSerivice.GetUncheckedReviewsInMovie(movieId, 20, reviewStatus, isFilm);
+
+            return Ok(reviews);
+        }
+
+        [Authorize]
+        [HttpGet("UsersReviews")]
+        public async Task<IActionResult> GetUsersReviews(Guid movieId, bool isFilm)
+        {
+            var reviews = await _commentSerivice.GetUncheckedReviewsInMovie(movieId, 20, "none", isFilm, User.Identity!.Name!);
+
+            return Ok(reviews);
+        }
     }
 }

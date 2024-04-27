@@ -1,15 +1,18 @@
 ﻿using RateFilms.Domain.DTO.Movies;
+using RateFilms.Domain.Models.DomainModels;
 
 namespace RateFilms.Application.Services.Movies
 {
     public interface ICommentService
     {
-        Task CreateCommentInFilm(CommentRequest commentRequest, string username);
-        Task CreateCommentInSerial(CommentRequest commentRequest, string username);
+        Task CreateComment(CommentRequest commentRequest, string username, bool isFilm);
+        Task ChangeReviewStatus(Guid reviewId, string username, bool isFilm);
+        Task PublishReview(AdminNote adminNote, string username);
         Task UpdateComment(CommentRequest commentRequest, string username);
         Task DeleteComment(CommentRequest commentRequest, string username);
-        Task<IEnumerable<CommentResponse>> GetCommentsInFilm(Guid filmId, int count, string? username);
-        Task<IEnumerable<CommentResponse>> GetCommentsInSerial(Guid filmId, int count, string? username);
+        Task<IEnumerable<CommentResponse>> GetCommentsInFilm(Guid filmId, int countComm, int countReview, string? username);
+        Task<IEnumerable<CommentResponse>> GetCommentsInSerial(Guid serialId, int countComm, int countReview, string? username);
+        Task<IEnumerable<CommentResponse>> GetUncheckedReviewsInMovie(Guid movieId, int count, string status, bool isFilm, string? username = null);
         Task<bool> ChangeLikeOnComment(Guid commentId, string username);
     }
 }

@@ -1,8 +1,10 @@
-﻿using RateFilms.Domain.Convertors;
+﻿using RateFilms.Common.Helpers;
 using RateFilms.Domain.DTO.Movies;
+using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Models.StorageModels;
 using RateFilms.Domain.Repositories;
+using System.Xml.Linq;
 
 namespace RateFilms.Application.Services.Movies
 {
@@ -13,8 +15,8 @@ namespace RateFilms.Application.Services.Movies
         private readonly IFavoriteRepository _favoriteRepository;
 
         public CommentService(
-            ICommentRepository commentRepository, 
-            IUserRepository userRepository, 
+            ICommentRepository commentRepository,
+            IUserRepository userRepository,
             IFavoriteRepository favoriteRepository)
         {
             _commentRepository = commentRepository;
@@ -22,75 +24,184 @@ namespace RateFilms.Application.Services.Movies
             _favoriteRepository = favoriteRepository;
         }
 
-        public async Task<IEnumerable<CommentResponse>> GetCommentsInFilm(Guid filmId, int count, string? username)
+        public async Task<IEnumerable<CommentResponse>> GetCommentsInFilm(Guid filmId, int countComm, int countReview, string? username)
         {
             IEnumerable<Comment> comments;
+            var resComment = new List<CommentResponse>();
+
             if (username != null)
             {
                 var user = await _userRepository.FindUser(username);
-                comments = await _commentRepository.GetCommentsInFilm(filmId, count, user?.Id);
+                comments = await _commentRepository.GetCommentsInFilm(filmId, user?.Id);
             }
             else
             {
-                comments = await _commentRepository.GetCommentsInFilm(filmId, count, null);
+                comments = await _commentRepository.GetCommentsInFilm(filmId, null);
+            }
+
+            resComment.AddRange(comments.Where(c => c.Status == ReviewStatus.None).Take(countComm).Select(c => new CommentResponse(c)));
+            resComment.AddRange(comments.Where(c => c.Status == ReviewStatus.Published).Take(countReview).Select(c => new CommentResponse(c)));
+
+            return resComment;
+        }
+
+        public async Task<IEnumerable<CommentResponse>> GetCommentsInSerial(Guid serialId, int countComm, int countReview, string? username)
+        {
+            IEnumerable<Comment> comments;
+            var resComment = new List<CommentResponse>();
+
+            if (username != null)
+            {
+                var user = await _userRepository.FindUser(username);
+                comments = await _commentRepository.GetCommentsInSerial(serialId, user?.Id);
+            }
+            else
+            {
+                comments = await _commentRepository.GetCommentsInSerial(serialId, null);
+            }
+
+            resComment.AddRange(comments.Where(c => c.Status == ReviewStatus.None).Take(countComm).Select(c => new CommentResponse(c)));
+            resComment.AddRange(comments.Where(c => c.Status == ReviewStatus.Published).Take(countReview).Select(c => new CommentResponse(c)));
+
+            return resComment;
+        }
+
+        public async Task<IEnumerable<CommentResponse>> GetUncheckedReviewsInMovie(Guid movieId, int count, string status, bool isFilm, string? username = null)
+        {
+            IEnumerable<Comment> review;
+
+            if (isFilm)
+                review = await _commentRepository.GetCommentsInFilm(movieId, null);
+            else
+                review = await _commentRepository.GetCommentsInSerial(movieId, null);
+
+            if (username == null)
+            {
+                return review.Where(c => c.Status == status.ToEnum(ReviewStatus.None)).Take(count).Select(c => new CommentResponse(c));
+            }
+            else
+            {
+                var user = await _userRepository.FindUser(username);
+
+                if (user == null) throw new ArgumentException(nameof(username));
+
+                return review.Where(c => (c.Status == ReviewStatus.Unsent || c.Status == ReviewStatus.Canсeled) && c.User.Id == user.Id).Take(count)
+                .Select(c => new CommentResponse(c));
             }
             
-
-            return comments.Select(c => new CommentResponse(c));
         }
 
-        public async Task<IEnumerable<CommentResponse>> GetCommentsInSerial(Guid filmId, int count, string? username)
+        public async Task CreateComment(CommentRequest commentRequest, string username, bool isFilm)
         {
-            IEnumerable<Comment> comments;
-            if (username != null)
+            var user = await _userRepository.FindUser(username);
+            if (user == null) throw new ArgumentException(nameof(username));
+
+            var commentDb = new CommentDbModel
             {
-                var user = await _userRepository.FindUser(username);
-                comments = await _commentRepository.GetCommentsInSerial(filmId, count, user?.Id);
+                Text = commentRequest.CommentText,
+                Status = commentRequest.Status.ToEnum(ReviewStatus.None)
+            };
+
+            if (isFilm)
+            {
+                commentDb.CommentInFilm = new CommentInFilmDbModel
+                {
+                    Favorite = await _favoriteRepository.FindFavoriteFilm(commentRequest.MovieId, user.Id)
+                };
             }
             else
             {
-                comments = await _commentRepository.GetCommentsInSerial(filmId, count, null);
+                commentDb.CommentInSerial = new CommentInSerialDbModel
+                {
+                    Favorite = await _favoriteRepository.FindFavoriteSerial(commentRequest.MovieId, user.Id)
+                };
             }
 
-            return comments.Select(c => new CommentResponse(c));
-        }
-
-        public async Task CreateCommentInFilm(CommentRequest commentRequest, string username)
-        {
-            var user = await _userRepository.FindUser(username);
-            if (user == null) throw new ArgumentException(nameof(username));
-
-            var favorite = await _favoriteRepository.FindFavoriteFilm(commentRequest.MovieId, user.Id);
-
-            var commentDb = new CommentDbModel
-            {
-                Text = commentRequest.CommentText,
-                CommentInFilm = new CommentInFilmDbModel
-                {
-                    Favorite = favorite
-                }
-            };
-
             await _commentRepository.CreateCommentAsync(commentDb, user.Id, commentRequest.MovieId);
         }
 
-        public async Task CreateCommentInSerial(CommentRequest commentRequest, string username)
+        public async Task ChangeReviewStatus(Guid reviewId, string username, bool isFilm)
         {
+            var review = await _commentRepository.FindCommentById(reviewId, isFilm);
+
             var user = await _userRepository.FindUser(username);
+
             if (user == null) throw new ArgumentException(nameof(username));
 
-            var favorite = await _favoriteRepository.FindFavoriteSerial(commentRequest.MovieId, user.Id);
-
-            var commentDb = new CommentDbModel
+            if (review.User.Id == user.Id)
             {
-                Text = commentRequest.CommentText,
-                CommentInSerial = new CommentInSerialDbModel
+                switch (review.Status)
                 {
-                    Favorite = favorite
+                    case ReviewStatus.None:
+                        {
+                            throw new ArgumentException(nameof(reviewId));
+                        }
+                    case ReviewStatus.Unsent:
+                        {
+                            review.Status = ReviewStatus.Unpublished;
+                            break;
+                        }
+                    case ReviewStatus.Canсeled:
+                        {
+                            review.Status = ReviewStatus.Unsent;
+                            break;
+                        }
                 }
-            };
 
-            await _commentRepository.CreateCommentAsync(commentDb, user.Id, commentRequest.MovieId);
+                await _commentRepository.SetNewReviewStatus(review);
+            }
+        }
+
+        public async Task PublishReview(AdminNote adminNote, string username)
+        {
+            var user = await _userRepository.FindUser(username);
+
+            if (user == null) throw new ArgumentException(nameof(username));
+
+            if (user.Role == Role.Admin)
+            {
+                var review = await _commentRepository.FindCommentById(adminNote.ReviewId, adminNote.IsFilm);
+
+                switch (review.Status)
+                {
+                    case ReviewStatus.None:
+                        {
+                            throw new ArgumentException(nameof(adminNote.ReviewId));
+                        }
+                    case ReviewStatus.Unpublished:
+                        {
+                            if (adminNote.IsPublish)
+                                review.Status = ReviewStatus.Published;
+                            else
+                            {
+                                if (string.IsNullOrWhiteSpace(adminNote.Note)) throw new ArgumentNullException(nameof(adminNote.Note));
+
+                                await _commentRepository.CreateNoteToReview(user.Id, adminNote.ReviewId, adminNote.Note);
+
+                                review.Status = ReviewStatus.Canсeled;
+                            }
+
+                            break;
+                        }
+                    case ReviewStatus.Canсeled:
+                        {
+                            await _commentRepository.DeleteNoteToReview(user.Id, adminNote.ReviewId);
+                            review.Status = ReviewStatus.Published;
+                            break;
+                        }
+                    case ReviewStatus.Published:
+                        {
+                            if (string.IsNullOrWhiteSpace(adminNote.Note)) throw new ArgumentNullException(nameof(adminNote.Note));
+
+                            await _commentRepository.CreateNoteToReview(user.Id, adminNote.ReviewId, adminNote.Note);
+
+                            review.Status = ReviewStatus.Canсeled;
+                            break;
+                        }
+                }
+
+                await _commentRepository.SetNewReviewStatus(review);
+            }
         }
 
         public Task DeleteComment(CommentRequest commentRequest, string username)
@@ -111,5 +222,7 @@ namespace RateFilms.Application.Services.Movies
 
             return await _commentRepository.SetLikedComment(commentId, user.Id);
         }
+
+        
     }
 }

@@ -25,5 +25,17 @@
 
             return false;
         }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj == null) throw new ArgumentNullException(nameof(obj));
+
+            return obj is Film film && Id == film.Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id);
+        }
     }
 }

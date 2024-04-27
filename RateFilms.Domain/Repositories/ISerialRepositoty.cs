@@ -37,5 +37,11 @@ namespace RateFilms.Domain.Repositories
         /// <param name="userName">Модель авторизованного пользователя</param>
         /// <returns></returns>
         Task SetFavoriteSerial(FavoriteMovie favoriteSerial, User user);
+
+        /// <summary>
+        /// Ищет сериалы с непроверенными рецензиями для администратора
+        /// </summary>
+        /// <returns>Список фильмов</returns>
+        Task<IEnumerable<Serial>> GetSerialsWithUncheckedReview();
     }
 }

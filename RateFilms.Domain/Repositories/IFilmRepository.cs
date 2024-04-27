@@ -44,5 +44,11 @@ namespace RateFilms.Domain.Repositories
         /// <param name="filmId">Уникальный ключ фильма</param>
         /// <returns>Модель фильма</returns>
         Task<Film?> GetFilmWithFavoriteById(Guid filmId);
+
+        /// <summary>
+        /// Ищет фильмы с непроверенными рецензиями для администратора
+        /// </summary>
+        /// <returns>Список фильмов</returns>
+        Task<IEnumerable<Film>> GetFilmsWithUncheckedReview();
     }
 }

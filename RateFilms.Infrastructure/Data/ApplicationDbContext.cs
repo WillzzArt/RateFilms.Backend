@@ -61,6 +61,9 @@ namespace RateFilms.Infrastructure.Data
             builder.Entity<CommentUserDbModel>()
                 .HasKey(c => new { c.UserId, c.CommentId });
 
+            builder.Entity<AdminNoteDbModel>()
+                .HasKey(a => new { a.UserId, a.ReviewId });
+
             builder.Entity<PersonInFilmDbModel>()
                 .HasMany(f => f.Professions)
                 .WithMany(g => g.PersonInFilms)
@@ -96,6 +99,10 @@ namespace RateFilms.Infrastructure.Data
             builder.Entity<CommentDbModel>()
                 .HasOne(c => c.CommentInSerial)
                 .WithOne(c => c.Comment);
+
+            builder.Entity<CommentDbModel>()
+                .HasOne(c => c.AdminNote)
+                .WithOne(c => c.Review);
         }
 
         public DbSet<FilmDbModel> Film { get; set; }
@@ -115,5 +122,6 @@ namespace RateFilms.Infrastructure.Data
         public DbSet<CommentInSerialDbModel> CommentInSerial { get; set; }
         public DbSet<CommentDbModel> Comment { get; set; }
         public DbSet<CommentUserDbModel> UserComment { get; set; }
+        public DbSet<AdminNoteDbModel> AdminNote { get; set; }
     }
 }
