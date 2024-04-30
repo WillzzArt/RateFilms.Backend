@@ -1,6 +1,6 @@
 ﻿namespace RateFilms.Domain.DTO.Movies
 {
-    public class AdminNote
+    public class AdminNoteRequest
     {
         public Guid ReviewId { get; set; }
         public string? Note { get; set; }

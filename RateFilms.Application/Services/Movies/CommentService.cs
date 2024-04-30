@@ -4,7 +4,6 @@ using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Models.StorageModels;
 using RateFilms.Domain.Repositories;
-using System.Xml.Linq;
 
 namespace RateFilms.Application.Services.Movies
 {
@@ -13,21 +12,23 @@ namespace RateFilms.Application.Services.Movies
         private readonly ICommentRepository _commentRepository;
         private readonly IUserRepository _userRepository;
         private readonly IFavoriteRepository _favoriteRepository;
+        private readonly IReviewRepository _reviewRepository;
 
         public CommentService(
             ICommentRepository commentRepository,
             IUserRepository userRepository,
-            IFavoriteRepository favoriteRepository)
+            IFavoriteRepository favoriteRepository,
+            IReviewRepository reviewRepository)
         {
             _commentRepository = commentRepository;
             _userRepository = userRepository;
             _favoriteRepository = favoriteRepository;
+            _reviewRepository = reviewRepository;
         }
 
-        public async Task<IEnumerable<CommentResponse>> GetCommentsInFilm(Guid filmId, int countComm, int countReview, string? username)
+        public async Task<IEnumerable<CommentResponse>> GetCommentsInFilm(Guid filmId, int countComm, string? username)
         {
             IEnumerable<Comment> comments;
-            var resComment = new List<CommentResponse>();
 
             if (username != null)
             {
@@ -39,16 +40,12 @@ namespace RateFilms.Application.Services.Movies
                 comments = await _commentRepository.GetCommentsInFilm(filmId, null);
             }
 
-            resComment.AddRange(comments.Where(c => c.Status == ReviewStatus.None).Take(countComm).Select(c => new CommentResponse(c)));
-            resComment.AddRange(comments.Where(c => c.Status == ReviewStatus.Published).Take(countReview).Select(c => new CommentResponse(c)));
-
-            return resComment;
+            return comments.Take(countComm).Select(c => new CommentResponse(c));
         }
 
-        public async Task<IEnumerable<CommentResponse>> GetCommentsInSerial(Guid serialId, int countComm, int countReview, string? username)
+        public async Task<IEnumerable<CommentResponse>> GetCommentsInSerial(Guid serialId, int countComm, string? username)
         {
             IEnumerable<Comment> comments;
-            var resComment = new List<CommentResponse>();
 
             if (username != null)
             {
@@ -60,24 +57,17 @@ namespace RateFilms.Application.Services.Movies
                 comments = await _commentRepository.GetCommentsInSerial(serialId, null);
             }
 
-            resComment.AddRange(comments.Where(c => c.Status == ReviewStatus.None).Take(countComm).Select(c => new CommentResponse(c)));
-            resComment.AddRange(comments.Where(c => c.Status == ReviewStatus.Published).Take(countReview).Select(c => new CommentResponse(c)));
-
-            return resComment;
+            return comments.Take(countComm).Select(c => new CommentResponse(c));
         }
 
-        public async Task<IEnumerable<CommentResponse>> GetUncheckedReviewsInMovie(Guid movieId, int count, string status, bool isFilm, string? username = null)
+        public async Task<IEnumerable<ReviewResponse>> GetUncheckedReviewsInMovie(Guid movieId, int count, bool isFilm, string? username)
         {
-            IEnumerable<Comment> review;
-
-            if (isFilm)
-                review = await _commentRepository.GetCommentsInFilm(movieId, null);
-            else
-                review = await _commentRepository.GetCommentsInSerial(movieId, null);
+            IEnumerable<Review> review;
 
             if (username == null)
             {
-                return review.Where(c => c.Status == status.ToEnum(ReviewStatus.None)).Take(count).Select(c => new CommentResponse(c));
+                review = await _reviewRepository.GetUncheckedReview(movieId, isFilm,
+                    x => new[] { ReviewStatus.Unpublished, ReviewStatus.Canсeled, ReviewStatus.Published }.Contains(x.Status));
             }
             else
             {
@@ -85,10 +75,12 @@ namespace RateFilms.Application.Services.Movies
 
                 if (user == null) throw new ArgumentException(nameof(username));
 
-                return review.Where(c => (c.Status == ReviewStatus.Unsent || c.Status == ReviewStatus.Canсeled) && c.User.Id == user.Id).Take(count)
-                .Select(c => new CommentResponse(c));
+                review = await _reviewRepository.GetUncheckedReview(movieId, isFilm,
+                    x => new[] { ReviewStatus.Unsent, ReviewStatus.Canсeled, ReviewStatus.Published }.Contains(x.Status) 
+                    && x.User.Id == user.Id);
             }
-            
+
+            return review.Select(r => new ReviewResponse(r));
         }
 
         public async Task CreateComment(CommentRequest commentRequest, string username, bool isFilm)
@@ -122,7 +114,7 @@ namespace RateFilms.Application.Services.Movies
 
         public async Task ChangeReviewStatus(Guid reviewId, string username, bool isFilm)
         {
-            var review = await _commentRepository.FindCommentById(reviewId, isFilm);
+            var review = await _reviewRepository.FindReviewById(reviewId, isFilm);
 
             var user = await _userRepository.FindUser(username);
 
@@ -148,11 +140,11 @@ namespace RateFilms.Application.Services.Movies
                         }
                 }
 
-                await _commentRepository.SetNewReviewStatus(review);
+                await _reviewRepository.SetNewReviewStatus(review.Id, review.Status);
             }
         }
 
-        public async Task PublishReview(AdminNote adminNote, string username)
+        public async Task PublishReview(AdminNoteRequest adminNote, string username)
         {
             var user = await _userRepository.FindUser(username);
 
@@ -160,7 +152,7 @@ namespace RateFilms.Application.Services.Movies
 
             if (user.Role == Role.Admin)
             {
-                var review = await _commentRepository.FindCommentById(adminNote.ReviewId, adminNote.IsFilm);
+                var review = await _reviewRepository.FindReviewById(adminNote.ReviewId, adminNote.IsFilm);
 
                 switch (review.Status)
                 {
@@ -176,7 +168,7 @@ namespace RateFilms.Application.Services.Movies
                             {
                                 if (string.IsNullOrWhiteSpace(adminNote.Note)) throw new ArgumentNullException(nameof(adminNote.Note));
 
-                                await _commentRepository.CreateNoteToReview(user.Id, adminNote.ReviewId, adminNote.Note);
+                                await _reviewRepository.CreateNoteToReview(user.Id, adminNote.ReviewId, adminNote.Note);
 
                                 review.Status = ReviewStatus.Canсeled;
                             }
@@ -185,22 +177,18 @@ namespace RateFilms.Application.Services.Movies
                         }
                     case ReviewStatus.Canсeled:
                         {
-                            await _commentRepository.DeleteNoteToReview(user.Id, adminNote.ReviewId);
-                            review.Status = ReviewStatus.Published;
+                            await _reviewRepository.DeleteNoteToReview(user.Id, adminNote.ReviewId);
+                            review.Status = ReviewStatus.Unpublished;
                             break;
                         }
                     case ReviewStatus.Published:
                         {
-                            if (string.IsNullOrWhiteSpace(adminNote.Note)) throw new ArgumentNullException(nameof(adminNote.Note));
-
-                            await _commentRepository.CreateNoteToReview(user.Id, adminNote.ReviewId, adminNote.Note);
-
-                            review.Status = ReviewStatus.Canсeled;
+                            review.Status = ReviewStatus.Unpublished;
                             break;
                         }
                 }
 
-                await _commentRepository.SetNewReviewStatus(review);
+                await _reviewRepository.SetNewReviewStatus(review.Id, review.Status);
             }
         }
 
@@ -223,6 +211,6 @@ namespace RateFilms.Application.Services.Movies
             return await _commentRepository.SetLikedComment(commentId, user.Id);
         }
 
-        
+
     }
 }

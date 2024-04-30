@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RateFilms.Domain.Convertors;
-using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Models.StorageModels;
 using RateFilms.Domain.Repositories;
@@ -81,46 +80,6 @@ namespace RateFilms.Infrastructure.Data.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Comment> FindCommentById(Guid reviewId, bool isFilm)
-        {
-            var comment = new CommentDbModel();
-            var commentDomain = new Comment
-            {
-                User = new User()
-            };
-
-            if (isFilm)
-            {
-                comment = await _context.Comment
-                    .Include(c => c.CommentInFilm)
-                        .ThenInclude(c => c.Favorite)
-                    .FirstOrDefaultAsync(c => c.Id == reviewId);
-
-                if (comment == null) throw new ArgumentException(nameof(reviewId));
-
-                commentDomain.User.Id = comment.CommentInFilm!.Favorite!.UserId;
-            }
-            else
-            {
-                comment = await _context.Comment
-                   .Include(c => c.CommentInSerial)
-                       .ThenInclude(c => c.Favorite)
-                   .FirstOrDefaultAsync(c => c.Id == reviewId);
-
-                if (comment == null) throw new ArgumentException(nameof(reviewId));
-
-                commentDomain.User.Id = comment.CommentInSerial!.Favorite!.UserId;
-            }
-
-            commentDomain.Id = comment.Id;
-            commentDomain.Text = comment.Text;
-            commentDomain.Date = comment.Date;
-            commentDomain.IsEdit = comment.IsEdit;
-            commentDomain.Status = comment.Status;
-
-            return commentDomain;
-        }
-
         public async Task<IEnumerable<Comment>> GetCommentsInFilm(Guid filmId, Guid? userId)
         {
             var commentsInFav = await _context.FavoriteFilms.Where(fav => fav.FilmId == filmId && fav.Comments != null)
@@ -132,7 +91,6 @@ namespace RateFilms.Infrastructure.Data.Repository
                         Date = c.Comment.Date,
                         IsEdit = c.Comment.IsEdit,
                         Text = c.Comment.Text,
-                        Status = c.Comment.Status,
                         Users = c.Comment.Users.ToList()
                     }).ToList(),
                     user = new UserDbModel
@@ -146,6 +104,7 @@ namespace RateFilms.Infrastructure.Data.Repository
 
             var comment = from commInFav in commentsInFav
                           from comm in commInFav.comments
+                          where comm.Status == ReviewStatus.None
                           let isLiked = comm.Users.Any(u => u.UserId == userId)
                           select new Comment
                           {
@@ -155,7 +114,6 @@ namespace RateFilms.Infrastructure.Data.Repository
                               Date = comm.Date,
                               Text = comm.Text,
                               CountLike = comm.Users?.Count() ?? 0,
-                              Status = comm.Status,
                               IsLiked = isLiked
                           };
 
@@ -173,7 +131,6 @@ namespace RateFilms.Infrastructure.Data.Repository
                         Date = c.Comment.Date,
                         IsEdit = c.Comment.IsEdit,
                         Text = c.Comment.Text,
-                        Status = c.Comment.Status,
                         Users = c.Comment.Users.ToList()
                     }).ToList(),
                     user = new UserDbModel
@@ -186,6 +143,7 @@ namespace RateFilms.Infrastructure.Data.Repository
 
             var comment = from commInFav in commentsInFav
                           from comm in commInFav.comments
+                          where comm.Status == ReviewStatus.None
                           let isLiked = comm.Users.Any(u => u.UserId == userId)
                           select new Comment
                           {
@@ -195,7 +153,6 @@ namespace RateFilms.Infrastructure.Data.Repository
                               Date = comm.Date,
                               Text = comm.Text,
                               CountLike = comm.Users?.Count() ?? 0,
-                              Status = comm.Status,
                               IsLiked = isLiked
                           };
 
@@ -221,45 +178,6 @@ namespace RateFilms.Infrastructure.Data.Repository
 
             await _context.SaveChangesAsync();
             return true;
-        }
-
-        public async Task SetNewReviewStatus(Comment review)
-        {
-            var comment = await _context.Comment.FirstOrDefaultAsync(c => c.Id == review.Id);
-
-            if (comment == null) throw new ArgumentException(nameof(review));
-
-            comment.Status = review.Status;
-
-            await _context.SaveChangesAsync();
-
-        }
-
-        public async Task CreateNoteToReview(Guid userId, Guid reviewId, string note)
-        {
-            var noteToReview = new AdminNoteDbModel
-            {
-                UserId = userId,
-                ReviewId = reviewId,
-                Note = note,
-                Date = DateTime.UtcNow
-            };
-
-            await _context.AdminNote.AddAsync(noteToReview);
-            await _context.SaveChangesAsync();
-
-        }
-
-        public async Task DeleteNoteToReview(Guid userId, Guid reviewId)
-        {
-            var review = await _context.AdminNote.FirstOrDefaultAsync(x => x.UserId == userId && x.ReviewId == reviewId);
-
-            if (review != null)
-            {
-                _context.AdminNote.Remove(review);
-                await _context.SaveChangesAsync();
-            }
-
         }
     }
 }
