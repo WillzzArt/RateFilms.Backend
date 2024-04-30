@@ -112,5 +112,21 @@ namespace RateFilms.WebAPI.Controllers
 
             return Ok(reviews);
         }
+
+        [HttpGet("ReviewsInMovie")]
+        public async Task<IActionResult> GetReviewsInMovie(Guid movieId, int countReview, bool isFilm)
+        {
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                var comments = await _commentSerivice.GetReviewsInMovie(movieId, countReview, isFilm, User.Identity.Name);
+                return Ok(comments);
+            }
+            else
+            {
+                var comments = await _commentSerivice.GetReviewsInMovie(movieId, countReview, isFilm, null);
+                return Ok(comments);
+            }
+
+        }
     }
 }

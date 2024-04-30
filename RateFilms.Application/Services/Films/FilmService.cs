@@ -2,6 +2,7 @@
 using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO.Films;
 using RateFilms.Domain.DTO.Movies;
+using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Repositories;
 
@@ -12,15 +13,18 @@ namespace RateFilms.Application.Services.Films
         private readonly IFilmRepository _filmRepository;
         private readonly IUserRepository _userRepository;
         private readonly ICommentService _commentService;
+        private readonly IReviewRepository _reviewRepository;
 
         public FilmService(
             IFilmRepository filmRepository,
             IUserRepository userRepository,
-            ICommentService commentSerivice)
+            ICommentService commentSerivice,
+            IReviewRepository reviewRepository)
         {
             _filmRepository = filmRepository;
             _userRepository = userRepository;
             _commentService = commentSerivice;
+            _reviewRepository = reviewRepository;
         }
 
         public async Task CreateFilmsAsync(Film film)
@@ -64,9 +68,15 @@ namespace RateFilms.Application.Services.Films
 
             var comment = await _commentService.GetCommentsInFilm(id, 5, userName);
 
+            var reviews = await _reviewRepository.GetReviewByStatus(id, user.Id, true,
+                x => x.Status == ReviewStatus.Published);
+
+            var popularReview = reviews.OrderByDescending(r => r.CountLike).FirstOrDefault();
+
+
             if (film != null)
             {
-                return new FilmExtendResponse(film, film.Favorites?.FirstOrDefault(x => x.User.Id == user.Id), comment);
+                return new FilmExtendResponse(film, film.Favorites?.FirstOrDefault(x => x.User.Id == user.Id), comment, popularReview);
             }
 
             return null;
@@ -75,11 +85,17 @@ namespace RateFilms.Application.Services.Films
         public async Task<FilmExtendResponse?> GetFilmById(Guid id)
         {
             var film = await _filmRepository.GetFilmWithFavoriteById(id);
+
             var comment = await _commentService.GetCommentsInFilm(id, 5, null);
+
+            var reviews = await _reviewRepository.GetReviewByStatus(id, null, true,
+                x => x.Status == ReviewStatus.Published);
+
+            var popularReview = reviews.OrderByDescending(r => r.CountLike).FirstOrDefault();
 
             if (film != null)
             {
-                return new FilmExtendResponse(film, null, comment);
+                return new FilmExtendResponse(film, null, comment, popularReview);
             }
 
             return null;

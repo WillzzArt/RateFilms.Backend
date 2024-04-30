@@ -13,7 +13,7 @@ namespace RateFilms.Domain.DTO.Movies
         public bool IsLiked { get; }
         public string Status { get; }
         public AdminNoteResponse? Note { get; }
-        public int? UserRating { get; }
+        public int UserRating { get; }
 
         public ReviewResponse(Review review)
         {

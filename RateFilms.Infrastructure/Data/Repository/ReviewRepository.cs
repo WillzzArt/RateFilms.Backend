@@ -93,7 +93,7 @@ namespace RateFilms.Infrastructure.Data.Repository
             }
         }
 
-        public async Task<IEnumerable<Review>> GetUncheckedReview(Guid moviewId, bool isFilm, Func<Review, bool> predicate)
+        public async Task<IEnumerable<Review>> GetReviewByStatus(Guid moviewId, Guid? userId, bool isFilm, Func<Review, bool> predicate)
         {
             IQueryable<CommentDbModel> review;
 
@@ -115,8 +115,8 @@ namespace RateFilms.Infrastructure.Data.Repository
                 User = r.CommentInFilm != null 
                         ? UserConvertor.UserDbConvertUserDomain(r.CommentInFilm!.Favorite!.User) 
                         : UserConvertor.UserDbConvertUserDomain(r.CommentInSerial!.Favorite!.User),
-                /*CountLike = r.Users.Count(),
-                IsLiked = r.Users.Any(u => u.UserId == user?.Id),*/
+                CountLike = r.Users.Count(),
+                IsLiked = r.Users.Any(u => u.UserId == userId),
                 Score = (int)(r.CommentInFilm != null 
                         ? r.CommentInFilm!.Favorite!.Score!
                         : r.CommentInSerial!.Favorite!.Score!),

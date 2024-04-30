@@ -2,6 +2,7 @@
 using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.DTO.Serials;
+using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Repositories;
 
@@ -12,14 +13,17 @@ namespace RateFilms.Application.Services.Serials
         private readonly ISerialRepositoty _serialRepositoty;
         private readonly IUserRepository _userRepository;
         private readonly ICommentService _commentService;
+        private readonly IReviewRepository _reviewRepository;
         public SerialService(
             ISerialRepositoty serialRepositoty,
             IUserRepository userRepository,
-            ICommentService commentService)
+            ICommentService commentService,
+            IReviewRepository reviewRepository)
         {
             _serialRepositoty = serialRepositoty;
             _userRepository = userRepository;
             _commentService = commentService;
+            _reviewRepository = reviewRepository;
         }
         public async Task CreateSerialAsync(Serial serial)
         {
@@ -68,9 +72,14 @@ namespace RateFilms.Application.Services.Serials
             var serial = await _serialRepositoty.GetSerialWithFavoriteById(id);
             var comment = await _commentService.GetCommentsInSerial(id, 5, null);
 
+            var reviews = await _reviewRepository.GetReviewByStatus(id, null, false,
+                x => x.Status == ReviewStatus.Published);
+
+            var popularReview = reviews.OrderByDescending(r => r.CountLike).FirstOrDefault();
+
             if (serial != null)
             {
-                return new SerialExtendResponse(serial, null, comment);
+                return new SerialExtendResponse(serial, null, comment, popularReview);
             }
 
             return null;
@@ -85,9 +94,14 @@ namespace RateFilms.Application.Services.Serials
 
             var comment = await _commentService.GetCommentsInSerial(id, 5, userName);
 
+            var reviews = await _reviewRepository.GetReviewByStatus(id, user.Id, false,
+                x => x.Status == ReviewStatus.Published);
+
+            var popularReview = reviews.OrderByDescending(r => r.CountLike).FirstOrDefault();
+
             if (serial != null)
             {
-                return new SerialExtendResponse(serial, serial.Favorites?.FirstOrDefault(x => x.User.Id == user.Id), comment);
+                return new SerialExtendResponse(serial, serial.Favorites?.FirstOrDefault(x => x.User.Id == user.Id), comment, popularReview);
             }
 
             return null;

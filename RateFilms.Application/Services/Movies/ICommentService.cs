@@ -12,6 +12,7 @@ namespace RateFilms.Application.Services.Movies
         Task<IEnumerable<CommentResponse>> GetCommentsInFilm(Guid filmId, int countComm, string? username);
         Task<IEnumerable<CommentResponse>> GetCommentsInSerial(Guid serialId, int countComm, string? username);
         Task<IEnumerable<ReviewResponse>> GetUncheckedReviewsInMovie(Guid movieId, int count, bool isFilm, string? username);
+        Task<IEnumerable<ReviewResponse>> GetReviewsInMovie(Guid movieId, int count, bool isFilm, string? username);
         Task<bool> ChangeLikeOnComment(Guid commentId, string username);
     }
 }

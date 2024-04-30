@@ -91,6 +91,7 @@ namespace RateFilms.Infrastructure.Data.Repository
                         Date = c.Comment.Date,
                         IsEdit = c.Comment.IsEdit,
                         Text = c.Comment.Text,
+                        Status = c.Comment.Status,
                         Users = c.Comment.Users.ToList()
                     }).ToList(),
                     user = new UserDbModel
@@ -131,6 +132,7 @@ namespace RateFilms.Infrastructure.Data.Repository
                         Date = c.Comment.Date,
                         IsEdit = c.Comment.IsEdit,
                         Text = c.Comment.Text,
+                        Status = c.Comment.Status,
                         Users = c.Comment.Users.ToList()
                     }).ToList(),
                     user = new UserDbModel

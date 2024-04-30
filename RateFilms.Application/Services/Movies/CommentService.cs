@@ -62,11 +62,11 @@ namespace RateFilms.Application.Services.Movies
 
         public async Task<IEnumerable<ReviewResponse>> GetUncheckedReviewsInMovie(Guid movieId, int count, bool isFilm, string? username)
         {
-            IEnumerable<Review> review;
+            IEnumerable<Review> reviews;
 
             if (username == null)
             {
-                review = await _reviewRepository.GetUncheckedReview(movieId, isFilm,
+                reviews = await _reviewRepository.GetReviewByStatus(movieId, null, isFilm,
                     x => new[] { ReviewStatus.Unpublished, ReviewStatus.Canсeled, ReviewStatus.Published }.Contains(x.Status));
             }
             else
@@ -75,12 +75,34 @@ namespace RateFilms.Application.Services.Movies
 
                 if (user == null) throw new ArgumentException(nameof(username));
 
-                review = await _reviewRepository.GetUncheckedReview(movieId, isFilm,
+                reviews = await _reviewRepository.GetReviewByStatus(movieId, null, isFilm,
                     x => new[] { ReviewStatus.Unsent, ReviewStatus.Canсeled, ReviewStatus.Published }.Contains(x.Status) 
                     && x.User.Id == user.Id);
             }
 
-            return review.Select(r => new ReviewResponse(r));
+            return reviews.Take(count).Select(r => new ReviewResponse(r));
+        }
+
+        public async Task<IEnumerable<ReviewResponse>> GetReviewsInMovie(Guid movieId, int count, bool isFilm, string? username)
+        {
+            IEnumerable<Review> reviews;
+
+            if (username != null)
+            {
+                var user = await _userRepository.FindUser(username);
+
+                if (user == null) throw new ArgumentException(nameof(username));
+
+                reviews = await _reviewRepository.GetReviewByStatus(movieId, user.Id, isFilm,
+                    x => x.Status == ReviewStatus.Published);
+            }
+            else
+            {
+                reviews = await _reviewRepository.GetReviewByStatus(movieId, null, isFilm,
+                    x => x.Status == ReviewStatus.Published);
+            }
+
+            return reviews.Take(count).Select(r => new ReviewResponse(r));
         }
 
         public async Task CreateComment(CommentRequest commentRequest, string username, bool isFilm)
@@ -210,7 +232,6 @@ namespace RateFilms.Application.Services.Movies
 
             return await _commentRepository.SetLikedComment(commentId, user.Id);
         }
-
 
     }
 }
