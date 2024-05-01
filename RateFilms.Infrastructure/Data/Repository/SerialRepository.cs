@@ -179,7 +179,7 @@ namespace RateFilms.Infrastructure.Data.Repository
                     UserId = user.Id,
                     Status = favoriteSerial.StatusMovie.ToEnum(StatusMovie.None),
                     IsFavorite = favoriteSerial.IsFavorite ?? false,
-                    Score = favoriteSerial.Score
+                    Score = favoriteSerial.Score ?? 0
                 };
 
                 await _context.FavoriteSerials.AddAsync(saveFavorite);
@@ -192,12 +192,12 @@ namespace RateFilms.Infrastructure.Data.Repository
                 favoriteSerialDb.IsFavorite = favoriteSerial.IsFavorite ?? favoriteSerialDb.IsFavorite;
                 favoriteSerialDb.Score = favoriteSerial.Score ?? favoriteSerialDb.Score;
 
-                if (favoriteSerialDb.Status == StatusMovie.None &&
+                /*if (favoriteSerialDb.Status == StatusMovie.None &&
                     favoriteSerialDb.IsFavorite == false &&
                     favoriteSerialDb.Score == 0)
                 {
                     _context.Remove(favoriteSerialDb);
-                }
+                }*/
             }
 
             await _context.SaveChangesAsync();

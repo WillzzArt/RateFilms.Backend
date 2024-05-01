@@ -57,13 +57,15 @@ namespace RateFilms.Infrastructure.Data.Repository
             return review;
         }
 
-        public async Task SetNewReviewStatus(Guid reviewId, ReviewStatus status)
+        public async Task SetNewReviewStatus(Review review)
         {
-            var review = await _context.Comment.FirstOrDefaultAsync(c => c.Id == reviewId);
+            var reviewData = await _context.Comment.FirstOrDefaultAsync(c => c.Id == review.Id);
 
-            if (review == null) throw new ArgumentException(nameof(reviewId));
+            if (reviewData == null) throw new ArgumentException(nameof(review));
 
-            review.Status = status;
+            reviewData.Status = review.Status;
+            reviewData.Date = review.Date;
+
 
             await _context.SaveChangesAsync();
         }
@@ -112,12 +114,12 @@ namespace RateFilms.Infrastructure.Data.Repository
                 Date = r.Date,
                 Status = r.Status,
                 Text = r.Text,
-                User = r.CommentInFilm != null 
-                        ? UserConvertor.UserDbConvertUserDomain(r.CommentInFilm!.Favorite!.User) 
+                User = r.CommentInFilm != null
+                        ? UserConvertor.UserDbConvertUserDomain(r.CommentInFilm!.Favorite!.User)
                         : UserConvertor.UserDbConvertUserDomain(r.CommentInSerial!.Favorite!.User),
                 CountLike = r.Users.Count(),
                 IsLiked = r.Users.Any(u => u.UserId == userId),
-                Score = (int)(r.CommentInFilm != null 
+                Score = (int)(r.CommentInFilm != null
                         ? r.CommentInFilm!.Favorite!.Score!
                         : r.CommentInSerial!.Favorite!.Score!),
 
@@ -130,6 +132,22 @@ namespace RateFilms.Infrastructure.Data.Repository
             }).ToListAsync();
 
             return result.Where(predicate);
+        }
+
+        public async Task<bool> UpdateReview(Guid reviewId, string text)
+        {
+            var reviewData = await _context.Comment.FirstOrDefaultAsync(r => r.Id == reviewId);
+
+            if (reviewData != null && reviewData.Status == ReviewStatus.Unsent)
+            {
+                reviewData.Text = text;
+
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+
+            return false;
         }
     }
 }

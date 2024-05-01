@@ -96,8 +96,8 @@ namespace RateFilms.WebAPI.Controllers
         }
 
         [Authorize(Policy = "admin")]
-        [HttpGet("UnpublishedReviews")]
-        public async Task<IActionResult> GetUnpublishedReviews(Guid movieId, bool isFilm)
+        [HttpGet("UserReviews")]
+        public async Task<IActionResult> GetUserReviews(Guid movieId, bool isFilm)
         {
             var reviews = await _commentSerivice.GetUncheckedReviewsInMovie(movieId, 20, isFilm, null);
 
@@ -105,8 +105,8 @@ namespace RateFilms.WebAPI.Controllers
         }
 
         [Authorize]
-        [HttpGet("UsersReviews")]
-        public async Task<IActionResult> GetUsersReviews(Guid movieId, bool isFilm)
+        [HttpGet("MyReviews")]
+        public async Task<IActionResult> GetMyReviews(Guid movieId, bool isFilm)
         {
             var reviews = await _commentSerivice.GetUncheckedReviewsInMovie(movieId, 20, isFilm, User.Identity!.Name!);
 
@@ -127,6 +127,21 @@ namespace RateFilms.WebAPI.Controllers
                 return Ok(comments);
             }
 
+        }
+
+        [Authorize]
+        [HttpPut("UpdateReview")]
+        public async Task<IActionResult> UpdateReview(Guid reviewId, string text)
+        {
+            var isUpdate = await _commentSerivice.UpdateReview(reviewId, text);
+            if (isUpdate)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
     }
 }

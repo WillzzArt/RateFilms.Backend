@@ -40,6 +40,11 @@ namespace RateFilms.Application.Services.Movies
                 comments = await _commentRepository.GetCommentsInFilm(filmId, null);
             }
 
+            if (countComm == 0)
+            {
+                return comments.Select(c => new CommentResponse(c));
+            }
+
             return comments.Take(countComm).Select(c => new CommentResponse(c));
         }
 
@@ -55,6 +60,11 @@ namespace RateFilms.Application.Services.Movies
             else
             {
                 comments = await _commentRepository.GetCommentsInSerial(serialId, null);
+            }
+
+            if (countComm == 0)
+            {
+                return comments.Select(c => new CommentResponse(c));
             }
 
             return comments.Take(countComm).Select(c => new CommentResponse(c));
@@ -153,6 +163,7 @@ namespace RateFilms.Application.Services.Movies
                     case ReviewStatus.Unsent:
                         {
                             review.Status = ReviewStatus.Unpublished;
+                            review.Date = DateTimeOffset.UtcNow;
                             break;
                         }
                     case ReviewStatus.Canсeled:
@@ -162,7 +173,7 @@ namespace RateFilms.Application.Services.Movies
                         }
                 }
 
-                await _reviewRepository.SetNewReviewStatus(review.Id, review.Status);
+                await _reviewRepository.SetNewReviewStatus(review);
             }
         }
 
@@ -193,6 +204,7 @@ namespace RateFilms.Application.Services.Movies
                                 await _reviewRepository.CreateNoteToReview(user.Id, adminNote.ReviewId, adminNote.Note);
 
                                 review.Status = ReviewStatus.Canсeled;
+                                review.Date = DateTime.UtcNow;
                             }
 
                             break;
@@ -210,7 +222,7 @@ namespace RateFilms.Application.Services.Movies
                         }
                 }
 
-                await _reviewRepository.SetNewReviewStatus(review.Id, review.Status);
+                await _reviewRepository.SetNewReviewStatus(review);
             }
         }
 
@@ -219,9 +231,9 @@ namespace RateFilms.Application.Services.Movies
             throw new NotImplementedException();
         }
 
-        public Task UpdateComment(CommentRequest commentRequest, string username)
+        public async Task<bool> UpdateReview(Guid reviewId, string text)
         {
-            throw new NotImplementedException();
+            return await _reviewRepository.UpdateReview(reviewId, text);
         }
 
         public async Task<bool> ChangeLikeOnComment(Guid commentId, string username)

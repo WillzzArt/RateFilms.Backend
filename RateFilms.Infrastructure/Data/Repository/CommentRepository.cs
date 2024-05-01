@@ -42,7 +42,8 @@ namespace RateFilms.Infrastructure.Data.Repository
                     var favoriteFilm = new FavoriteFilmDbModel
                     {
                         UserId = userId,
-                        FilmId = movieId
+                        FilmId = movieId,
+                        Score = 0
                     };
 
                     await _context.FavoriteFilms.AddAsync(favoriteFilm);
@@ -65,7 +66,8 @@ namespace RateFilms.Infrastructure.Data.Repository
                     var favoriteSerial = new FavoriteSerialDbModel
                     {
                         UserId = userId,
-                        SerialId = movieId
+                        SerialId = movieId,
+                        Score = 0
                     };
 
                     await _context.FavoriteSerials.AddAsync(favoriteSerial);

@@ -7,8 +7,9 @@ namespace RateFilms.Domain.Repositories
     {
         Task<Review> FindReviewById(Guid reviewId, bool isFilm);
         Task<IEnumerable<Review>> GetReviewByStatus(Guid moviewId, Guid? userId, bool isFilm, Func<Review, bool> predicate);
-        Task SetNewReviewStatus(Guid reviewId, ReviewStatus status);
+        Task SetNewReviewStatus(Review review);
         Task CreateNoteToReview(Guid userId, Guid reviewId, string note);
         Task DeleteNoteToReview(Guid userId, Guid reviewId);
+        Task<bool> UpdateReview(Guid reviewId, string text);
     }
 }
