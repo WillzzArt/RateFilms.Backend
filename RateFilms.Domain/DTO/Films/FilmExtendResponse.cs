@@ -24,10 +24,11 @@ namespace RateFilms.Domain.DTO.Films
         public string? Country { get; }
         public int? UserRating { get; }
         public IEnumerable<CommentResponse>? Comments { get; }
+        public ReviewResponse? Review { get; }
         public Dictionary<int, int>? Ratings { get; }
         public Dictionary<string, int> StatusOfPeople { get; }
 
-        public FilmExtendResponse(Film film, Favorite? favoriteFilm, IEnumerable<CommentResponse> comments)
+        public FilmExtendResponse(Film film, Favorite? favoriteFilm, IEnumerable<CommentResponse> comments, Review? review)
         {
             Id = film.Id;
             Name = film.Name;
@@ -66,6 +67,7 @@ namespace RateFilms.Domain.DTO.Films
             StatusOfPeople = Favorite.GetStatusOfPeople(film.Favorites);
             Comments = comments;
             IsAnnouncement = film.IsAnnouncement();
+            Review = review != null ? new ReviewResponse(review) : null;
         }
     }
 }

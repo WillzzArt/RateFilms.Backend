@@ -11,7 +11,6 @@ namespace RateFilms.Domain.DTO.Movies
         public int CountLike { get;  }
         public UserMini User {  get; }
         public bool IsLiked { get; }
-        public string Status { get; }
 
         public CommentResponse(Comment comment)
         {
@@ -21,7 +20,6 @@ namespace RateFilms.Domain.DTO.Movies
             CountLike = comment.CountLike;
             User = new UserMini(comment.User);
             IsLiked = comment.IsLiked;
-            Status = comment.Status.ToString();
         }
 
     }

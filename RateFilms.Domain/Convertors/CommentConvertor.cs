@@ -15,8 +15,7 @@ namespace RateFilms.Domain.Convertors
                 Id = commentDb.Id,
                 Text = commentDb.Text,
                 Date = commentDb.Date,
-                IsEdit = commentDb.IsEdit,
-                Status = commentDb.Status
+                IsEdit = commentDb.IsEdit
             };
 
             return comment;

@@ -32,10 +32,11 @@ namespace RateFilms.Domain.DTO.Serials
         public string? Country { get; }
         public int? UserRating { get; }
         public IEnumerable<CommentResponse>? Comments { get; }
+        public ReviewResponse? Review { get; }
         public Dictionary<int, int>? Ratings { get; }
         public Dictionary<string, int> StatusOfPeople { get; }
 
-        public SerialExtendResponse(Serial serial, Favorite? favoriteSerial, IEnumerable<CommentResponse> comments)
+        public SerialExtendResponse(Serial serial, Favorite? favoriteSerial, IEnumerable<CommentResponse> comments, Review? review)
         {
             Id = serial.Id;
             Name = serial.Name;
@@ -63,6 +64,7 @@ namespace RateFilms.Domain.DTO.Serials
             Ratings = Favorite.GetRatings(serial.Favorites);
             StatusOfPeople = Favorite.GetStatusOfPeople(serial.Favorites);
             Comments = comments;
+            Review = review != null ? new ReviewResponse(review) : null;
         }
     }
 }

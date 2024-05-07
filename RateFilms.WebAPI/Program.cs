@@ -77,6 +77,7 @@ builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICommentService, CommentService>();
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 
 builder.Services.Configure<TokenOptions>(config.GetSection("JwtSettings"));
 
