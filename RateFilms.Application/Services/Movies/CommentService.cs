@@ -70,7 +70,7 @@ namespace RateFilms.Application.Services.Movies
             return comments.Take(countComm).Select(c => new CommentResponse(c));
         }
 
-        public async Task<IEnumerable<ReviewResponse>> GetUncheckedReviewsInMovie(Guid movieId, int count, bool isFilm, string? username)
+        public async Task<IEnumerable<ReviewResponse>> GetUncheckedReviewsInMovie(Guid movieId, bool isFilm, string? username)
         {
             IEnumerable<Review> reviews;
 
@@ -90,10 +90,10 @@ namespace RateFilms.Application.Services.Movies
                     && x.User.Id == user.Id);
             }
 
-            return reviews.Take(count).Select(r => new ReviewResponse(r));
+            return reviews.Select(r => new ReviewResponse(r));
         }
 
-        public async Task<IEnumerable<ReviewResponse>> GetReviewsInMovie(Guid movieId, int count, bool isFilm, string? username)
+        public async Task<IEnumerable<ReviewResponse>> GetReviewsInMovie(Guid movieId, bool isFilm, string? username)
         {
             IEnumerable<Review> reviews;
 
@@ -112,7 +112,7 @@ namespace RateFilms.Application.Services.Movies
                     x => x.Status == ReviewStatus.Published);
             }
 
-            return reviews.Take(count).Select(r => new ReviewResponse(r));
+            return reviews.Select(r => new ReviewResponse(r));
         }
 
         public async Task CreateComment(CommentRequest commentRequest, string username, bool isFilm)

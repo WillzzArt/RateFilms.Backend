@@ -21,10 +21,10 @@ namespace RateFilms.Domain.Models.DomainModels
             if (favorites != null)
             {
                 var avgRating = 0.0;
-                if (favorites.Any(fav => fav.Score != null))
+                if (favorites.Any(fav => fav.Score != null && fav.Score != 0))
                 {
                     avgRating = favorites
-                        .Where(fav => fav.Score != null)
+                        .Where(fav => fav.Score != null && fav.Score != 0)
                         .Select(fav => (int)fav.Score!)
                         .Average();
                 }
