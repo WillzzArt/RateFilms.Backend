@@ -1,8 +1,6 @@
 ﻿using Microsoft.ML;
-using Microsoft.ML.Trainers;
+using RateFilms.Common.MovieRatingModels;
 using RateFilms.Domain.Repositories;
-using RateFilms.MovieRecomendation.Model;
-using System.Drawing;
 
 namespace RateFilms.MovieRecomendation
 {
@@ -10,9 +8,10 @@ namespace RateFilms.MovieRecomendation
     {
         private readonly IFavoriteRepository _favoriteRepository;
 
-        private List<MovieRating> testData = new List<MovieRating>() 
+        //Need update
+        private List<MovieRating> testData = new List<MovieRating>()
         {
-            new MovieRating() 
+            new MovieRating()
             {
                 UserId = "95830040-d2b1-4f9d-b12c-22714f86976f",
                 MovieId = "d6f2db08-b3e1-4cd3-9def-2fa8027b560e",
@@ -109,11 +108,19 @@ namespace RateFilms.MovieRecomendation
             var metrics = mlContext.BinaryClassification
                 .Evaluate(
                     data: prediction,
-                    labelColumnName: "Label", 
-                    scoreColumnName: "Score", 
+                    labelColumnName: "Label",
+                    scoreColumnName: "Score",
                     predictedLabelColumnName: "PredictedLabel");
 
             Console.WriteLine("Evaluation Metrics: acc:" + Math.Round(metrics.Accuracy, 4) + " AreaUnderRocCurve(AUC):" + Math.Round(metrics.AreaUnderRocCurve, 4));
+        }
+
+        public void SaveModel(MLContext mlContext, DataViewSchema trainingDataViewSchema, ITransformer model)
+        {
+            var modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "MovieRecommenderModel.zip");
+
+            Console.WriteLine("=============== Saving the model to a file ===============");
+            mlContext.Model.Save(model, trainingDataViewSchema, modelPath);
         }
     }
 }

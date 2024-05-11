@@ -46,5 +46,13 @@ namespace RateFilms.Application.Services.Movies
 
             return new Movie(films, serils);
         }
+
+        public async Task<Movie> GetRecommendedMovie(string username)
+        {
+            var films = await _filmService.GetRecommendedFilms(username);
+            var serials = await _serialService.GetRecommendedSerials(username);
+
+            return new Movie(films, serials);
+        }
     }
 }

@@ -14,5 +14,6 @@ namespace RateFilms.Application.Services.Films
         Task CreateFilmsAsync(Film film);
         Task SetFavoriteFilm(FavoriteMovie favoriteFilm, string userName);
         Task<IEnumerable<FilmResponse>> GetFilmsWithUncheckedReview();
+        Task<IEnumerable<FilmResponse>> GetRecommendedFilms(string username);
     }
 }

@@ -14,5 +14,6 @@ namespace RateFilms.Application.Services.Serials
         Task SetFavoriteSerial(FavoriteMovie favoriteMovie, string userName);
         Task<IEnumerable<SerialResponse>> GetAllFavoriteSerials(string userName);
         Task<IEnumerable<SerialResponse>> GetSerialsWithUncheckedReview();
+        Task<IEnumerable<SerialResponse>> GetRecommendedSerials(string username);
     }
 }

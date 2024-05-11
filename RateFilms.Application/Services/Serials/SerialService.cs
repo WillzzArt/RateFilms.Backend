@@ -1,8 +1,10 @@
-﻿using RateFilms.Application.Services.Movies;
+﻿using Microsoft.ML;
+using RateFilms.Application.Services.Movies;
+using RateFilms.Common.MovieRatingModels;
 using RateFilms.Domain.Convertors;
+using RateFilms.Domain.DTO.Films;
 using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.DTO.Serials;
-using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Repositories;
 
@@ -14,16 +16,20 @@ namespace RateFilms.Application.Services.Serials
         private readonly IUserRepository _userRepository;
         private readonly ICommentService _commentService;
         private readonly IReviewRepository _reviewRepository;
+        private readonly IFavoriteRepository _favoriteRepository;
+
         public SerialService(
             ISerialRepositoty serialRepositoty,
             IUserRepository userRepository,
             ICommentService commentService,
-            IReviewRepository reviewRepository)
+            IReviewRepository reviewRepository,
+            IFavoriteRepository favoriteRepository)
         {
             _serialRepositoty = serialRepositoty;
             _userRepository = userRepository;
             _commentService = commentService;
             _reviewRepository = reviewRepository;
+            _favoriteRepository = favoriteRepository;
         }
         public async Task CreateSerialAsync(Serial serial)
         {
@@ -124,10 +130,10 @@ namespace RateFilms.Application.Services.Serials
             if (user == null) throw new ArgumentException(userName);
 
             var favoriteSerialsForUser = from s in serials
-                                       where s.Favorites != null
-                                       from fav in s.Favorites!
-                                       where fav.User.Id == user.Id
-                                       select new SerialResponse(s, fav);
+                                         where s.Favorites != null
+                                         from fav in s.Favorites!
+                                         where fav.User.Id == user.Id
+                                         select new SerialResponse(s, fav);
 
             return favoriteSerialsForUser;
         }
@@ -139,6 +145,44 @@ namespace RateFilms.Application.Services.Serials
             var res = serials.Select(s => new SerialResponse(s, null));
 
             return res;
+        }
+
+        public async Task<IEnumerable<SerialResponse>> GetRecommendedSerials(string username)
+        {
+            var user = await _userRepository.FindUser(username);
+
+            if (user == null) throw new ArgumentException(username);
+
+            var mLContext = new MLContext();
+            DataViewSchema modelSchema;
+            var trainedModel = mLContext.Model.Load(Path.Combine(Environment.CurrentDirectory, "Data", "MovieRecommenderModel.zip"), out modelSchema);
+
+            var predictionEngine = mLContext.Model.CreatePredictionEngine<MovieRating, MovieRatingPrediction>(trainedModel);
+
+            var favorite = await _favoriteRepository.FindFavoriteSerials(user.Id);
+            var serials = await _serialRepositoty.GetAllSerialsWithFavorite();
+            var unWatchedSerials = serials.Where(f => !favorite.Any(fav => fav.SerialId == f.Id && (fav.Score != null || fav.Score != 0)));
+
+            var resultSerials = new List<SerialResponse>();
+
+            MovieRatingPrediction prediction = null;
+
+            foreach (var serial in unWatchedSerials)
+            {
+                prediction = predictionEngine.Predict(new MovieRating
+                {
+                    UserId = user.Id.ToString(),
+                    MovieId = serial.Id.ToString(),
+                    Genres = serial.Genre.Select(g => g.ToString()).ToArray()
+                });
+
+                if ((float)(100 / (1 + Math.Exp(-prediction.Score))) > 65)
+                {
+                    resultSerials.Add(new SerialResponse(serial, null));
+                }
+            }
+
+            return resultSerials;
         }
     }
 }

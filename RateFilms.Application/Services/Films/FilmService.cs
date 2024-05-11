@@ -1,4 +1,6 @@
-﻿using RateFilms.Application.Services.Movies;
+﻿using Microsoft.ML;
+using RateFilms.Application.Services.Movies;
+using RateFilms.Common.MovieRatingModels;
 using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO.Films;
 using RateFilms.Domain.DTO.Movies;
@@ -14,17 +16,20 @@ namespace RateFilms.Application.Services.Films
         private readonly IUserRepository _userRepository;
         private readonly ICommentService _commentService;
         private readonly IReviewRepository _reviewRepository;
+        private readonly IFavoriteRepository _favoriteRepository;
 
         public FilmService(
             IFilmRepository filmRepository,
             IUserRepository userRepository,
             ICommentService commentSerivice,
-            IReviewRepository reviewRepository)
+            IReviewRepository reviewRepository,
+            IFavoriteRepository favoriteRepository)
         {
             _filmRepository = filmRepository;
             _userRepository = userRepository;
             _commentService = commentSerivice;
             _reviewRepository = reviewRepository;
+            _favoriteRepository = favoriteRepository;
         }
 
         public async Task CreateFilmsAsync(Film film)
@@ -133,6 +138,44 @@ namespace RateFilms.Application.Services.Films
             var filmsRespons = films.Select(f => new FilmResponse(f, null)).ToList();
 
             return filmsRespons;
+        }
+
+        public async Task<IEnumerable<FilmResponse>> GetRecommendedFilms(string username)
+        {
+            var user = await _userRepository.FindUser(username);
+
+            if (user == null) throw new ArgumentException(username);
+
+            var mLContext = new MLContext();
+            DataViewSchema modelSchema;
+            var trainedModel = mLContext.Model.Load(Path.Combine(Environment.CurrentDirectory, "Data", "MovieRecommenderModel.zip"), out modelSchema);
+
+            var predictionEngine = mLContext.Model.CreatePredictionEngine<MovieRating, MovieRatingPrediction>(trainedModel);
+
+            var favorite = await _favoriteRepository.FindFavoriteFilms(user.Id);
+            var films = await _filmRepository.GetAllFilmsWithFavorite();
+            var unWatchedFilms = films.Where(f => !favorite.Any(fav => fav.FilmId == f.Id && (fav.Score != null || fav.Score != 0)));
+
+            var resultFilms = new List<FilmResponse>();
+
+            MovieRatingPrediction prediction = null;
+
+            foreach (var film in unWatchedFilms)
+            {
+                prediction = predictionEngine.Predict(new MovieRating
+                {
+                    UserId = user.Id.ToString(),
+                    MovieId = film.Id.ToString(),
+                    Genres = film.Genre.Select(g => g.ToString()).ToArray()
+                });
+
+                if ((float)(100 / (1 + Math.Exp(-prediction.Score))) > 65)
+                {
+                    resultFilms.Add(new FilmResponse(film, null));
+                }
+            }
+
+            return resultFilms;
         }
     }
 }

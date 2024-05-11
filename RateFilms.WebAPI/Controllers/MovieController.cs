@@ -40,6 +40,14 @@ namespace RateFilms.WebAPI.Controllers
             return Ok(favoriteMovie);
         }
 
+        [Authorize]
+        [HttpGet("Recommended")]
+        public async Task<IActionResult> GetRecomendedMovies()
+        {
+            var movie = await _movieService.GetRecommendedMovie(User.Identity!.Name!);
+            return Ok(movie);
+        }
+
         [Authorize(Policy = "admin")]
         [HttpGet("GetMoviesWithUncheckedReview")]
         public async Task<IActionResult> GetMoviesWithUncheckedReview()

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RateFilms.Application.Services.Films;
+using RateFilms.Application.Services.Serials;
 using RateFilms.Domain.DTO.Movies;
+using RateFilms.Domain.DTO.Serials;
 using RateFilms.Domain.Models.DomainModels;
 using System.Security.Claims;
 
@@ -14,13 +16,16 @@ namespace RateFilms.WebAPI.Controllers
         private readonly ILogger<FilmsController> _logger;
 
         private readonly IFilmService _filmService;
+        private readonly ISerialService _serialService;
 
         public FilmsController(
             ILogger<FilmsController> logger,
-            IFilmService filmService)
+            IFilmService filmService,
+            ISerialService serialService)
         {
             _logger = logger;
             _filmService = filmService;
+            _serialService = serialService;
         }
 
         [AllowAnonymous]
@@ -66,6 +71,14 @@ namespace RateFilms.WebAPI.Controllers
             return Ok(favoriteFilm);
         }
 
+        [Authorize]
+        [HttpGet("RecommendedFilms")]
+        public async Task<IActionResult> GetRecommendedFilms()
+        {
+            var film = await _filmService.GetRecommendedFilms(User.Identity!.Name!);
+            return Ok(film);
+        }
+
         [Authorize(Policy = "admin")]
         [HttpPost]
         public async Task<IActionResult> AddFilms(Film film)
@@ -85,6 +98,47 @@ namespace RateFilms.WebAPI.Controllers
 
             return Ok();
         }
+
+        /*[Authorize]
+        [HttpPost("SetFavorites")]
+        public async Task<IActionResult> SetFavorites(int min, int max)
+        {
+            ClaimsPrincipal claims = HttpContext.User;
+
+            var films = await _filmService.GetFilms();
+            var serial = await _serialService.GetSerials();
+            var filmss = films.ToList();
+            var serials = serial.ToList();
+            var rnd = new Random();
+
+            for (var i = 0; i < 6; i++)
+            {
+                var fav = new FavoriteMovie
+                {
+                    MovieId = filmss[rnd.Next(0, 18)].Id,
+                    IsFavorite = false,
+                    StatusMovie = StatusMovie.None.ToString(),
+                    Score = rnd.Next(min, max)
+                };
+
+                await _filmService.SetFavoriteFilm(fav, claims.Identity!.Name!);
+            }
+            for (var i = 0; i < 6; i++)
+            {
+                var fav = new FavoriteMovie
+                {
+                    MovieId = serials[rnd.Next(0, 9)].Id,
+                    IsFavorite = false,
+                    StatusMovie = StatusMovie.None.ToString(),
+                    Score = rnd.Next(min, max)
+                };
+
+                await _serialService.SetFavoriteSerial(fav, claims.Identity!.Name!);
+            }
+            
+
+            return Ok();
+        }*/
 
         [Authorize(Policy = "admin")]
         [HttpGet("GetFilmsWithUncheckedReview")]

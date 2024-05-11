@@ -1,8 +1,8 @@
 ﻿using Microsoft.ML.Data;
 
-namespace RateFilms.MovieRecomendation.Model
+namespace RateFilms.Common.MovieRatingModels
 {
-    internal class MovieRating
+    public class MovieRating
     {
         [ColumnName("UserId")]
         public string UserId { get; set; }

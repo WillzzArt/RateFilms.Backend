@@ -2,10 +2,10 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ML;
+using RateFilms.Common.MovieRatingModels;
 using RateFilms.Domain.Repositories;
 using RateFilms.Infrastructure.Data;
 using RateFilms.Infrastructure.Data.Repository;
-using RateFilms.MovieRecomendation.Model;
 
 namespace RateFilms.MovieRecomendation
 {
@@ -43,14 +43,15 @@ namespace RateFilms.MovieRecomendation
 
             MovieRating testData = new MovieRating() 
             {
-                UserId = "768cd7e4-8c17-45f6-a635-d028066f070f",
-                MovieId = "3c7b869a-70ed-442e-9f30-f5e0a5182cb1",
-                Genres = new[] { "Action", "Fantasy" }
+                UserId = "d5e54094-e591-452f-9abd-71cf3a34b703",
+                MovieId = "30ef5bbd-4a7f-408a-ad5b-d1d1eb43bf87",
+                Genres = new[] { "Fantasy", "Animated", "Comedy" }
             };
 
             var movieRatingPrediction = predictionEngine.Predict(testData);
-            Console.WriteLine($"UserId:{testData.UserId} with movieId: {testData.MovieId} Score:{(float)(100 / (1 + Math.Exp(-movieRatingPrediction.Score)))} and Label {movieRatingPrediction.PredictedLabel}");
-
+            Console.WriteLine($"UserId: {testData.UserId} with movieId: {testData.MovieId} Score:{(float)(100 / (1 + Math.Exp(-movieRatingPrediction.Score)))} and Label {movieRatingPrediction.PredictedLabel}");
+            
+            trainModel.SaveModel(mlContext, trainingDataView.Schema, model);
         }
     }
 }

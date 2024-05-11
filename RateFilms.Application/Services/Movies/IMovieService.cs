@@ -8,5 +8,6 @@ namespace RateFilms.Application.Services.Movies
         Task<Movie> GetAllMoviesForAuthorizeUser(string username);
         Task<Movie> GetAllFavoritesMovie(string username);
         Task<Movie> GetMoviesWithUncheckedReview();
+        Task<Movie> GetRecommendedMovie(string username);
     }
 }
