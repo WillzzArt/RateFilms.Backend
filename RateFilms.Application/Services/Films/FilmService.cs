@@ -1,10 +1,9 @@
-﻿using Microsoft.ML;
+﻿using Microsoft.Extensions.ML;
 using RateFilms.Application.Services.Movies;
 using RateFilms.Common.MovieRatingModels;
 using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO.Films;
 using RateFilms.Domain.DTO.Movies;
-using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Repositories;
 
@@ -17,19 +16,22 @@ namespace RateFilms.Application.Services.Films
         private readonly ICommentService _commentService;
         private readonly IReviewRepository _reviewRepository;
         private readonly IFavoriteRepository _favoriteRepository;
+        private readonly PredictionEnginePool<MovieRating, MovieRatingPrediction> _predictionEnginePool;
 
         public FilmService(
             IFilmRepository filmRepository,
             IUserRepository userRepository,
             ICommentService commentSerivice,
             IReviewRepository reviewRepository,
-            IFavoriteRepository favoriteRepository)
+            IFavoriteRepository favoriteRepository,
+            PredictionEnginePool<MovieRating, MovieRatingPrediction> predictionEnginePool)
         {
             _filmRepository = filmRepository;
             _userRepository = userRepository;
             _commentService = commentSerivice;
             _reviewRepository = reviewRepository;
             _favoriteRepository = favoriteRepository;
+            _predictionEnginePool = predictionEnginePool;
         }
 
         public async Task CreateFilmsAsync(Film film)
@@ -146,11 +148,9 @@ namespace RateFilms.Application.Services.Films
 
             if (user == null) throw new ArgumentException(username);
 
-            var mLContext = new MLContext();
-            DataViewSchema modelSchema;
-            var trainedModel = mLContext.Model.Load(Path.Combine(Environment.CurrentDirectory, "Data", "MovieRecommenderModel.zip"), out modelSchema);
-
-            var predictionEngine = mLContext.Model.CreatePredictionEngine<MovieRating, MovieRatingPrediction>(trainedModel);
+            var predictionHandler =
+                async (PredictionEnginePool<MovieRating, MovieRatingPrediction> predictionEnginePool, MovieRating input) =>
+                    await Task.FromResult(predictionEnginePool.Predict(modelName: "MovieRecommenderModel", input));
 
             var favorite = await _favoriteRepository.FindFavoriteFilms(user.Id);
             var films = await _filmRepository.GetAllFilmsWithFavorite();
@@ -162,14 +162,14 @@ namespace RateFilms.Application.Services.Films
 
             foreach (var film in unWatchedFilms)
             {
-                prediction = predictionEngine.Predict(new MovieRating
+                prediction = await predictionHandler(_predictionEnginePool, new MovieRating
                 {
                     UserId = user.Id.ToString(),
                     MovieId = film.Id.ToString(),
                     Genres = film.Genre.Select(g => g.ToString()).ToArray()
                 });
 
-                if ((float)(100 / (1 + Math.Exp(-prediction.Score))) > 65)
+                if ((float)(100 / (1 + Math.Exp(-prediction.Score))) > 70)
                 {
                     resultFilms.Add(new FilmResponse(film, null));
                 }

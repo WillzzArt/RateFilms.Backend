@@ -1,8 +1,7 @@
-﻿using Microsoft.ML;
+﻿using Microsoft.Extensions.ML;
 using RateFilms.Application.Services.Movies;
 using RateFilms.Common.MovieRatingModels;
 using RateFilms.Domain.Convertors;
-using RateFilms.Domain.DTO.Films;
 using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.DTO.Serials;
 using RateFilms.Domain.Models.DomainModels;
@@ -17,19 +16,22 @@ namespace RateFilms.Application.Services.Serials
         private readonly ICommentService _commentService;
         private readonly IReviewRepository _reviewRepository;
         private readonly IFavoriteRepository _favoriteRepository;
+        private readonly PredictionEnginePool<MovieRating, MovieRatingPrediction> _predictionEnginePool;
 
         public SerialService(
             ISerialRepositoty serialRepositoty,
             IUserRepository userRepository,
             ICommentService commentService,
             IReviewRepository reviewRepository,
-            IFavoriteRepository favoriteRepository)
+            IFavoriteRepository favoriteRepository,
+            PredictionEnginePool<MovieRating, MovieRatingPrediction> predictionEnginePool)
         {
             _serialRepositoty = serialRepositoty;
             _userRepository = userRepository;
             _commentService = commentService;
             _reviewRepository = reviewRepository;
             _favoriteRepository = favoriteRepository;
+            _predictionEnginePool = predictionEnginePool;
         }
         public async Task CreateSerialAsync(Serial serial)
         {
@@ -153,11 +155,9 @@ namespace RateFilms.Application.Services.Serials
 
             if (user == null) throw new ArgumentException(username);
 
-            var mLContext = new MLContext();
-            DataViewSchema modelSchema;
-            var trainedModel = mLContext.Model.Load(Path.Combine(Environment.CurrentDirectory, "Data", "MovieRecommenderModel.zip"), out modelSchema);
-
-            var predictionEngine = mLContext.Model.CreatePredictionEngine<MovieRating, MovieRatingPrediction>(trainedModel);
+            var predictionHandler =
+                async (PredictionEnginePool<MovieRating, MovieRatingPrediction> predictionEnginePool, MovieRating input) =>
+                    await Task.FromResult(predictionEnginePool.Predict(modelName: "MovieRecommenderModel", input));
 
             var favorite = await _favoriteRepository.FindFavoriteSerials(user.Id);
             var serials = await _serialRepositoty.GetAllSerialsWithFavorite();
@@ -169,14 +169,14 @@ namespace RateFilms.Application.Services.Serials
 
             foreach (var serial in unWatchedSerials)
             {
-                prediction = predictionEngine.Predict(new MovieRating
+                prediction = await predictionHandler(_predictionEnginePool, new MovieRating
                 {
                     UserId = user.Id.ToString(),
                     MovieId = serial.Id.ToString(),
                     Genres = serial.Genre.Select(g => g.ToString()).ToArray()
                 });
 
-                if ((float)(100 / (1 + Math.Exp(-prediction.Score))) > 65)
+                if ((float)(100 / (1 + Math.Exp(-prediction.Score))) > 70)
                 {
                     resultSerials.Add(new SerialResponse(serial, null));
                 }

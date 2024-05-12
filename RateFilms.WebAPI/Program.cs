@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.ML;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using RateFilms.Application.Option;
@@ -7,6 +8,7 @@ using RateFilms.Application.Services;
 using RateFilms.Application.Services.Films;
 using RateFilms.Application.Services.Movies;
 using RateFilms.Application.Services.Serials;
+using RateFilms.Common.MovieRatingModels;
 using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Repositories;
 using RateFilms.Infrastructure.Data;
@@ -78,6 +80,9 @@ builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+
+builder.Services.AddPredictionEnginePool<MovieRating, MovieRatingPrediction>()
+    .FromFile(modelName: "MovieRecommenderModel", filePath: "Data/MovieRecommenderModel.zip", watchForChanges: true);
 
 builder.Services.Configure<TokenOptions>(config.GetSection("JwtSettings"));
 
