@@ -1,4 +1,7 @@
 ﻿using Microsoft.Extensions.ML;
+using Microsoft.ML;
+using Microsoft.ML.Data;
+using Microsoft.ML.Trainers;
 using RateFilms.Application.Services.Movies;
 using RateFilms.Common.MovieRatingModels;
 using RateFilms.Domain.Convertors;
@@ -115,6 +118,45 @@ namespace RateFilms.Application.Services.Films
             if (user == null) throw new ArgumentException(userName);
 
             await _filmRepository.SetFavoriteFilm(favoriteFilm, user);
+
+            /*if (favoriteFilm.Score != null && favoriteFilm.Score != 0)
+            {
+                MLContext mlContext = new MLContext();
+
+                var modelHandler = async (PredictionEnginePool<MovieRating, MovieRatingPrediction> predictionEnginePool, string modelName) =>
+                    await Task.FromResult(predictionEnginePool.GetModel(modelName));
+
+                var dataPrepPipeline = await modelHandler(_predictionEnginePool, "data_preparation_pipeline");
+                var trainedModel = await modelHandler(_predictionEnginePool, "MovieRecommenderModel");
+                
+                var predictor = (trainedModel as TransformerChain<ITransformer>)!.LastTransformer as FieldAwareFactorizationMachinePredictionTransformer;
+                var originalModelParameters = predictor!.Model;
+
+                var film = await _filmRepository.GetFilmWithFavoriteById(favoriteFilm.MovieId);
+
+                var inputData = new List<MovieRating>() { new MovieRating
+                {
+                    UserId = user.Id.ToString(),
+                    MovieId = favoriteFilm.MovieId.ToString(),
+                    Genres = film.Genre.Select(g => g.ToString()).ToArray(),
+                    Label = favoriteFilm.Score! > 3.5 ? true : false
+                }};
+
+                var retrainingDataView = mlContext.Data.LoadFromEnumerable(inputData);
+                var newData = dataPrepPipeline.Transform(retrainingDataView);
+                var transformedNewData = dataPrepPipeline.Transform(newData);
+
+                var retrainedModel =
+                    mlContext.BinaryClassification.Trainers.FieldAwareFactorizationMachine(new string[] { "Features" })
+                        .Fit(transformedNewData, null, originalModelParameters);
+
+                //var modelDataView = retrainedModel.Transform(newData);
+
+                var modelPath = Path.Combine(Environment.CurrentDirectory, "../RateFilms.WebAPI/Data", "MovieRecommenderModel.zip");
+
+                mlContext.Model.Save(retrainedModel, transformedNewData.Schema, modelPath);
+
+            }*/
         }
 
         public async Task<IEnumerable<FilmResponse>> GetAllFavoriteFilms(string userName)

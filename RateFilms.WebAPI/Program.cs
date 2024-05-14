@@ -84,6 +84,9 @@ builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddPredictionEnginePool<MovieRating, MovieRatingPrediction>()
     .FromFile(modelName: "MovieRecommenderModel", filePath: "Data/MovieRecommenderModel.zip", watchForChanges: true);
 
+builder.Services.AddPredictionEnginePool<MovieRating, MovieRatingPrediction>()
+    .FromFile(modelName: "data_preparation_pipeline", filePath: "Data/data_preparation_pipeline.zip", watchForChanges: true);
+
 builder.Services.Configure<TokenOptions>(config.GetSection("JwtSettings"));
 
 var connectionString = builder.Configuration.GetConnectionString("WebApiDatabase");

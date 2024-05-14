@@ -1,45 +1,15 @@
 ﻿using Microsoft.ML;
+using Microsoft.ML.Trainers;
 using RateFilms.Common.MovieRatingModels;
 using RateFilms.Domain.Repositories;
+using System.Xml.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RateFilms.MovieRecomendation
 {
     internal class TrainModel
     {
         private readonly IFavoriteRepository _favoriteRepository;
-
-        //Need update
-        private List<MovieRating> testData = new List<MovieRating>()
-        {
-            new MovieRating()
-            {
-                UserId = "95830040-d2b1-4f9d-b12c-22714f86976f",
-                MovieId = "d6f2db08-b3e1-4cd3-9def-2fa8027b560e",
-                Genres = new[] { "Action", "Fantasy", "Horror" },
-                Label = false
-            },
-            new MovieRating()
-            {
-                UserId = "bb2cf527-d32b-430b-b993-8f3af037603b",
-                MovieId = "54814870-3963-4fc8-9847-6f667c4305c3",
-                Genres = new[] { "Fantasy", "Animated", "Drama" },
-                Label = true
-            },
-            new MovieRating()
-            {
-                UserId = "b4c09461-0ca8-4420-a175-bd5c4f16e44b",
-                MovieId = "ec22be77-76d4-401e-a1b2-1e7a73b811ce",
-                Genres = new[] { "Action" },
-                Label = true
-            },
-            new MovieRating()
-            {
-                UserId = "df26ffa9-07d6-4edc-b593-b899062f256c",
-                MovieId = "5b7096a9-c9e6-479a-afed-503eeae05040",
-                Genres = new[] { "Fantasy" },
-                Label = false
-            }
-        };
 
         public TrainModel(IFavoriteRepository favoriteRepository)
         {
@@ -78,15 +48,17 @@ namespace RateFilms.MovieRecomendation
                 movieRatings.Add(movieRating);
             }
 
-            IDataView trainingDataView = mLContext.Data.LoadFromEnumerable(movieRatings);
-            IDataView testDataView = mLContext.Data.LoadFromEnumerable(testData);
+            var dataSplit = mLContext.Data.TrainTestSplit(mLContext.Data.LoadFromEnumerable(movieRatings), 0.2);
+
+            IDataView trainingDataView = dataSplit.TrainSet;
+            IDataView testDataView = dataSplit.TestSet;
 
             return (trainingDataView, testDataView);
         }
 
-        public ITransformer BuildAndTrain(MLContext mlContext, IDataView trainingDataView)
+        public ITransformer TrainAndSave(MLContext mlContext, IDataView trainingDataView)
         {
-            var dataProcessPipeline = mlContext.Transforms.Text
+            /*var dataProcessPipeline = mlContext.Transforms.Text
                 .FeaturizeText("userIdFeaturized", nameof(MovieRating.UserId))
                 .Append(mlContext.Transforms.Text.FeaturizeText("movieIdFeaturized", nameof(MovieRating.MovieId))
                 .Append(mlContext.Transforms.Text.FeaturizeText("genresFeaturized", nameof(MovieRating.Genres))
@@ -97,6 +69,30 @@ namespace RateFilms.MovieRecomendation
 
             Console.WriteLine("=============== Training the model ===============");
             var model = trainingPipeLine.Fit(trainingDataView);
+            return model;*/
+
+            var dataProcessPipeline = mlContext.Transforms.Text
+                .FeaturizeText("userIdFeaturized", nameof(MovieRating.UserId))
+                .Append(mlContext.Transforms.Text.FeaturizeText("movieIdFeaturized", nameof(MovieRating.MovieId)))
+                .Append(mlContext.Transforms.Text.FeaturizeText("genresFeaturized", nameof(MovieRating.Genres)))
+                .Append(mlContext.Transforms.Concatenate("Features", new string[] { "userIdFeaturized", "movieIdFeaturized", "genresFeaturized" }))
+                .Append(mlContext.Transforms.NormalizeMinMax("Features"));
+
+            ITransformer dataPrepTransformer = dataProcessPipeline.Fit(trainingDataView);
+            IDataView transformedData = dataPrepTransformer.Transform(trainingDataView);
+
+            var pipeline = dataProcessPipeline.Append(
+                mlContext.BinaryClassification.Trainers.FieldAwareFactorizationMachine(new string[] { "Features" }));
+
+            var dataPath = Path.Combine(Environment.CurrentDirectory, "Data", "data_preparation_pipeline.zip");
+            mlContext.Model.Save(dataPrepTransformer, transformedData.Schema, dataPath);
+
+            var model = pipeline.Fit(trainingDataView);
+            var modelDataView = model.Transform(trainingDataView);
+
+            var modelPath = Path.Combine(Environment.CurrentDirectory, "Data", "MovieRecommenderModel.zip");
+            mlContext.Model.Save(model, modelDataView.Schema, modelPath);
+
             return model;
         }
 
