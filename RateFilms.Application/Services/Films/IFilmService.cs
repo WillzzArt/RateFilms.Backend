@@ -1,6 +1,7 @@
 ﻿using RateFilms.Domain.DTO.Films;
 using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.Models.DomainModels;
+using System.Globalization;
 
 namespace RateFilms.Application.Services.Films
 {
@@ -8,7 +9,7 @@ namespace RateFilms.Application.Services.Films
     {
         Task<IEnumerable<FilmResponse?>> GetFilms();
         Task<IEnumerable<FilmResponse?>> GetFilmForAuthorizeUser(string userName);
-        Task<FilmExtendResponse?> GetFilmById(Guid id);
+        Task<FilmExtendResponse?> GetFilmById(Guid id, CultureInfo culture);
         Task<FilmExtendResponse?> GetFilmForAuthorizeUserById(Guid id, string userName);
         Task<IEnumerable<FilmResponse>> GetAllFavoriteFilms(string userName);
         Task CreateFilmsAsync(Film film);

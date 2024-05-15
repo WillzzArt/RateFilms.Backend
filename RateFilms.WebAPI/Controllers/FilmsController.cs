@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using RateFilms.Application.Services.Films;
+using RateFilms.Common.Models.Localization;
 using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.Models.DomainModels;
+using System.Globalization;
 using System.Security.Claims;
 
 namespace RateFilms.WebAPI.Controllers
@@ -15,12 +19,16 @@ namespace RateFilms.WebAPI.Controllers
 
         private readonly IFilmService _filmService;
 
+        private readonly IOptions<RequestLocalizationOptions> _localizationOptions;
+
         public FilmsController(
             ILogger<FilmsController> logger,
-            IFilmService filmService)
+            IFilmService filmService,
+            IOptions<RequestLocalizationOptions> localizationOptions)
         {
             _logger = logger;
             _filmService = filmService;
+            _localizationOptions = localizationOptions;
         }
 
         [AllowAnonymous]
@@ -42,6 +50,10 @@ namespace RateFilms.WebAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetFilmById(Guid id)
         {
+            //var cultureFeature = HttpContext.Features.Get<IRequestCultureFeature>();
+            //cultureFeature.RequestCulture.UICulture
+            CultureInfo current = Thread.CurrentThread.CurrentUICulture;
+
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 var favoriteFilm = await _filmService.GetFilmForAuthorizeUserById(id, User.Identity.Name!);
@@ -51,7 +63,7 @@ namespace RateFilms.WebAPI.Controllers
                 return Ok(favoriteFilm);
             }
 
-            var film = await _filmService.GetFilmById(id);
+            var film = await _filmService.GetFilmById(id, current);
 
             if (film == null) return NotFound();
 

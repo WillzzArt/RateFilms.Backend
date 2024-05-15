@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using RateFilms.Common.Models.Localization;
 using RateFilms.Domain.Models.StorageModels;
 
 namespace RateFilms.Infrastructure.Data
@@ -123,5 +124,7 @@ namespace RateFilms.Infrastructure.Data
         public DbSet<CommentDbModel> Comment { get; set; }
         public DbSet<CommentUserDbModel> UserComment { get; set; }
         public DbSet<AdminNoteDbModel> AdminNote { get; set; }
+        public DbSet<Resource> Resource { get; set; }
+        public DbSet<Culture> Culture { get; set; }
     }
 }

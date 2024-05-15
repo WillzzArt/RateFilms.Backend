@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ML;
-using RateFilms.Common.MovieRatingModels;
+using RateFilms.Common.Models.MovieRatingModels;
 using RateFilms.Domain.Repositories;
 using RateFilms.Infrastructure.Data;
 using RateFilms.Infrastructure.Data.Repository;

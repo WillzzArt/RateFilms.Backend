@@ -1,9 +1,6 @@
 ﻿using Microsoft.ML;
-using Microsoft.ML.Trainers;
-using RateFilms.Common.MovieRatingModels;
+using RateFilms.Common.Models.MovieRatingModels;
 using RateFilms.Domain.Repositories;
-using System.Xml.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RateFilms.MovieRecomendation
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.ML.Data;
 
-namespace RateFilms.Common.MovieRatingModels
+namespace RateFilms.Common.Models.MovieRatingModels
 {
     public class MovieRating
     {

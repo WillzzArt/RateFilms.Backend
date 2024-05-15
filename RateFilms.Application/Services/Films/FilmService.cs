@@ -1,14 +1,13 @@
 ﻿using Microsoft.Extensions.ML;
-using Microsoft.ML;
-using Microsoft.ML.Data;
-using Microsoft.ML.Trainers;
+using RateFilms.Application.Services.Localization;
 using RateFilms.Application.Services.Movies;
-using RateFilms.Common.MovieRatingModels;
+using RateFilms.Common.Models.MovieRatingModels;
 using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO.Films;
 using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Repositories;
+using System.Globalization;
 
 namespace RateFilms.Application.Services.Films
 {
@@ -20,6 +19,7 @@ namespace RateFilms.Application.Services.Films
         private readonly IReviewRepository _reviewRepository;
         private readonly IFavoriteRepository _favoriteRepository;
         private readonly PredictionEnginePool<MovieRating, MovieRatingPrediction> _predictionEnginePool;
+        private readonly LocalizationService _localizationService;
 
         public FilmService(
             IFilmRepository filmRepository,
@@ -27,7 +27,8 @@ namespace RateFilms.Application.Services.Films
             ICommentService commentSerivice,
             IReviewRepository reviewRepository,
             IFavoriteRepository favoriteRepository,
-            PredictionEnginePool<MovieRating, MovieRatingPrediction> predictionEnginePool)
+            PredictionEnginePool<MovieRating, MovieRatingPrediction> predictionEnginePool,
+            LocalizationService localizationService)
         {
             _filmRepository = filmRepository;
             _userRepository = userRepository;
@@ -35,6 +36,8 @@ namespace RateFilms.Application.Services.Films
             _reviewRepository = reviewRepository;
             _favoriteRepository = favoriteRepository;
             _predictionEnginePool = predictionEnginePool;
+            _localizationService = localizationService;
+            _localizationService.LoadTranslation();
         }
 
         public async Task CreateFilmsAsync(Film film)
@@ -92,7 +95,7 @@ namespace RateFilms.Application.Services.Films
             return null;
         }
 
-        public async Task<FilmExtendResponse?> GetFilmById(Guid id)
+        public async Task<FilmExtendResponse?> GetFilmById(Guid id, CultureInfo culture)
         {
             var film = await _filmRepository.GetFilmWithFavoriteById(id);
 
@@ -105,6 +108,14 @@ namespace RateFilms.Application.Services.Films
 
             if (film != null)
             {
+                _localizationService.SetLanguage(culture);
+                film.Name = _localizationService[film.Name];
+                film.Description = _localizationService[film.Description];
+                film.Country = film.Country != null ? _localizationService[film.Country] : null;
+
+                foreach (var people in film.People)
+                    people.Name = _localizationService[people.Name];
+
                 return new FilmExtendResponse(film, null, comment, popularReview);
             }
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.ML;
 using RateFilms.Application.Services.Movies;
-using RateFilms.Common.MovieRatingModels;
+using RateFilms.Common.Models.MovieRatingModels;
 using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.DTO.Serials;
