@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RateFilms.Application.Services.Movies;
+using RateFilms.WebAPI.Helpers;
 
 namespace RateFilms.WebAPI.Controllers
 {
@@ -22,12 +23,12 @@ namespace RateFilms.WebAPI.Controllers
         {
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
-                var movieFavorite = await _movieService.GetAllMoviesForAuthorizeUser(User.Identity.Name!);
+                var movieFavorite = await _movieService.GetAllMoviesForAuthorizeUser(User.Identity.Name!, CultureHelper.GetCurrentCulture(Request));
 
                 return Ok(movieFavorite);
             }
 
-            var movie = await _movieService.GetAllMovies();
+            var movie = await _movieService.GetAllMovies(CultureHelper.GetCurrentCulture(Request));
 
             return Ok(movie);
         }
@@ -36,7 +37,7 @@ namespace RateFilms.WebAPI.Controllers
         [HttpGet("Favorite")]
         public async Task<IActionResult> GetFavoriteMovies()
         {
-            var favoriteMovie = await _movieService.GetAllFavoritesMovie(User.Identity!.Name!);
+            var favoriteMovie = await _movieService.GetAllFavoritesMovie(User.Identity!.Name!, CultureHelper.GetCurrentCulture(Request));
             return Ok(favoriteMovie);
         }
 
@@ -44,7 +45,7 @@ namespace RateFilms.WebAPI.Controllers
         [HttpGet("Recommended")]
         public async Task<IActionResult> GetRecomendedMovies()
         {
-            var movie = await _movieService.GetRecommendedMovie(User.Identity!.Name!);
+            var movie = await _movieService.GetRecommendedMovie(User.Identity!.Name!, CultureHelper.GetCurrentCulture(Request));
             return Ok(movie);
         }
 
@@ -52,7 +53,7 @@ namespace RateFilms.WebAPI.Controllers
         [HttpGet("GetMoviesWithUncheckedReview")]
         public async Task<IActionResult> GetMoviesWithUncheckedReview()
         {
-            var movies = await _movieService.GetMoviesWithUncheckedReview();
+            var movies = await _movieService.GetMoviesWithUncheckedReview(CultureHelper.GetCurrentCulture(Request));
 
             return Ok(movies);
         }

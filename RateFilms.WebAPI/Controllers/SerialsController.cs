@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RateFilms.Application.Services.Serials;
 using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.Models.DomainModels;
+using RateFilms.WebAPI.Helpers;
 
 namespace RateFilms.WebAPI.Controllers
 {
@@ -32,14 +33,14 @@ namespace RateFilms.WebAPI.Controllers
         {
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
-                var favoriteSerial = await _serialService.GetSerialForAuthorizeUser(User.Identity.Name!);
+                var favoriteSerial = await _serialService.GetSerialForAuthorizeUser(User.Identity.Name!, CultureHelper.GetCurrentCulture(Request));
 
                 if (favoriteSerial == null) return NotFound();
 
                 return Ok(favoriteSerial);
             }
 
-            var serial = await _serialService.GetSerials();
+            var serial = await _serialService.GetSerials(CultureHelper.GetCurrentCulture(Request));
 
             if (serial == null) return NotFound();
 
@@ -52,11 +53,11 @@ namespace RateFilms.WebAPI.Controllers
         {
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
-                var favoriteSerial = await _serialService.GetSerialForAuthorizeUserById(id, User.Identity.Name!);
+                var favoriteSerial = await _serialService.GetSerialForAuthorizeUserById(id, User.Identity.Name!, CultureHelper.GetCurrentCulture(Request));
                 return Ok(favoriteSerial);
             }
 
-            var serial = await _serialService.GetSerialById(id);
+            var serial = await _serialService.GetSerialById(id, CultureHelper.GetCurrentCulture(Request));
 
             return Ok(serial);
         }
@@ -65,7 +66,7 @@ namespace RateFilms.WebAPI.Controllers
         [HttpGet("Favorite")]
         public async Task<IActionResult> GetRecommendedSerials()
         {
-            var favoriteSerial = await _serialService.GetAllFavoriteSerials(User.Identity!.Name!);
+            var favoriteSerial = await _serialService.GetAllFavoriteSerials(User.Identity!.Name!, CultureHelper.GetCurrentCulture(Request));
             return Ok(favoriteSerial);
         }
 
@@ -73,7 +74,7 @@ namespace RateFilms.WebAPI.Controllers
         [HttpGet("RecommendedSerials")]
         public async Task<IActionResult> GetFavoriteSerials()
         {
-            var serials = await _serialService.GetRecommendedSerials(User.Identity!.Name!);
+            var serials = await _serialService.GetRecommendedSerials(User.Identity!.Name!, CultureHelper.GetCurrentCulture(Request));
             return Ok(serials);
         }
 
@@ -91,7 +92,7 @@ namespace RateFilms.WebAPI.Controllers
         [HttpGet("GetSerialsWithUncheckedReview")]
         public async Task<IActionResult> GetSerialsWithUncheckedReview()
         {
-            var serials = await _serialService.GetSerialsWithUncheckedReview();
+            var serials = await _serialService.GetSerialsWithUncheckedReview(CultureHelper.GetCurrentCulture(Request));
 
             return Ok(serials);
         }

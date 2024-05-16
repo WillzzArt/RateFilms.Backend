@@ -17,7 +17,7 @@ namespace RateFilms.Application.Services.Localization
 
             Languages = new List<CultureInfo>()
             {
-                CultureInfo.GetCultureInfo("en-US"),
+                CultureInfo.GetCultureInfo("en-GB"),
                 CultureInfo.GetCultureInfo("ru-RU")
             };
         }

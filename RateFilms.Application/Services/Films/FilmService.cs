@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.ML;
 using RateFilms.Application.Services.Localization;
 using RateFilms.Application.Services.Movies;
+using RateFilms.Common.Models.Localization;
 using RateFilms.Common.Models.MovieRatingModels;
 using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO.Films;
@@ -46,12 +47,15 @@ namespace RateFilms.Application.Services.Films
         }
 
 
-        public async Task<IEnumerable<FilmResponse?>> GetFilmForAuthorizeUser(string userName)
+        public async Task<IEnumerable<FilmResponse?>> GetFilmForAuthorizeUser(string userName, CultureInfo culture)
         {
             var films = await _filmRepository.GetAllFilmsWithFavorite();
             var user = await _userRepository.FindUser(userName);
 
             if (user == null) throw new ArgumentException(userName);
+
+            foreach (var film in films)
+                LocalizeFieldsFilm(film, culture);
 
             var favoriteFilmsForUser = films
                 .Select(f =>
@@ -63,16 +67,19 @@ namespace RateFilms.Application.Services.Films
             return favoriteFilmsForUser;
         }
 
-        public async Task<IEnumerable<FilmResponse?>> GetFilms()
+        public async Task<IEnumerable<FilmResponse?>> GetFilms(CultureInfo culture)
         {
             var films = await _filmRepository.GetAllFilmsWithFavorite();
+
+            foreach (var film in films)
+                LocalizeFieldsFilm(film, culture);
 
             var filmsRespons = films.Select(f => new FilmResponse(f, null)).ToList();
 
             return filmsRespons;
         }
 
-        public async Task<FilmExtendResponse?> GetFilmForAuthorizeUserById(Guid id, string userName)
+        public async Task<FilmExtendResponse?> GetFilmForAuthorizeUserById(Guid id, string userName, CultureInfo culture)
         {
             var user = await _userRepository.FindUser(userName);
             if (user == null) throw new ArgumentException(nameof(userName));
@@ -89,6 +96,8 @@ namespace RateFilms.Application.Services.Films
 
             if (film != null)
             {
+                LocalizeFieldsFilm(film, culture);
+
                 return new FilmExtendResponse(film, film.Favorites?.FirstOrDefault(x => x.User.Id == user.Id), comment, popularReview);
             }
 
@@ -108,13 +117,7 @@ namespace RateFilms.Application.Services.Films
 
             if (film != null)
             {
-                _localizationService.SetLanguage(culture);
-                film.Name = _localizationService[film.Name];
-                film.Description = _localizationService[film.Description];
-                film.Country = film.Country != null ? _localizationService[film.Country] : null;
-
-                foreach (var people in film.People)
-                    people.Name = _localizationService[people.Name];
+                LocalizeFieldsFilm(film, culture);
 
                 return new FilmExtendResponse(film, null, comment, popularReview);
             }
@@ -170,12 +173,15 @@ namespace RateFilms.Application.Services.Films
             }*/
         }
 
-        public async Task<IEnumerable<FilmResponse>> GetAllFavoriteFilms(string userName)
+        public async Task<IEnumerable<FilmResponse>> GetAllFavoriteFilms(string userName, CultureInfo culture)
         {
             var films = await _filmRepository.GetAllFilmsWithFavorite();
             var user = await _userRepository.FindUser(userName);
 
             if (user == null) throw new ArgumentException(userName);
+
+            foreach (var film in films)
+                LocalizeFieldsFilm(film, culture);
 
             var favoriteFilmsForUser = from f in films
                                        where f.Favorites != null
@@ -186,16 +192,19 @@ namespace RateFilms.Application.Services.Films
             return favoriteFilmsForUser;
         }
 
-        public async Task<IEnumerable<FilmResponse>> GetFilmsWithUncheckedReview()
+        public async Task<IEnumerable<FilmResponse>> GetFilmsWithUncheckedReview(CultureInfo culture)
         {
             var films = await _filmRepository.GetFilmsWithUncheckedReview();
+
+            foreach (var film in films)
+                LocalizeFieldsFilm(film, culture);
 
             var filmsRespons = films.Select(f => new FilmResponse(f, null)).ToList();
 
             return filmsRespons;
         }
 
-        public async Task<IEnumerable<FilmResponse>> GetRecommendedFilms(string username)
+        public async Task<IEnumerable<FilmResponse>> GetRecommendedFilms(string username, CultureInfo culture)
         {
             var user = await _userRepository.FindUser(username);
 
@@ -224,11 +233,27 @@ namespace RateFilms.Application.Services.Films
 
                 if ((float)(100 / (1 + Math.Exp(-prediction.Score))) > 70)
                 {
+                    LocalizeFieldsFilm(film, culture);
                     resultFilms.Add(new FilmResponse(film, null));
                 }
             }
 
             return resultFilms;
+        }
+
+        private void LocalizeFieldsFilm(Film film, CultureInfo culture)
+        {
+            _localizationService.SetLanguage(culture);
+
+            film.Name = _localizationService[film.Name];
+            film.Description = _localizationService[film.Description];
+            film.Country = film.Country != null ? _localizationService[film.Country] : null;
+
+            if (film.People.Any())
+            {
+                foreach (var people in film.People)
+                    people.Name = _localizationService[people.Name];
+            }
         }
     }
 }

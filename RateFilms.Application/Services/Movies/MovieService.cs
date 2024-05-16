@@ -1,6 +1,7 @@
 ﻿using RateFilms.Application.Services.Films;
 using RateFilms.Application.Services.Serials;
 using RateFilms.Domain.DTO.Movies;
+using System.Globalization;
 
 namespace RateFilms.Application.Services.Movies
 {
@@ -15,42 +16,42 @@ namespace RateFilms.Application.Services.Movies
             _serialService = serialService;
         }
 
-        public async Task<Movie> GetAllFavoritesMovie(string username)
+        public async Task<Movie> GetAllFavoritesMovie(string username, CultureInfo culture)
         {
-            var films = await _filmService.GetAllFavoriteFilms(username);
-            var serials = await _serialService.GetAllFavoriteSerials(username);
+            var films = await _filmService.GetAllFavoriteFilms(username, culture);
+            var serials = await _serialService.GetAllFavoriteSerials(username, culture);
 
             return new Movie(films, serials);
         }
 
-        public async Task<Movie> GetAllMovies()
+        public async Task<Movie> GetAllMovies(CultureInfo culture)
         {
-            var films = await _filmService.GetFilms();
-            var serils = await _serialService.GetSerials();
+            var films = await _filmService.GetFilms(culture);
+            var serils = await _serialService.GetSerials(culture);
 
             return new Movie(films, serils);
         }
 
-        public async Task<Movie> GetAllMoviesForAuthorizeUser(string username)
+        public async Task<Movie> GetAllMoviesForAuthorizeUser(string username, CultureInfo culture)
         {
-            var films = await _filmService.GetFilmForAuthorizeUser(username);
-            var serils = await _serialService.GetSerialForAuthorizeUser(username);
+            var films = await _filmService.GetFilmForAuthorizeUser(username, culture);
+            var serils = await _serialService.GetSerialForAuthorizeUser(username, culture);
 
             return new Movie(films, serils);
         }
 
-        public async Task<Movie> GetMoviesWithUncheckedReview()
+        public async Task<Movie> GetMoviesWithUncheckedReview(CultureInfo culture)
         {
-            var films = await _filmService.GetFilmsWithUncheckedReview();
-            var serils = await _serialService.GetSerialsWithUncheckedReview();
+            var films = await _filmService.GetFilmsWithUncheckedReview(culture);
+            var serils = await _serialService.GetSerialsWithUncheckedReview(culture);
 
             return new Movie(films, serils);
         }
 
-        public async Task<Movie> GetRecommendedMovie(string username)
+        public async Task<Movie> GetRecommendedMovie(string username, CultureInfo culture)
         {
-            var films = await _filmService.GetRecommendedFilms(username);
-            var serials = await _serialService.GetRecommendedSerials(username);
+            var films = await _filmService.GetRecommendedFilms(username, culture);
+            var serials = await _serialService.GetRecommendedSerials(username, culture);
 
             return new Movie(films, serials);
         }
