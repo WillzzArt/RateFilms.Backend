@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RateFilms.Infrastructure.Data;
@@ -11,9 +12,11 @@ using RateFilms.Infrastructure.Data;
 namespace RateFilms.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240509183811_16.0")]
+    partial class _160
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,49 +89,6 @@ namespace RateFilms.Infrastructure.Migrations
                     b.HasIndex("PersonInSerialsSerialId", "PersonInSerialsPersonId");
 
                     b.ToTable("PersonInSerialProfession", (string)null);
-                });
-
-            modelBuilder.Entity("RateFilms.Common.Models.Localization.Culture", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Culture");
-                });
-
-            modelBuilder.Entity("RateFilms.Common.Models.Localization.Resource", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CultureId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CultureId");
-
-                    b.ToTable("Resource");
                 });
 
             modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.AdminNoteDbModel", b =>
@@ -633,17 +593,6 @@ namespace RateFilms.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RateFilms.Common.Models.Localization.Resource", b =>
-                {
-                    b.HasOne("RateFilms.Common.Models.Localization.Culture", "Culture")
-                        .WithMany("Resources")
-                        .HasForeignKey("CultureId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Culture");
-                });
-
             modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.AdminNoteDbModel", b =>
                 {
                     b.HasOne("RateFilms.Domain.Models.StorageModels.CommentDbModel", "Review")
@@ -866,11 +815,6 @@ namespace RateFilms.Infrastructure.Migrations
                         .HasForeignKey("ImageId");
 
                     b.Navigation("Image");
-                });
-
-            modelBuilder.Entity("RateFilms.Common.Models.Localization.Culture", b =>
-                {
-                    b.Navigation("Resources");
                 });
 
             modelBuilder.Entity("RateFilms.Domain.Models.StorageModels.CommentDbModel", b =>

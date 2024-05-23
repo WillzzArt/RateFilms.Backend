@@ -6,6 +6,6 @@
         public string Url { get; set; }
         public bool isPreview { get; set; }
         public string? Name { get; set; }
-        public byte[] Img { get; set; }
+        public byte[]? Img { get; set; }
     }
 }

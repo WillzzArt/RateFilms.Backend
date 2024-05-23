@@ -8,5 +8,7 @@ namespace RateFilms.Domain.Repositories
         Task<FavoriteSerialDbModel?> FindFavoriteSerial(Guid serialId, Guid userId);
         Task<IEnumerable<FavoriteFilmDbModel>> FindFavoriteFilms(Guid userId);
         Task<IEnumerable<FavoriteSerialDbModel>> FindFavoriteSerials(Guid userId);
+        Task<IEnumerable<FavoriteSerialDbModel>> FindFavoriteInSerials();
+        Task<IEnumerable<FavoriteFilmDbModel>> FindFavoriteInFilms();
     }
 }

@@ -99,7 +99,7 @@ namespace RateFilms.WebAPI.Controllers
         [HttpGet("UserReviews")]
         public async Task<IActionResult> GetUserReviews(Guid movieId, bool isFilm)
         {
-            var reviews = await _commentSerivice.GetUncheckedReviewsInMovie(movieId, 20, isFilm, null);
+            var reviews = await _commentSerivice.GetUncheckedReviewsInMovie(movieId, isFilm, null);
 
             return Ok(reviews);
         }
@@ -108,22 +108,26 @@ namespace RateFilms.WebAPI.Controllers
         [HttpGet("MyReviews")]
         public async Task<IActionResult> GetMyReviews(Guid movieId, bool isFilm)
         {
-            var reviews = await _commentSerivice.GetUncheckedReviewsInMovie(movieId, 20, isFilm, User.Identity!.Name!);
+            var reviews = await _commentSerivice.GetUncheckedReviewsInMovie(movieId, isFilm, User.Identity!.Name!);
 
             return Ok(reviews);
         }
 
         [HttpGet("ReviewsInMovie")]
-        public async Task<IActionResult> GetReviewsInMovie(Guid movieId, int countReview, bool isFilm)
+        public async Task<IActionResult> GetReviewsInMovie(Guid movieId, bool isFilm)
         {
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
-                var comments = await _commentSerivice.GetReviewsInMovie(movieId, countReview, isFilm, User.Identity.Name);
+                var comments = await _commentSerivice.GetReviewsInMovie(movieId, isFilm, User.Identity.Name);
+                comments = comments.ToList();
+
                 return Ok(comments);
             }
             else
             {
-                var comments = await _commentSerivice.GetReviewsInMovie(movieId, countReview, isFilm, null);
+                var comments = await _commentSerivice.GetReviewsInMovie(movieId, isFilm, null);
+                comments = comments.ToList();
+
                 return Ok(comments);
             }
 

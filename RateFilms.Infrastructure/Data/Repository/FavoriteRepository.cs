@@ -34,5 +34,23 @@ namespace RateFilms.Infrastructure.Data.Repository
         {
             return await _context.FavoriteSerials.Where(fav => fav.UserId == userId).ToListAsync();
         }
+
+        public async Task<IEnumerable<FavoriteFilmDbModel>> FindFavoriteInFilms()
+        {
+            return await _context.FavoriteFilms
+                .Include(f => f.Film)
+                    .ThenInclude(f => f.Genre)
+                .Include(f => f.User)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<FavoriteSerialDbModel>> FindFavoriteInSerials()
+        {
+            return await _context.FavoriteSerials
+                .Include(f => f.Serial)
+                    .ThenInclude(f => f.Genre)
+                .Include(f => f.User)
+                .ToListAsync();
+        }
     }
 }
