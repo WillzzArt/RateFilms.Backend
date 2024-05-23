@@ -79,9 +79,9 @@ namespace RateFilms.WebAPI.Controllers
 
         [Authorize]
         [HttpPut("ChangeReviewStatus")]
-        public async Task<IActionResult> ChangeReviewStatusInFilm(Guid reviewId, bool isFilm)
+        public async Task<IActionResult> ChangeReviewStatusInFilm(Guid reviewId)
         {
-            await _commentSerivice.ChangeReviewStatus(reviewId, User.Identity!.Name!, isFilm);
+            await _commentSerivice.ChangeReviewStatus(reviewId, User.Identity!.Name!);
 
             return Ok();
         }

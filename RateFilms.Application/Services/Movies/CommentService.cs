@@ -144,9 +144,9 @@ namespace RateFilms.Application.Services.Movies
             await _commentRepository.CreateCommentAsync(commentDb, user.Id, commentRequest.MovieId);
         }
 
-        public async Task ChangeReviewStatus(Guid reviewId, string username, bool isFilm)
+        public async Task ChangeReviewStatus(Guid reviewId, string username)
         {
-            var review = await _reviewRepository.FindReviewById(reviewId, isFilm);
+            var review = await _reviewRepository.FindReviewById(reviewId);
 
             var user = await _userRepository.FindUser(username);
 
@@ -185,7 +185,7 @@ namespace RateFilms.Application.Services.Movies
 
             if (user.Role == Role.Admin)
             {
-                var review = await _reviewRepository.FindReviewById(adminNote.ReviewId, adminNote.IsFilm);
+                var review = await _reviewRepository.FindReviewById(adminNote.ReviewId);
 
                 switch (review.Status)
                 {

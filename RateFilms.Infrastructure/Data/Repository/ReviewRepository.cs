@@ -17,7 +17,7 @@ namespace RateFilms.Infrastructure.Data.Repository
         }
 
 
-        public async Task<Review> FindReviewById(Guid reviewId, bool isFilm)
+        public async Task<Review> FindReviewById(Guid reviewId)
         {
             var comment = new CommentDbModel();
             var review = new Review
@@ -26,7 +26,7 @@ namespace RateFilms.Infrastructure.Data.Repository
                 Note = new AdminNote()
             };
 
-            if (isFilm)
+            if (_context.Comment.FirstOrDefault(x => x.Id == reviewId && x.CommentInFilm != null) != null)
             {
                 comment = await _context.Comment
                     .Include(c => c.CommentInFilm)
