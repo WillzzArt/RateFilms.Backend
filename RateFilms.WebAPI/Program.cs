@@ -26,10 +26,10 @@ var config = builder.Configuration;
 
 builder.Services.AddAuthentication(x =>
 {
-    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(x =>
+    x.DefaultAuthenticateScheme = "AccessScheme"; //JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = "AccessScheme"; //JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultScheme = "AccessScheme"; //JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer("AccessScheme", x =>
 {
     x.TokenValidationParameters = new TokenValidationParameters
     {
@@ -43,6 +43,20 @@ builder.Services.AddAuthentication(x =>
         IssuerSigningKey = new SymmetricSecurityKey
                                 (Encoding.UTF8.GetBytes(config[key: "JwtSettings:Secret"]))
 
+    };
+}).AddJwtBearer("RefreshScheme", x =>
+{
+    x.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+
+        ValidIssuer = config["JwtSettings:IssuerRefresh"],
+        ValidAudience = config["JwtSettings:AudienceRefresh"],
+        IssuerSigningKey = new SymmetricSecurityKey
+                                (Encoding.UTF8.GetBytes(config[key: "JwtSettings:SecretRefresh"]))
     };
 });
 
