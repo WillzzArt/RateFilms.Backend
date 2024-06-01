@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RateFilms.Application.Services;
 using RateFilms.Domain.DTO.Authorization;
 
@@ -55,6 +56,19 @@ namespace RateFilms.WebAPI.Controllers
                 return BadRequest(new { message = "Username or password is incorrect" });
 
             return Ok(response);
+        }
+
+        [Authorize(AuthenticationSchemes = "RefreshScheme")]
+        [HttpGet("RefreshToken")]
+        public async Task<ActionResult> UpdateToken(string refreshToken)
+        {
+            var response = await _userService.RefreshToken(User.Identity!.Name!, refreshToken);
+
+            if (response == null)
+                return NoContent();
+
+            return Ok(response);
+
         }
     }
 }

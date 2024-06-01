@@ -6,14 +6,14 @@ namespace RateFilms.Domain.DTO.Authorization
     {
         public Guid Id { get; set; }
         public string Username { get; set; }
-        public string Token { get; set; }
+        public TokenModel Token { get; set; }
         public string Role { get; set; }
 
-        public LoginResponse(User user, string token)
+        public LoginResponse(User user, (string accessToken, string refreshToken) token)
         {
             Id = user.Id;
             Username = user.Username;
-            Token = token;
+            Token = new TokenModel(token);
             Role = user.Role.ToString();
         }
     }

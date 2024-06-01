@@ -77,7 +77,7 @@ namespace RateFilms.Application.Services.Movies
             if (username == null)
             {
                 reviews = await _reviewRepository.GetReviewByStatus(movieId, null, isFilm,
-                    x => new[] { ReviewStatus.Unpublished, ReviewStatus.Canсeled, ReviewStatus.Published }.Contains(x.Status));
+                    x => new[] { ReviewStatus.Unpublished, ReviewStatus.Canceled, ReviewStatus.Published }.Contains(x.Status));
             }
             else
             {
@@ -86,7 +86,7 @@ namespace RateFilms.Application.Services.Movies
                 if (user == null) throw new ArgumentException(nameof(username));
 
                 reviews = await _reviewRepository.GetReviewByStatus(movieId, null, isFilm,
-                    x => new[] { ReviewStatus.Unsent, ReviewStatus.Canсeled, ReviewStatus.Published }.Contains(x.Status) 
+                    x => new[] { ReviewStatus.Unsent, ReviewStatus.Canceled, ReviewStatus.Published }.Contains(x.Status) 
                     && x.User.Id == user.Id);
             }
 
@@ -166,7 +166,7 @@ namespace RateFilms.Application.Services.Movies
                             review.Date = DateTimeOffset.UtcNow;
                             break;
                         }
-                    case ReviewStatus.Canсeled:
+                    case ReviewStatus.Canceled:
                         {
                             review.Status = ReviewStatus.Unsent;
                             break;
@@ -203,13 +203,13 @@ namespace RateFilms.Application.Services.Movies
 
                                 await _reviewRepository.CreateNoteToReview(user.Id, adminNote.ReviewId, adminNote.Note);
 
-                                review.Status = ReviewStatus.Canсeled;
+                                review.Status = ReviewStatus.Canceled;
                                 review.Date = DateTime.UtcNow;
                             }
 
                             break;
                         }
-                    case ReviewStatus.Canсeled:
+                    case ReviewStatus.Canceled:
                         {
                             await _reviewRepository.DeleteNoteToReview(user.Id, adminNote.ReviewId);
                             review.Status = ReviewStatus.Unpublished;

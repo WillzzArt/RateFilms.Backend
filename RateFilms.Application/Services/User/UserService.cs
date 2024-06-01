@@ -46,6 +46,21 @@ namespace RateFilms.Application.Services
             return null;
         }
 
+        public async Task<LoginResponse?> RefreshToken(string username, string refreshToken)
+        {
+            var user = await _userRepository.FindUser(username);
+
+            if (user != null && await _userRepository.IsActualToken(refreshToken))
+            {
+                var token = Token.CreateToken(_tokenOption, user);
+
+                return new LoginResponse(user, token);
+            }
+
+            return null;
+
+        }
+
         public async Task<LoginResponse?> Register(Registration model)
         {
             UserDbModel user = new UserDbModel();
@@ -97,7 +112,7 @@ namespace RateFilms.Application.Services
             return null;
         }
 
-        public async Task<string?> UpdateUser(UserExtendedResponse user, string username)
+        public async Task<TokenModel?> UpdateUser(UserExtendedResponse user, string username)
         {
             var isChangedToken = await _userRepository.UpdateUser(user, username);
 
@@ -107,7 +122,7 @@ namespace RateFilms.Application.Services
                 if (newUser != null)
                 {
                     var token = Token.CreateToken(_tokenOption, newUser);
-                    return token;
+                    return new TokenModel(token);
                 }
                 else throw new ArgumentException(nameof(user));
             }

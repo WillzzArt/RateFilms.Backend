@@ -59,6 +59,5 @@ namespace RateFilms.Application.Services.Localization
             }
         }
 
-
     }
 }

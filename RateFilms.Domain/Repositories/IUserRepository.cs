@@ -11,5 +11,6 @@ namespace RateFilms.Domain.Repositories
         Task<User?> ChangePassword(string userLogin, string password);
         Task<bool> UpdateUser(UserExtendedResponse user, string username);
         Task<IEnumerable<UserMini>> FindUsersByUsername(string username);
+        Task<bool> IsActualToken(string refreshToken);
     }
 }
