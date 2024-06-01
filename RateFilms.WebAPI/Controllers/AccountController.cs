@@ -60,11 +60,14 @@ namespace RateFilms.WebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = "RefreshScheme")]
         [HttpGet("RefreshToken")]
-        public async Task<ActionResult> UpdateToken()
+        public async Task<ActionResult> UpdateToken(string refreshToken)
         {
-            var token = await _userService.RefreshToken(User.Identity!.Name!);
+            var response = await _userService.RefreshToken(User.Identity!.Name!, refreshToken);
 
-            return Ok(token);
+            if (response == null)
+                return NoContent();
+
+            return Ok(response);
 
         }
     }

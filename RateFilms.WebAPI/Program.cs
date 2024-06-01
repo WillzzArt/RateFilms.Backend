@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.ML;
 using Microsoft.Extensions.Options;
@@ -17,7 +15,6 @@ using RateFilms.Infrastructure.Data;
 using RateFilms.Infrastructure.Data.Repository;
 using RateFilms.WebAPI.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Globalization;
 using System.Security.Claims;
 using System.Text;
 
@@ -115,8 +112,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 {
     option.UseNpgsql(connectionString);
 });
-
-
 
 var app = builder.Build();
 

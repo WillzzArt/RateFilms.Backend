@@ -46,15 +46,15 @@ namespace RateFilms.Application.Services
             return null;
         }
 
-        public async Task<TokenModel?> RefreshToken(string username)
+        public async Task<LoginResponse?> RefreshToken(string username, string refreshToken)
         {
             var user = await _userRepository.FindUser(username);
 
-            if (user != null)
+            if (user != null && await _userRepository.IsActualToken(refreshToken))
             {
                 var token = Token.CreateToken(_tokenOption, user);
 
-                return new TokenModel(token);
+                return new LoginResponse(user, token);
             }
 
             return null;

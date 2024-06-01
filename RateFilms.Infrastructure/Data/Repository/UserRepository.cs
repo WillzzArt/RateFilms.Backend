@@ -100,5 +100,23 @@ namespace RateFilms.Infrastructure.Data.Repository
             await _context.SaveChangesAsync();
             return res;
         }
+
+        public async Task<bool> IsActualToken(string refreshToken)
+        {
+            if (_context.Token.Any(t => t.Token == refreshToken))
+            {
+                return false;
+            }
+            else
+            {
+                await _context.Token.AddAsync(new TokenDbModel { Token = refreshToken, DateOfEntry = DateTimeOffset.UtcNow });
+                
+                await _context.SaveChangesAsync();
+                
+                return true;
+            }
+
+            
+        }
     }
 }

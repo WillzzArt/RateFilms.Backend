@@ -11,6 +11,6 @@ namespace RateFilms.Application.Services
         Task<TokenModel?> UpdateUser(UserExtendedResponse user, string username);
         Task<UserExtendedResponse?> FindUserForProfile(string username);
         Task<IEnumerable<UserMini>> FindUsers(string username);
-        Task<TokenModel?> RefreshToken(string username);
+        Task<LoginResponse?> RefreshToken(string username, string refreshToken);
     }
 }

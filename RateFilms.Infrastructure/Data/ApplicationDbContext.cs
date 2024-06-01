@@ -27,6 +27,12 @@ namespace RateFilms.Infrastructure.Data
                 entity.HasIndex(e => e.UserName).IsUnique();
             });
 
+
+            builder.Entity<TokenDbModel>(entity =>
+            {
+                entity.HasIndex(e => e.Token).IsUnique();
+            });
+
             builder.Entity<GenreDbModel>(entity =>
             {
                 entity.HasIndex(e => e.Genre).IsUnique();
@@ -126,5 +132,6 @@ namespace RateFilms.Infrastructure.Data
         public DbSet<AdminNoteDbModel> AdminNote { get; set; }
         public DbSet<Resource> Resource { get; set; }
         public DbSet<Culture> Culture { get; set; }
+        public DbSet<TokenDbModel> Token { get; set; }
     }
 }

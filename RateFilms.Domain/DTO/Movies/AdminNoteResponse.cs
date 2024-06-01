@@ -7,7 +7,7 @@ namespace RateFilms.Domain.DTO.Movies
     {
         public UserMini user { get; }
         public long Date { get; }
-        public string? Note { get; }
+        public string Note { get; }
 
         public AdminNoteResponse(AdminNote note)
         {
