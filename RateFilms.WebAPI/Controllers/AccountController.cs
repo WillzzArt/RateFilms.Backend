@@ -59,7 +59,7 @@ namespace RateFilms.WebAPI.Controllers
         }
 
         [Authorize(AuthenticationSchemes = "RefreshScheme")]
-        [HttpGet("RefreshToken")]
+        [HttpPost("RefreshToken")]
         public async Task<ActionResult> UpdateToken(string refreshToken)
         {
             var response = await _userService.RefreshToken(User.Identity!.Name!, refreshToken);

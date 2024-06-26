@@ -9,5 +9,6 @@ namespace RateFilms.Domain.Repositories
         Task<IEnumerable<Comment>> GetCommentsInFilm(Guid filmId, Guid? userId);
         Task<IEnumerable<Comment>> GetCommentsInSerial(Guid serialId, Guid? userId);
         Task<bool> SetLikedComment(Guid commentId, Guid userId);
+        Task DeleteComment(Guid commentId);
     }
 }

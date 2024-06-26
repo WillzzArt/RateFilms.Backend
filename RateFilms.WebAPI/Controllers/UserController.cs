@@ -61,7 +61,7 @@ namespace RateFilms.WebAPI.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("FindUsers")]
+        [HttpGet("FindUsers/{username}")]
         public async Task<IActionResult> SearchUsers(string username)
         {
             if (string.IsNullOrWhiteSpace(username)) return BadRequest();
@@ -69,6 +69,28 @@ namespace RateFilms.WebAPI.Controllers
             var users = await _userService.FindUsers(username);
 
             return Ok(users);
+        }
+
+        [Authorize(Policy = "admin")]
+        [HttpPost("BanUser")]
+        public async Task<IActionResult> BanUser(string username)
+        {
+            if (string.IsNullOrWhiteSpace(username)) return BadRequest();
+
+            await _userService.SwitchBan(username, true);
+
+            return Ok();
+        }
+
+        [Authorize(Policy = "admin")]
+        [HttpPost("UnbanUser")]
+        public async Task<IActionResult> UnbanUser(string username)
+        {
+            if (string.IsNullOrWhiteSpace(username)) return BadRequest();
+
+            await _userService.SwitchBan(username, false);
+
+            return Ok();
         }
     }
 }

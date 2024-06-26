@@ -172,5 +172,14 @@ namespace RateFilms.Application.Services
         {
             return await _userRepository.FindUsersByUsername(username);
         }
+
+        public async Task SwitchBan(string username, bool IsBanned)
+        {
+            var user = await _userRepository.FindUser(username);
+
+            if (user == null) throw new ArgumentException(username);
+
+            await _userRepository.SwitchBann(user.Id, IsBanned);
+        }
     }
 }

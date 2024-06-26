@@ -14,5 +14,6 @@ namespace RateFilms.Application.Services.Movies
         Task<IEnumerable<ReviewResponse>> GetUncheckedReviewsInMovie(Guid movieId, bool isFilm, string? username);
         Task<IEnumerable<ReviewResponse>> GetReviewsInMovie(Guid movieId, bool isFilm, string? username);
         Task<bool> ChangeLikeOnComment(Guid commentId, string username);
+        Task DeleteComment(Guid commentId);
     }
 }

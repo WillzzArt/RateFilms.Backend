@@ -118,5 +118,14 @@ namespace RateFilms.Infrastructure.Data.Repository
 
             
         }
+
+        public async Task SwitchBann(Guid userId, bool isBanned)
+        {
+            var user = await _context.User.FirstAsync(u => u.Id == userId);
+
+            user.IsBanned = isBanned;
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

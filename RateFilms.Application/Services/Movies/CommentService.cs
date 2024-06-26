@@ -245,5 +245,9 @@ namespace RateFilms.Application.Services.Movies
             return await _commentRepository.SetLikedComment(commentId, user.Id);
         }
 
+        public async Task DeleteComment(Guid commentId)
+        {
+            await _commentRepository.DeleteComment(commentId);
+        }
     }
 }

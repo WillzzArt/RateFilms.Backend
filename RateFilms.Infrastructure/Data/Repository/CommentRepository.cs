@@ -82,6 +82,45 @@ namespace RateFilms.Infrastructure.Data.Repository
             await _context.SaveChangesAsync();
         }
 
+        public async Task DeleteComment(Guid commentId)
+        {
+            if (await _context.Comment.FirstOrDefaultAsync(c => c.Id == commentId) != null)
+            {
+                var commWithEntity = await _context.Comment.Select(c => new
+                {
+                    comm = c,
+                    commInFilm = c.CommentInFilm,
+                    commInSerial = c.CommentInSerial,
+                    adminNote = c.AdminNote,
+                    likes = c.Users.ToList()
+
+                }).FirstAsync(c => c.comm.Id == commentId);
+
+                if (commWithEntity.commInFilm != null)
+                {
+                    _context.Remove(commWithEntity.commInFilm);
+                }
+                else if (commWithEntity.commInSerial != null)
+                {
+                    _context.Remove(commWithEntity.commInSerial);
+                }
+
+                if (commWithEntity.adminNote != null)
+                {
+                    _context.Remove(commWithEntity.adminNote);
+                }
+
+                if (commWithEntity.likes.Any())
+                {
+                    _context.RemoveRange(commWithEntity.likes);
+                }
+
+                _context.Remove(commWithEntity.comm);
+
+                await _context.SaveChangesAsync();
+            }
+        }
+
         public async Task<IEnumerable<Comment>> GetCommentsInFilm(Guid filmId, Guid? userId)
         {
             var commentsInFav = await _context.FavoriteFilms.Where(fav => fav.FilmId == filmId && fav.Comments != null)

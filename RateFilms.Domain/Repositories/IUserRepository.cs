@@ -12,5 +12,6 @@ namespace RateFilms.Domain.Repositories
         Task<bool> UpdateUser(UserExtendedResponse user, string username);
         Task<IEnumerable<UserMini>> FindUsersByUsername(string username);
         Task<bool> IsActualToken(string refreshToken);
+        Task SwitchBann(Guid userId, bool isBanned);
     }
 }

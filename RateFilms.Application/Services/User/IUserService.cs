@@ -12,5 +12,6 @@ namespace RateFilms.Application.Services
         Task<UserExtendedResponse?> FindUserForProfile(string username);
         Task<IEnumerable<UserMini>> FindUsers(string username);
         Task<LoginResponse?> RefreshToken(string username, string refreshToken);
+        Task SwitchBan(string username, bool IsBanned);
     }
 }

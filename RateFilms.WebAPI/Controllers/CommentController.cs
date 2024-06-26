@@ -147,5 +147,13 @@ namespace RateFilms.WebAPI.Controllers
                 return BadRequest();
             }
         }
+
+        [Authorize(Policy = "admin")]
+        [HttpDelete("{commentId}")]
+        public async Task<IActionResult> DeleteComment(Guid commentId)
+        {
+            await _commentSerivice.DeleteComment(commentId);
+            return Ok();
+        }
     }
 }
