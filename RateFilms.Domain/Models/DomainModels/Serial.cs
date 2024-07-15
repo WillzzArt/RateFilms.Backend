@@ -1,18 +1,8 @@
 ﻿namespace RateFilms.Domain.Models.DomainModels
 {
-    public class Serial
+    public class Serial: Movie
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public DateTimeOffset? RealeseDate { get; set; }
-        public IEnumerable<Genre> Genre { get; set; }
-        public Image PreviewImage { get; set; }
-        public int AgeRating { get; set; }
-        public string? Country { get; set; }
         public IEnumerable<Season> Seasons { get; set; }
-        public IEnumerable<Favorite>? Favorites { get; set; }
-        public IEnumerable<Person> People { get; set; }
 
         public void CountSeries(
             out bool IsAnnouncement,
@@ -29,7 +19,7 @@
             var seriesLeft = 0;
             var flag = true;
 
-            if (RealeseDate == null || RealeseDate > DateTimeOffset.UtcNow)
+            if (ReleaseDate == null || ReleaseDate > DateTimeOffset.UtcNow)
             {
                 IsAnnouncement = true;
                 return;

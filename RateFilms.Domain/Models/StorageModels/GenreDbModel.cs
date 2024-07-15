@@ -7,7 +7,8 @@ namespace RateFilms.Domain.Models.StorageModels
         [Key]
         public int Id { get; set; }
         public string Genre { get; set; }
-        public IEnumerable<FilmDbModel>? Films { get; set; }
-        public IEnumerable<SerialDbModel>? Serials { get; set; }
+        public IEnumerable<MovieDbModel> Movies { get; set; }
+        /*public IEnumerable<FilmDbModel>? Films { get; set; }
+        public IEnumerable<SerialDbModel>? Serials { get; set; }*/
     }
 }

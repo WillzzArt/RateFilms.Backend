@@ -15,11 +15,11 @@ namespace RateFilms.MovieRecomendation
 
         public async Task<(IDataView training, IDataView test)> LoadData(MLContext mLContext)
         {
-            var favInFilms = await _favoriteRepository.FindFavoriteInFilms();
-            var favInSerials = await _favoriteRepository.FindFavoriteInSerials();
-            var movieRatings = new List<MovieRating>();
+            //var favInFilms = await _favoriteRepository.FindFavoriteInFilms();
+            //var favInSerials = await _favoriteRepository.FindFavoriteInSerials();
+            //var movieRatings = new List<MovieRating>();
 
-            foreach (var fav in favInFilms)
+            /*foreach (var fav in favInFilms)
             {
                 var movieRating = new MovieRating
                 {
@@ -43,7 +43,16 @@ namespace RateFilms.MovieRecomendation
                 };
 
                 movieRatings.Add(movieRating);
-            }
+            }*/
+
+            var favInMovie = await _favoriteRepository.FindFavoriteinMovies();
+            var movieRatings = favInMovie.Select(f => new MovieRating
+            {
+                UserId = f.UserId.ToString(),
+                Genres = f.Movie!.Genre.Select(x => x.Genre).ToArray(),
+                MovieId = f.MovieId.ToString(),
+                Label = f.Score! > 3.5 ? true : false
+            }).ToList();
 
             var dataSplit = mLContext.Data.TrainTestSplit(mLContext.Data.LoadFromEnumerable(movieRatings), 0.2);
 

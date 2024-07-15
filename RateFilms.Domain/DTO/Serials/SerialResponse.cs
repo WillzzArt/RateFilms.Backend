@@ -32,7 +32,7 @@ namespace RateFilms.Domain.DTO.Serials
             Id = serial.Id;
             Name = serial.Name;
             Description = serial.Description;
-            if (serial.RealeseDate != null) ReleaseDate = ((DateTimeOffset)serial.RealeseDate).ToUnixTimeMilliseconds();
+            if (serial.ReleaseDate != null) ReleaseDate = ((DateTimeOffset)serial.ReleaseDate).ToUnixTimeMilliseconds();
             if (serial.Genre.Any())
             {
                 Genre = serial.Genre

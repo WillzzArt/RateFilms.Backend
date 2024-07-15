@@ -1,23 +1,21 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RateFilms.Application.Services.Films;
-using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.WebAPI.Helpers;
-using System.Security.Claims;
 
 namespace RateFilms.WebAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class FilmsController : Controller
+    public class FilmController : Controller
     {
-        private readonly ILogger<FilmsController> _logger;
+        private readonly ILogger<FilmController> _logger;
 
         private readonly IFilmService _filmService;
 
-        public FilmsController(
-            ILogger<FilmsController> logger,
+        public FilmController(
+            ILogger<FilmController> logger,
             IFilmService filmService)
         {
             _logger = logger;
@@ -80,16 +78,6 @@ namespace RateFilms.WebAPI.Controllers
         public async Task<IActionResult> AddFilms(Film film)
         {
             await _filmService.CreateFilmsAsync(film);
-
-            return Ok();
-        }
-
-        [Authorize]
-        [HttpPost("SetFavorite")]
-        public async Task<IActionResult> SetFavorite(FavoriteMovie favorite)
-        {
-            ClaimsPrincipal claims = HttpContext.User;
-            await _filmService.SetFavoriteFilm(favorite, claims.Identity!.Name!);
 
             return Ok();
         }

@@ -26,18 +26,18 @@ namespace RateFilms.Application.Services.Movies
             _reviewRepository = reviewRepository;
         }
 
-        public async Task<IEnumerable<CommentResponse>> GetCommentsInFilm(Guid filmId, int countComm, string? username)
+        public async Task<IEnumerable<CommentResponse>> GetCommentsInMovie(Guid filmId, int countComm, string? username)
         {
             IEnumerable<Comment> comments;
 
             if (username != null)
             {
                 var user = await _userRepository.FindUser(username);
-                comments = await _commentRepository.GetCommentsInFilm(filmId, user?.Id);
+                comments = await _commentRepository.GetCommentsInMovie(filmId, user?.Id);
             }
             else
             {
-                comments = await _commentRepository.GetCommentsInFilm(filmId, null);
+                comments = await _commentRepository.GetCommentsInMovie(filmId, null);
             }
 
             if (countComm == 0)
@@ -48,35 +48,14 @@ namespace RateFilms.Application.Services.Movies
             return comments.Take(countComm).Select(c => new CommentResponse(c));
         }
 
-        public async Task<IEnumerable<CommentResponse>> GetCommentsInSerial(Guid serialId, int countComm, string? username)
-        {
-            IEnumerable<Comment> comments;
 
-            if (username != null)
-            {
-                var user = await _userRepository.FindUser(username);
-                comments = await _commentRepository.GetCommentsInSerial(serialId, user?.Id);
-            }
-            else
-            {
-                comments = await _commentRepository.GetCommentsInSerial(serialId, null);
-            }
-
-            if (countComm == 0)
-            {
-                return comments.Select(c => new CommentResponse(c));
-            }
-
-            return comments.Take(countComm).Select(c => new CommentResponse(c));
-        }
-
-        public async Task<IEnumerable<ReviewResponse>> GetUncheckedReviewsInMovie(Guid movieId, bool isFilm, string? username)
+        public async Task<IEnumerable<ReviewResponse>> GetUncheckedReviewsInMovie(Guid movieId, string? username)
         {
             IEnumerable<Review> reviews;
 
             if (username == null)
             {
-                reviews = await _reviewRepository.GetReviewByStatus(movieId, null, isFilm,
+                reviews = await _reviewRepository.GetReviewByStatus(movieId, null,
                     x => new[] { ReviewStatus.Unpublished, ReviewStatus.Canceled, ReviewStatus.Published }.Contains(x.Status));
             }
             else
@@ -85,7 +64,7 @@ namespace RateFilms.Application.Services.Movies
 
                 if (user == null) throw new ArgumentException(nameof(username));
 
-                reviews = await _reviewRepository.GetReviewByStatus(movieId, null, isFilm,
+                reviews = await _reviewRepository.GetReviewByStatus(movieId, null,
                     x => new[] { ReviewStatus.Unsent, ReviewStatus.Canceled, ReviewStatus.Published }.Contains(x.Status) 
                     && x.User.Id == user.Id);
             }
@@ -93,7 +72,7 @@ namespace RateFilms.Application.Services.Movies
             return reviews.Select(r => new ReviewResponse(r));
         }
 
-        public async Task<IEnumerable<ReviewResponse>> GetReviewsInMovie(Guid movieId, bool isFilm, string? username)
+        public async Task<IEnumerable<ReviewResponse>> GetReviewsInMovie(Guid movieId, string? username)
         {
             IEnumerable<Review> reviews;
 
@@ -103,12 +82,12 @@ namespace RateFilms.Application.Services.Movies
 
                 if (user == null) throw new ArgumentException(nameof(username));
 
-                reviews = await _reviewRepository.GetReviewByStatus(movieId, user.Id, isFilm,
+                reviews = await _reviewRepository.GetReviewByStatus(movieId, user.Id,
                     x => x.Status == ReviewStatus.Published);
             }
             else
             {
-                reviews = await _reviewRepository.GetReviewByStatus(movieId, null, isFilm,
+                reviews = await _reviewRepository.GetReviewByStatus(movieId, null,
                     x => x.Status == ReviewStatus.Published);
             }
 
@@ -123,23 +102,9 @@ namespace RateFilms.Application.Services.Movies
             var commentDb = new CommentDbModel
             {
                 Text = commentRequest.CommentText,
-                Status = commentRequest.Status.ToEnum(ReviewStatus.None)
+                Status = commentRequest.Status.ToEnum(ReviewStatus.None),
+                Favorite = await _favoriteRepository.FindFavoriteMovie(commentRequest.MovieId, user.Id)
             };
-
-            if (isFilm)
-            {
-                commentDb.CommentInFilm = new CommentInFilmDbModel
-                {
-                    Favorite = await _favoriteRepository.FindFavoriteFilm(commentRequest.MovieId, user.Id)
-                };
-            }
-            else
-            {
-                commentDb.CommentInSerial = new CommentInSerialDbModel
-                {
-                    Favorite = await _favoriteRepository.FindFavoriteSerial(commentRequest.MovieId, user.Id)
-                };
-            }
 
             await _commentRepository.CreateCommentAsync(commentDb, user.Id, commentRequest.MovieId);
         }
@@ -249,5 +214,27 @@ namespace RateFilms.Application.Services.Movies
         {
             await _commentRepository.DeleteComment(commentId);
         }
+
+        /*public async Task<IEnumerable<CommentResponse>> GetCommentsInSerial(Guid serialId, int countComm, string? username)
+        {
+            IEnumerable<Comment> comments;
+
+            if (username != null)
+            {
+                var user = await _userRepository.FindUser(username);
+                comments = await _commentRepository.GetCommentsInSerial(serialId, user?.Id);
+            }
+            else
+            {
+                comments = await _commentRepository.GetCommentsInSerial(serialId, null);
+            }
+
+            if (countComm == 0)
+            {
+                return comments.Select(c => new CommentResponse(c));
+            }
+
+            return comments.Take(countComm).Select(c => new CommentResponse(c));
+        }*/
     }
 }

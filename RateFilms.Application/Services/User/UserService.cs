@@ -132,16 +132,22 @@ namespace RateFilms.Application.Services
 
         public async Task<UserExtendedResponse?> FindUserForProfile(string username)
         {
-            var user = await _userRepository.FindUserWithImage(username);
+            var user = await _userRepository.FindUserIncludeImage(username);
 
             if (user != null)
             {
-                var favoriteFilm = await _favoriteRepository.FindFavoriteFilms(user.Id);
-                var faviriteSerial = await _favoriteRepository.FindFavoriteSerials(user.Id);
+                var favoriteMovies = await _favoriteRepository.FindFavoriteMovies(user.Id);
+                //var faviriteSerial = await _favoriteRepository.FindFavoriteSerials(user.Id);
+                //var favMovie = new List<Favorite>();
 
-                var favMovie = new List<Favorite>();
+                var favMovies = favoriteMovies.Select(f => new Favorite
+                {
+                    IsFavorite = f.IsFavorite,
+                    Score = f.Score,
+                    Status = f.Status
+                }).ToList();
 
-                foreach (var fav in favoriteFilm)
+                /*foreach (var fav in favoriteMovies)
                 {
                     favMovie.Add(new Favorite
                     {
@@ -159,9 +165,9 @@ namespace RateFilms.Application.Services
                         Score = fav.Score,
                         Status = fav.Status
                     });
-                }
+                }*/
 
-                return new UserExtendedResponse(user, favMovie);
+                return new UserExtendedResponse(user, favMovies);
             }
 
             return null;

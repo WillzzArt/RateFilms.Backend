@@ -18,6 +18,7 @@ namespace RateFilms.Application.Services.Serials
         private readonly ICommentService _commentService;
         private readonly IReviewRepository _reviewRepository;
         private readonly IFavoriteRepository _favoriteRepository;
+        private readonly IMovieRepository _movieRepository;
         private readonly PredictionEnginePool<MovieRating, MovieRatingPrediction> _predictionEnginePool;
         private readonly LocalizationService _localizationService;
 
@@ -27,6 +28,7 @@ namespace RateFilms.Application.Services.Serials
             ICommentService commentService,
             IReviewRepository reviewRepository,
             IFavoriteRepository favoriteRepository,
+            IMovieRepository movieRepository,
             PredictionEnginePool<MovieRating, MovieRatingPrediction> predictionEnginePool,
             LocalizationService localizationService)
         {
@@ -35,13 +37,14 @@ namespace RateFilms.Application.Services.Serials
             _commentService = commentService;
             _reviewRepository = reviewRepository;
             _favoriteRepository = favoriteRepository;
+            _movieRepository = movieRepository;
             _predictionEnginePool = predictionEnginePool;
             _localizationService = localizationService;
             _localizationService.LoadTranslation();
         }
         public async Task CreateSerialAsync(Serial serial)
         {
-            if (serial.Seasons.Any(s => s.RealeseDate < serial.RealeseDate))
+            if (serial.Seasons.Any(s => s.RealeseDate < serial.ReleaseDate))
             {
                 throw new ArgumentOutOfRangeException(nameof(serial.Seasons));
             }
@@ -51,7 +54,7 @@ namespace RateFilms.Application.Services.Serials
                 throw new ArgumentOutOfRangeException("series");
             }
 
-            await _serialRepositoty.CreateAsync(SerialConvertor.SerialDomainConvertSerialDb(serial));
+            await _movieRepository.CreateAsync(SerialConvertor.SerialDomainConvertSerialDb(serial));
         }
 
 
@@ -90,9 +93,9 @@ namespace RateFilms.Application.Services.Serials
         public async Task<SerialExtendResponse?> GetSerialById(Guid id, CultureInfo culture)
         {
             var serial = await _serialRepositoty.GetSerialWithFavoriteById(id);
-            var comment = await _commentService.GetCommentsInSerial(id, 5, null);
+            var comment = await _commentService.GetCommentsInMovie(id, 5, null);
 
-            var reviews = await _reviewRepository.GetReviewByStatus(id, null, false,
+            var reviews = await _reviewRepository.GetReviewByStatus(id, null,
                 x => x.Status == ReviewStatus.Published);
 
             var popularReview = reviews.OrderByDescending(r => r.CountLike).FirstOrDefault();
@@ -113,9 +116,9 @@ namespace RateFilms.Application.Services.Serials
 
             var serial = await _serialRepositoty.GetSerialWithFavoriteById(id);
 
-            var comment = await _commentService.GetCommentsInSerial(id, 5, userName);
+            var comment = await _commentService.GetCommentsInMovie(id, 5, userName);
 
-            var reviews = await _reviewRepository.GetReviewByStatus(id, user.Id, false,
+            var reviews = await _reviewRepository.GetReviewByStatus(id, user.Id,
                 x => x.Status == ReviewStatus.Published);
 
             var popularReview = reviews.OrderByDescending(r => r.CountLike).FirstOrDefault();
@@ -127,15 +130,6 @@ namespace RateFilms.Application.Services.Serials
             }
 
             return null;
-        }
-
-        public async Task SetFavoriteSerial(FavoriteMovie favoriteMovie, string userName)
-        {
-            var user = await _userRepository.FindUser(userName);
-
-            if (user == null) throw new ArgumentException(userName);
-
-            await _serialRepositoty.SetFavoriteSerial(favoriteMovie, user);
         }
 
         public async Task<IEnumerable<SerialResponse>> GetAllFavoriteSerials(string userName, CultureInfo culture)
@@ -151,7 +145,8 @@ namespace RateFilms.Application.Services.Serials
             var favoriteSerialsForUser = from s in serials
                                          where s.Favorites != null
                                          from fav in s.Favorites!
-                                         where fav.User.Id == user.Id
+                                         where fav.User.Id == user.Id &&
+                                         (fav.Status != StatusMovie.None || fav.Score != 0 || fav.IsFavorite != false)
                                          select new SerialResponse(s, fav);
 
             return favoriteSerialsForUser;
@@ -179,9 +174,9 @@ namespace RateFilms.Application.Services.Serials
                 async (PredictionEnginePool<MovieRating, MovieRatingPrediction> predictionEnginePool, MovieRating input) =>
                     await Task.FromResult(predictionEnginePool.Predict(modelName: "MovieRecommenderModel", input));
 
-            var favorite = await _favoriteRepository.FindFavoriteSerials(user.Id);
+            var favorite = await _favoriteRepository.FindFavoriteMovies(user.Id);
             var serials = await _serialRepositoty.GetAllSerialsWithFavorite();
-            var unWatchedSerials = serials.Where(f => !favorite.Any(fav => fav.SerialId == f.Id && (fav.Score != null || fav.Score != 0)));
+            var unWatchedSerials = serials.Where(f => !favorite.Any(fav => fav.MovieId == f.Id && (fav.Score != null || fav.Score != 0)));
 
             var resultSerials = new List<SerialResponse>();
 

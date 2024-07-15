@@ -7,7 +7,7 @@ namespace RateFilms.Domain.Repositories
     public interface IUserRepository
     {
         Task<User?> FindUser(string userLogin);
-        Task<User?> FindUserWithImage(string username);
+        Task<User?> FindUserIncludeImage(string username);
         Task<User?> ChangePassword(string userLogin, string password);
         Task<bool> UpdateUser(UserExtendedResponse user, string username);
         Task<IEnumerable<UserMini>> FindUsersByUsername(string username);

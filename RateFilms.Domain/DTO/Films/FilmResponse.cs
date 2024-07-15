@@ -30,8 +30,8 @@ namespace RateFilms.Domain.DTO.Films
                     .ToList();
             }
 
-            if (film.RealeseDate != null)
-                ReleaseDate = ((DateTimeOffset)film.RealeseDate).ToUnixTimeMilliseconds();
+            if (film.ReleaseDate != null)
+                ReleaseDate = ((DateTimeOffset)film.ReleaseDate).ToUnixTimeMilliseconds();
 
             PreviewImage = film.PreviewImage;
             AvgRating = Favorite.GetAvgRating(film.Favorites);

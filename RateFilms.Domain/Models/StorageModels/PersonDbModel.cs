@@ -9,7 +9,8 @@ namespace RateFilms.Domain.Models.StorageModels
         public int? Age { get; set; }
         public Guid? ImageId { get; set; }
         public ImageDbModel? Image { get; set; }
-        public IEnumerable<PersonInFilmDbModel> Films { get; set; }
-        public IEnumerable<PersonInSerialDbModel> Serials { get; set; }
+        public IEnumerable<PersonInMovieDbModel> Movies { get; set; }
+        /*public IEnumerable<PersonInFilmDbModel> Films { get; set; }
+        public IEnumerable<PersonInSerialDbModel> Serials { get; set; }*/
     }
 }

@@ -5,10 +5,11 @@ namespace RateFilms.Application.Services.Movies
 {
     public interface IMovieService
     {
-        Task<Movie> GetAllMovies(CultureInfo culture);
-        Task<Movie> GetAllMoviesForAuthorizeUser(string username, CultureInfo culture);
-        Task<Movie> GetAllFavoritesMovie(string username, CultureInfo culture);
-        Task<Movie> GetMoviesWithUncheckedReview(CultureInfo culture);
-        Task<Movie> GetRecommendedMovie(string username, CultureInfo culture);
+        Task<MovieResponse> GetAllMovies(CultureInfo culture);
+        Task<MovieResponse> GetAllMoviesForAuthorizeUser(string username, CultureInfo culture);
+        Task<MovieResponse> GetAllFavoritesMovie(string username, CultureInfo culture);
+        Task<MovieResponse> GetMoviesWithUncheckedReview(CultureInfo culture);
+        Task<MovieResponse> GetRecommendedMovie(string username, CultureInfo culture);
+        Task SetFavoriteMovie(FavoriteMovie favoriteFilm, string userName);
     }
 }

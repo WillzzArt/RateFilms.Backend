@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RateFilms.Infrastructure.Data;
@@ -11,9 +12,11 @@ using RateFilms.Infrastructure.Data;
 namespace RateFilms.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240715153148_20.1")]
+    partial class _201
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -133,6 +136,12 @@ namespace RateFilms.Infrastructure.Migrations
                     b.Property<Guid>("FavoriteId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("FavoriteMovieId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("FavoriteUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<bool>("IsEdit")
                         .HasColumnType("boolean");
 
@@ -145,7 +154,7 @@ namespace RateFilms.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FavoriteId");
+                    b.HasIndex("FavoriteMovieId", "FavoriteUserId");
 
                     b.ToTable("Comment");
                 });
@@ -174,6 +183,7 @@ namespace RateFilms.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<bool>("IsFavorite")
@@ -555,8 +565,7 @@ namespace RateFilms.Infrastructure.Migrations
                 {
                     b.HasOne("RateFilms.Domain.Models.StorageModels.FavoriteMovieDbModel", "Favorite")
                         .WithMany("Comments")
-                        .HasForeignKey("FavoriteId")
-                        .HasPrincipalKey("Id")
+                        .HasForeignKey("FavoriteMovieId", "FavoriteUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

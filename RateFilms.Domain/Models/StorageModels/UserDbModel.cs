@@ -16,8 +16,9 @@ namespace RateFilms.Domain.Models.StorageModels
         public bool IsBanned { get; set; }
         public Guid? ImageId { get; set; }
         public ImageDbModel? Image { get; set; }
-        public IEnumerable<FavoriteFilmDbModel>? FavoriteFilms { get; set; }
-        public IEnumerable<FavoriteSerialDbModel>? FavoriteSerials { get; set; }
+        public IEnumerable<FavoriteMovieDbModel> FavoriteMovies { get; set; }
+        /*public IEnumerable<FavoriteFilmDbModel>? FavoriteFilms { get; set; }
+        public IEnumerable<FavoriteSerialDbModel>? FavoriteSerials { get; set; }*/
         public IEnumerable<CommentUserDbModel> Comments { get; set; }
         public IEnumerable<AdminNoteDbModel>? AdminNotes { get; set; }
     }

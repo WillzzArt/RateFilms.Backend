@@ -8,7 +8,7 @@ namespace RateFilms.Domain.Convertors
     {
         public static Serial SerialDbConvertSerialDomain(
             SerialDbModel serialDbModel,
-            IEnumerable<FavoriteSerialDbModel>? favorites = null)
+            IEnumerable<FavoriteMovieDbModel>? favorites = null)
         {
             if (serialDbModel == null) throw new ArgumentNullException(nameof(serialDbModel));
 
@@ -22,15 +22,15 @@ namespace RateFilms.Domain.Convertors
                 Country = serialDbModel.Country,
                 Genre = serialDbModel.Genre.Select(g => g.Genre.ToEnum(Genre.None)),
                 Seasons = SeasonDbListConvertSeasonDomain(serialDbModel.Seasons ?? new List<SeasonDbModel>()),
-                RealeseDate = serialDbModel.RealeseDate,
-                People = PersonConvertor.PersonInMovieDbListConvertPersonDomainList(serialDbModel.People ?? new List<PersonInSerialDbModel>())
+                ReleaseDate = serialDbModel.ReleaseDate,
+                People = PersonConvertor.PersonInMovieDbListConvertPersonDomainList(serialDbModel.People ?? new List<PersonInMovieDbModel>())
             };
 
             if (favorites != null)
             {
                 serial.Favorites = favorites.Select(fSerial => new Favorite
                 {
-                    Id = fSerial.FavoriteId,
+                    Id = fSerial.Id,
                     User = UserConvertor.UserDbConvertUserDomain(fSerial.User ?? new UserDbModel()),
                     IsFavorite = fSerial.IsFavorite,
                     Score = fSerial.Score,
@@ -95,8 +95,8 @@ namespace RateFilms.Domain.Convertors
                     Id = (int)g,
                     Genre = g.ToString()
                 }),
-                RealeseDate = serial.RealeseDate,
-                People = PersonConvertor.PersonDomainListConvertPersonInSerialDbList(serial.People, serial.Id),
+                ReleaseDate = serial.ReleaseDate,
+                People = PersonConvertor.PersonDomainListConvertPersonInMovieDbList(serial.People, serial.Id),
                 PreviewImageId = serial.PreviewImage?.Id,
                 PreviewImage = PersonConvertor.ImageDomainConvertImageDb(serial.PreviewImage),
                 Seasons = SeasonDomainListConvertSeasonDbList(serial.Seasons)

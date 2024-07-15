@@ -13,7 +13,27 @@ namespace RateFilms.Infrastructure.Data.Repository
             _context = context;
         }
 
-        public async Task<FavoriteFilmDbModel?> FindFavoriteFilm(Guid filmId, Guid userId)
+        public async Task<FavoriteMovieDbModel?> FindFavoriteMovie(Guid movieId, Guid userId)
+        {
+            return await _context.FavoriteMovie
+                .FirstOrDefaultAsync(fav => fav.MovieId == movieId && fav.UserId == userId);
+        }
+
+        public async Task<IEnumerable<FavoriteMovieDbModel>> FindFavoriteMovies(Guid userId)
+        {
+            return await _context.FavoriteMovie.Where(fav => fav.UserId == userId).ToListAsync();
+        }
+
+        public async Task<IEnumerable<FavoriteMovieDbModel>> FindFavoriteinMovies()
+        {
+            return await _context.FavoriteMovie
+                .Include(f => f.Movie)
+                    .ThenInclude(f => f.Genre)
+                .Include(f => f.User)
+                .ToListAsync();
+        }
+
+        /*public async Task<FavoriteFilmDbModel?> FindFavoriteFilm(Guid filmId, Guid userId)
         {
             return await _context.FavoriteFilms
                 .FirstOrDefaultAsync(fav => fav.FilmId == filmId && fav.UserId == userId);
@@ -51,6 +71,6 @@ namespace RateFilms.Infrastructure.Data.Repository
                     .ThenInclude(f => f.Genre)
                 .Include(f => f.User)
                 .ToListAsync();
-        }
+        }*/
     }
 }

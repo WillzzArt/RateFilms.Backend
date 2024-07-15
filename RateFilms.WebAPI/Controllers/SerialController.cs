@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RateFilms.Application.Services.Serials;
-using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.WebAPI.Helpers;
 
@@ -9,17 +8,17 @@ namespace RateFilms.WebAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class SerialsController : Controller
+    public class SerialController : Controller
     {
         private readonly ISerialService _serialService;
 
-        public SerialsController(ISerialService serialService)
+        public SerialController(ISerialService serialService)
         {
             _serialService = serialService;
         }
 
         [Authorize(Policy = "admin")]
-        [HttpPost("CreateSerial")]
+        [HttpPost]
         public async Task<IActionResult> AddSerials(Serial serial)
         {
             await _serialService.CreateSerialAsync(serial);
@@ -76,16 +75,6 @@ namespace RateFilms.WebAPI.Controllers
         {
             var serials = await _serialService.GetRecommendedSerials(User.Identity!.Name!, CultureHelper.GetCurrentCulture(Request));
             return Ok(serials);
-        }
-
-
-        [Authorize]
-        [HttpPost("SetFavorite")]
-        public async Task<IActionResult> SetFavoriteSerial(FavoriteMovie favorite)
-        {
-            await _serialService.SetFavoriteSerial(favorite, User.Identity!.Name!);
-
-            return Ok();
         }
 
         [Authorize(Policy = "admin")]

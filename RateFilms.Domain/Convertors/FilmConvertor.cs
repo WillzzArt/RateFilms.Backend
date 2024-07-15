@@ -8,7 +8,7 @@ namespace RateFilms.Domain.Convertors
     {
         public static Film FilmDbConvertFilmDomain(
             FilmDbModel filmDbModel, 
-            IEnumerable<FavoriteFilmDbModel>? favoriteFilm = null)
+            IEnumerable<FavoriteMovieDbModel>? favoriteMovie = null)
         {
             if (filmDbModel == null) throw new ArgumentNullException(nameof(filmDbModel));
 
@@ -27,21 +27,21 @@ namespace RateFilms.Domain.Convertors
                 Id = filmDbModel.Id,
                 Name = filmDbModel.Name,
                 Description = filmDbModel.Description,
-                People = PersonConvertor.PersonInMovieDbListConvertPersonDomainList(filmDbModel.People ?? new List<PersonInFilmDbModel>()),
+                People = PersonConvertor.PersonInMovieDbListConvertPersonDomainList(filmDbModel.People ?? new List<PersonInMovieDbModel>()),
                 AgeRating = filmDbModel.AgeRating,
                 Duration = filmDbModel.Duration,
                 Country = filmDbModel.Country,
-                RealeseDate = filmDbModel.ReleaseDate,
+                ReleaseDate = filmDbModel.ReleaseDate,
                 PreviewImage = PersonConvertor.ImageDbConvertImageDomain(previewImage)!,
                 Genre = filmDbModel.Genre.Select(g => g.Genre.ToEnum(Genre.None)),
                 Images = PersonConvertor.ImageDbListConvertImageDomainList(images)
             };
 
-            if (favoriteFilm != null)
+            if (favoriteMovie != null)
             {
-                film.Favorites = favoriteFilm.Select(fFilms => new Favorite
+                film.Favorites = favoriteMovie.Select(fFilms => new Favorite
                 {
-                    Id = fFilms.FavoriteId,
+                    Id = fFilms.Id,
                     User = UserConvertor.UserDbConvertUserDomain(fFilms.User ?? new UserDbModel()),
                     IsFavorite = fFilms.IsFavorite,
                     Score = fFilms.Score,
@@ -61,7 +61,7 @@ namespace RateFilms.Domain.Convertors
             if (filmDbModels == null) throw new ArgumentNullException(nameof(filmDbModels));
 
             var films = filmDbModels
-                .Select(fDB => FilmDbConvertFilmDomain(fDB, fDB.Favorite)).ToList();
+                .Select(fDB => FilmDbConvertFilmDomain(fDB, fDB.Favorites)).ToList();
 
             return films;
         }
@@ -80,10 +80,10 @@ namespace RateFilms.Domain.Convertors
                 Id = film.Id,
                 Name = film.Name,
                 Description = film.Description,
-                People = PersonConvertor.PersonDomainListConvertPersonInFilmDbList(film.People ?? new List<Person>(), film.Id),
+                People = PersonConvertor.PersonDomainListConvertPersonInMovieDbList(film.People ?? new List<Person>(), film.Id),
                 AgeRating = film.AgeRating,
                 Duration = film.Duration,
-                ReleaseDate = film.RealeseDate,
+                ReleaseDate = film.ReleaseDate,
                 Country = film.Country,
                 Genre = film.Genre
                 .Select(g => new GenreDbModel

@@ -89,6 +89,7 @@ builder.Services.AddScoped<ISerialService, SerialService>();
 builder.Services.AddScoped<ISerialRepositoty, SerialRepository>();
 
 builder.Services.AddScoped<IMovieService, MovieService>();
+builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 
 builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();

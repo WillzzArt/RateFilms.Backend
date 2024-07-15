@@ -1,9 +1,6 @@
-﻿using RateFilms.Domain.Models.DomainModels;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace RateFilms.Domain.Models.StorageModels
+﻿namespace RateFilms.Domain.Models.StorageModels
 {
-    [Table("FavoriteFilm")]
+    /*[Table("FavoriteFilm")]
     public class FavoriteFilmDbModel
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -16,5 +13,5 @@ namespace RateFilms.Domain.Models.StorageModels
         public bool IsFavorite { get; set; }
         public int? Score { get; set; }
         public IEnumerable<CommentInFilmDbModel>? Comments { get; set; }
-    }
+    }*/
 }

@@ -27,59 +27,26 @@ namespace RateFilms.Infrastructure.Data.Repository
 
             await _context.Comment.AddAsync(comment);
 
-            if (commentDb.CommentInFilm != null)
+            if (commentDb.Favorite != null)
             {
-                var commentInFilm = new CommentInFilmDbModel { Comment = comment };
-
-                await _context.CommentInFilm.AddAsync(commentInFilm);
-
-                if (commentDb.CommentInFilm.Favorite != null)
-                {
-                    commentInFilm.Favorite = commentDb.CommentInFilm.Favorite;
-                }
-                else
-                {
-                    var favoriteFilm = new FavoriteFilmDbModel
-                    {
-                        UserId = userId,
-                        FilmId = movieId,
-                        Score = 0
-                    };
-
-                    await _context.FavoriteFilms.AddAsync(favoriteFilm);
-                    commentInFilm.Favorite = favoriteFilm;
-                }
-
-            }
-            else if (commentDb.CommentInSerial != null)
-            {
-                var commentInSerial = new CommentInSerialDbModel { Comment = comment };
-
-                await _context.CommentInSerial.AddAsync(commentInSerial);
-
-                if (commentDb.CommentInSerial.Favorite != null)
-                {
-                    commentInSerial.Favorite = commentDb.CommentInSerial.Favorite;
-                }
-                else
-                {
-                    var favoriteSerial = new FavoriteSerialDbModel
-                    {
-                        UserId = userId,
-                        SerialId = movieId,
-                        Score = 0
-                    };
-
-                    await _context.FavoriteSerials.AddAsync(favoriteSerial);
-                    commentInSerial.Favorite = favoriteSerial;
-                }
+                comment.Favorite = commentDb.Favorite;
             }
             else
             {
-                throw new ArgumentException(nameof(commentDb));
+                var favoriteMovie = new FavoriteMovieDbModel
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = userId,
+                    MovieId = movieId,
+                    Score = 0
+                };
+
+                await _context.FavoriteMovie.AddAsync(favoriteMovie);
+                comment.Favorite = favoriteMovie;
             }
 
             await _context.SaveChangesAsync();
+
         }
 
         public async Task DeleteComment(Guid commentId)
@@ -89,21 +56,11 @@ namespace RateFilms.Infrastructure.Data.Repository
                 var commWithEntity = await _context.Comment.Select(c => new
                 {
                     comm = c,
-                    commInFilm = c.CommentInFilm,
-                    commInSerial = c.CommentInSerial,
                     adminNote = c.AdminNote,
                     likes = c.Users.ToList()
 
                 }).FirstAsync(c => c.comm.Id == commentId);
 
-                if (commWithEntity.commInFilm != null)
-                {
-                    _context.Remove(commWithEntity.commInFilm);
-                }
-                else if (commWithEntity.commInSerial != null)
-                {
-                    _context.Remove(commWithEntity.commInSerial);
-                }
 
                 if (commWithEntity.adminNote != null)
                 {
@@ -121,85 +78,26 @@ namespace RateFilms.Infrastructure.Data.Repository
             }
         }
 
-        public async Task<IEnumerable<Comment>> GetCommentsInFilm(Guid filmId, Guid? userId)
+        public async Task<IEnumerable<Comment>> GetCommentsInMovie(Guid movieId, Guid? userId)
         {
-            var commentsInFav = await _context.FavoriteFilms.Where(fav => fav.FilmId == filmId && fav.Comments != null)
-                .Select(x => new
-                {
-                    comments = x.Comments!.Select(c => new CommentDbModel
-                    {
-                        Id = c.Comment.Id,
-                        Date = c.Comment.Date,
-                        IsEdit = c.Comment.IsEdit,
-                        Text = c.Comment.Text,
-                        Status = c.Comment.Status,
-                        Users = c.Comment.Users.ToList()
-                    }).ToList(),
-                    user = new UserDbModel
-                    {
-                        Id = x.User.Id,
-                        UserName = x.User.UserName,
-                        Image = x.User.Image
+            var commentsInFav = _context.FavoriteMovie.Where(fav => fav.MovieId == movieId && fav.Comments != null);
 
-                    }
-                }).ToListAsync();
+            var commentRes = from commInFav in commentsInFav
+                             from comm in commInFav.Comments!
+                             where comm.Status == ReviewStatus.None
+                             let isLiked = comm.Users.Any(u => u.UserId == userId)
+                             select new Comment
+                             {
+                                 Id = comm.Id,
+                                 IsEdit = comm.IsEdit,
+                                 User = UserConvertor.UserDbConvertUserDomain(commInFav.User),
+                                 Date = comm.Date,
+                                 Text = comm.Text,
+                                 CountLike = comm.Users.Count(),
+                                 IsLiked = isLiked
+                             };
 
-            var comment = from commInFav in commentsInFav
-                          from comm in commInFav.comments
-                          where comm.Status == ReviewStatus.None
-                          let isLiked = comm.Users.Any(u => u.UserId == userId)
-                          select new Comment
-                          {
-                              Id = comm.Id,
-                              IsEdit = comm.IsEdit,
-                              User = UserConvertor.UserDbConvertUserDomain(commInFav.user),
-                              Date = comm.Date,
-                              Text = comm.Text,
-                              CountLike = comm.Users?.Count() ?? 0,
-                              IsLiked = isLiked
-                          };
-
-            return comment;
-        }
-
-        public async Task<IEnumerable<Comment>> GetCommentsInSerial(Guid serialId, Guid? userId)
-        {
-            var commentsInFav = await _context.FavoriteSerials.Where(fav => fav.SerialId == serialId && fav.Comments != null)
-                .Select(x => new
-                {
-                    comments = x.Comments!.Select(c => new CommentDbModel
-                    {
-                        Id = c.Comment.Id,
-                        Date = c.Comment.Date,
-                        IsEdit = c.Comment.IsEdit,
-                        Text = c.Comment.Text,
-                        Status = c.Comment.Status,
-                        Users = c.Comment.Users.ToList()
-                    }).ToList(),
-                    user = new UserDbModel
-                    {
-                        Id = x.User.Id,
-                        UserName = x.User.UserName,
-                        Image = x.User.Image
-                    }
-                }).ToListAsync();
-
-            var comment = from commInFav in commentsInFav
-                          from comm in commInFav.comments
-                          where comm.Status == ReviewStatus.None
-                          let isLiked = comm.Users.Any(u => u.UserId == userId)
-                          select new Comment
-                          {
-                              Id = comm.Id,
-                              IsEdit = comm.IsEdit,
-                              User = UserConvertor.UserDbConvertUserDomain(commInFav.user),
-                              Date = comm.Date,
-                              Text = comm.Text,
-                              CountLike = comm.Users?.Count() ?? 0,
-                              IsLiked = isLiked
-                          };
-
-            return comment;
+            return commentRes;
         }
 
         public async Task<bool> SetLikedComment(Guid commentId, Guid userId)

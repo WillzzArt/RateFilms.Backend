@@ -40,8 +40,8 @@ namespace RateFilms.Domain.DTO.Films
                     .ToList();
             }
             Duration = film.Duration;
-            if (film.RealeseDate != null)
-                ReleaseDate = ((DateTimeOffset)film.RealeseDate).ToUnixTimeMilliseconds();
+            if (film.ReleaseDate != null)
+                ReleaseDate = ((DateTimeOffset)film.ReleaseDate).ToUnixTimeMilliseconds();
 
             PreviewImage = film.PreviewImage;
             if (film.Images.Any())

@@ -19,6 +19,7 @@ namespace RateFilms.Application.Services.Films
         private readonly ICommentService _commentService;
         private readonly IReviewRepository _reviewRepository;
         private readonly IFavoriteRepository _favoriteRepository;
+        private readonly IMovieRepository _movieRepository;
         private readonly PredictionEnginePool<MovieRating, MovieRatingPrediction> _predictionEnginePool;
         private readonly LocalizationService _localizationService;
 
@@ -28,6 +29,7 @@ namespace RateFilms.Application.Services.Films
             ICommentService commentSerivice,
             IReviewRepository reviewRepository,
             IFavoriteRepository favoriteRepository,
+            IMovieRepository movieRepository,
             PredictionEnginePool<MovieRating, MovieRatingPrediction> predictionEnginePool,
             LocalizationService localizationService)
         {
@@ -36,6 +38,7 @@ namespace RateFilms.Application.Services.Films
             _commentService = commentSerivice;
             _reviewRepository = reviewRepository;
             _favoriteRepository = favoriteRepository;
+            _movieRepository = movieRepository;
             _predictionEnginePool = predictionEnginePool;
             _localizationService = localizationService;
             _localizationService.LoadTranslation();
@@ -43,7 +46,7 @@ namespace RateFilms.Application.Services.Films
 
         public async Task CreateFilmsAsync(Film film)
         {
-            await _filmRepository.CreateAsync(FilmConvertor.FilmDomainConvertFilmDb(film));
+            await _movieRepository.CreateAsync(FilmConvertor.FilmDomainConvertFilmDb(film));
         }
 
 
@@ -74,9 +77,9 @@ namespace RateFilms.Application.Services.Films
             foreach (var film in films)
                 LocalizeFieldsFilm(film, culture);
 
-            var filmsRespons = films.Select(f => new FilmResponse(f, null)).ToList();
+            var filmsResponse = films.Select(f => new FilmResponse(f, null)).ToList();
 
-            return filmsRespons;
+            return filmsResponse;
         }
 
         public async Task<FilmExtendResponse?> GetFilmForAuthorizeUserById(Guid id, string userName, CultureInfo culture)
@@ -86,9 +89,9 @@ namespace RateFilms.Application.Services.Films
 
             var film = await _filmRepository.GetFilmWithFavoriteById(id);
 
-            var comment = await _commentService.GetCommentsInFilm(id, 5, userName);
+            var comment = await _commentService.GetCommentsInMovie(id, 5, userName);
 
-            var reviews = await _reviewRepository.GetReviewByStatus(id, user.Id, true,
+            var reviews = await _reviewRepository.GetReviewByStatus(id, user.Id,
                 x => x.Status == ReviewStatus.Published);
 
             var popularReview = reviews.OrderByDescending(r => r.CountLike).FirstOrDefault();
@@ -108,9 +111,9 @@ namespace RateFilms.Application.Services.Films
         {
             var film = await _filmRepository.GetFilmWithFavoriteById(id);
 
-            var comment = await _commentService.GetCommentsInFilm(id, 5, null);
+            var comment = await _commentService.GetCommentsInMovie(id, 5, null);
 
-            var reviews = await _reviewRepository.GetReviewByStatus(id, null, true,
+            var reviews = await _reviewRepository.GetReviewByStatus(id, null,
                 x => x.Status == ReviewStatus.Published);
 
             var popularReview = reviews.OrderByDescending(r => r.CountLike).FirstOrDefault();
@@ -123,54 +126,6 @@ namespace RateFilms.Application.Services.Films
             }
 
             return null;
-        }
-
-        public async Task SetFavoriteFilm(FavoriteMovie favoriteFilm, string userName)
-        {
-            var user = await _userRepository.FindUser(userName);
-
-            if (user == null) throw new ArgumentException(userName);
-
-            await _filmRepository.SetFavoriteFilm(favoriteFilm, user);
-
-            /*if (favoriteFilm.Score != null && favoriteFilm.Score != 0)
-            {
-                MLContext mlContext = new MLContext();
-
-                var modelHandler = async (PredictionEnginePool<MovieRating, MovieRatingPrediction> predictionEnginePool, string modelName) =>
-                    await Task.FromResult(predictionEnginePool.GetModel(modelName));
-
-                var dataPrepPipeline = await modelHandler(_predictionEnginePool, "data_preparation_pipeline");
-                var trainedModel = await modelHandler(_predictionEnginePool, "MovieRecommenderModel");
-                
-                var predictor = (trainedModel as TransformerChain<ITransformer>)!.LastTransformer as FieldAwareFactorizationMachinePredictionTransformer;
-                var originalModelParameters = predictor!.Model;
-
-                var film = await _filmRepository.GetFilmWithFavoriteById(favoriteFilm.MovieId);
-
-                var inputData = new List<MovieRating>() { new MovieRating
-                {
-                    UserId = user.Id.ToString(),
-                    MovieId = favoriteFilm.MovieId.ToString(),
-                    Genres = film.Genre.Select(g => g.ToString()).ToArray(),
-                    Label = favoriteFilm.Score! > 3.5 ? true : false
-                }};
-
-                var retrainingDataView = mlContext.Data.LoadFromEnumerable(inputData);
-                var newData = dataPrepPipeline.Transform(retrainingDataView);
-                var transformedNewData = dataPrepPipeline.Transform(newData);
-
-                var retrainedModel =
-                    mlContext.BinaryClassification.Trainers.FieldAwareFactorizationMachine(new string[] { "Features" })
-                        .Fit(transformedNewData, null, originalModelParameters);
-
-                //var modelDataView = retrainedModel.Transform(newData);
-
-                var modelPath = Path.Combine(Environment.CurrentDirectory, "../RateFilms.WebAPI/Data", "MovieRecommenderModel.zip");
-
-                mlContext.Model.Save(retrainedModel, transformedNewData.Schema, modelPath);
-
-            }*/
         }
 
         public async Task<IEnumerable<FilmResponse>> GetAllFavoriteFilms(string userName, CultureInfo culture)
@@ -186,7 +141,8 @@ namespace RateFilms.Application.Services.Films
             var favoriteFilmsForUser = from f in films
                                        where f.Favorites != null
                                        from fav in f.Favorites!
-                                       where fav.User.Id == user.Id
+                                       where fav.User.Id == user.Id &&
+                                       (fav.Status != StatusMovie.None || fav.Score != 0 || fav.IsFavorite != false) 
                                        select new FilmResponse(f, fav);
 
             return favoriteFilmsForUser;
@@ -214,9 +170,9 @@ namespace RateFilms.Application.Services.Films
                 async (PredictionEnginePool<MovieRating, MovieRatingPrediction> predictionEnginePool, MovieRating input) =>
                     await Task.FromResult(predictionEnginePool.Predict(modelName: "MovieRecommenderModel", input));
 
-            var favorite = await _favoriteRepository.FindFavoriteFilms(user.Id);
+            var favorite = await _favoriteRepository.FindFavoriteMovies(user.Id);
             var films = await _filmRepository.GetAllFilmsWithFavorite();
-            var unWatchedFilms = films.Where(f => !favorite.Any(fav => fav.FilmId == f.Id && (fav.Score != null || fav.Score != 0)));
+            var unWatchedFilms = films.Where(f => !favorite.Any(fav => fav.MovieId == f.Id && (fav.Score != null || fav.Score != 0)));
 
             var resultFilms = new List<FilmResponse>();
 

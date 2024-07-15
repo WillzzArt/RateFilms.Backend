@@ -6,8 +6,7 @@ namespace RateFilms.Domain.Repositories
     public interface ICommentRepository
     {
         Task CreateCommentAsync(CommentDbModel commentDb, Guid userId, Guid movieId);
-        Task<IEnumerable<Comment>> GetCommentsInFilm(Guid filmId, Guid? userId);
-        Task<IEnumerable<Comment>> GetCommentsInSerial(Guid serialId, Guid? userId);
+        Task<IEnumerable<Comment>> GetCommentsInMovie(Guid movieId, Guid? userId);
         Task<bool> SetLikedComment(Guid commentId, Guid userId);
         Task DeleteComment(Guid commentId);
     }

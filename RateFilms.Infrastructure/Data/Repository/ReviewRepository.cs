@@ -26,7 +26,21 @@ namespace RateFilms.Infrastructure.Data.Repository
                 Note = new AdminNote()
             };
 
-            if (_context.Comment.FirstOrDefault(x => x.Id == reviewId && x.CommentInFilm != null) != null)
+            comment = await _context.Comment
+                .Include(c => c.Favorite)
+                .FirstOrDefaultAsync(c => c.Id == reviewId);
+
+            if (comment == null) throw new ArgumentException(nameof(reviewId));
+
+            review.User.Id = comment.Favorite!.UserId;
+            review.Id = comment.Id;
+            review.Text = comment.Text;
+            review.Date = comment.Date;
+            review.Status = comment.Status;
+
+            return review;
+
+            /*if (_context.Comment.FirstOrDefault(x => x.Id == reviewId && x.CommentInFilm != null) != null)
             {
                 comment = await _context.Comment
                     .Include(c => c.CommentInFilm)
@@ -47,14 +61,7 @@ namespace RateFilms.Infrastructure.Data.Repository
                 if (comment == null) throw new ArgumentException(nameof(reviewId));
 
                 review.User.Id = comment.CommentInSerial!.Favorite!.UserId;
-            }
-
-            review.Id = comment.Id;
-            review.Text = comment.Text;
-            review.Date = comment.Date;
-            review.Status = comment.Status;
-
-            return review;
+            }*/
         }
 
         public async Task SetNewReviewStatus(Review review)
@@ -95,18 +102,18 @@ namespace RateFilms.Infrastructure.Data.Repository
             }
         }
 
-        public async Task<IEnumerable<Review>> GetReviewByStatus(Guid moviewId, Guid? userId, bool isFilm, Func<Review, bool> predicate)
+        public async Task<IEnumerable<Review>> GetReviewByStatus(Guid moviewId, Guid? userId, Func<Review, bool> predicate)
         {
-            IQueryable<CommentDbModel> review;
+            var review = _context.Comment.Where(c => c.Favorite!.MovieId == moviewId);
 
-            if (isFilm)
+            /*if (isFilm)
             {
                 review = _context.Comment.Where(c => c.CommentInFilm!.Favorite!.FilmId == moviewId);
             }
             else
             {
                 review = _context.Comment.Where(c => c.CommentInSerial!.Favorite!.SerialId == moviewId);
-            }
+            }*/
 
             var result = await review.Select(r => new Review
             {
@@ -114,21 +121,23 @@ namespace RateFilms.Infrastructure.Data.Repository
                 Date = r.Date,
                 Status = r.Status,
                 Text = r.Text,
-                User = r.CommentInFilm != null
-                        ? UserConvertor.UserDbConvertUserDomain(r.CommentInFilm!.Favorite!.User)
-                        : UserConvertor.UserDbConvertUserDomain(r.CommentInSerial!.Favorite!.User),
+                User = UserConvertor.UserDbConvertUserDomain(r.Favorite!.User),
                 CountLike = r.Users.Count(),
                 IsLiked = r.Users.Any(u => u.UserId == userId),
-                Score = (int)(r.CommentInFilm != null
-                        ? r.CommentInFilm!.Favorite!.Score!
-                        : r.CommentInSerial!.Favorite!.Score!),
-
+                Score = (int)(r.Favorite!.Score!),
                 Note = r.AdminNote != null ? new AdminNote
                 {
                     Note = r.AdminNote.Note,
                     Date = r.AdminNote.Date,
                     user = UserConvertor.UserDbConvertUserDomain(r.AdminNote.User)
                 } : null
+
+                /*User = r.CommentInFilm != null
+                        ? UserConvertor.UserDbConvertUserDomain(r.CommentInFilm!.Favorite!.User)
+                        : UserConvertor.UserDbConvertUserDomain(r.CommentInSerial!.Favorite!.User),*/
+                /*Score = (int)(r.CommentInFilm != null
+                        ? r.CommentInFilm!.Favorite!.Score!
+                        : r.CommentInSerial!.Favorite!.Score!),*/
             }).ToListAsync();
 
             return result.Where(predicate);

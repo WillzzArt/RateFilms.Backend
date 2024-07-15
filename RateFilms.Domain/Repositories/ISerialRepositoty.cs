@@ -1,7 +1,4 @@
-﻿using RateFilms.Domain.DTO.Movies;
-using RateFilms.Domain.Models.Authorization;
-using RateFilms.Domain.Models.DomainModels;
-using RateFilms.Domain.Models.StorageModels;
+﻿using RateFilms.Domain.Models.DomainModels;
 
 namespace RateFilms.Domain.Repositories
 {
@@ -22,21 +19,6 @@ namespace RateFilms.Domain.Repositories
         /// <param name="serialId">Уникальный ключ сериала</param>
         /// <returns>Модель сериала</returns>
         Task<Serial?> GetSerialWithFavoriteById(Guid serialId);
-
-        /// <summary>
-        /// Сохраняет модель сериала в базу данных
-        /// </summary>
-        /// <param name="serial">Сторожевая модель сериала</param>
-        /// <returns></returns>
-        Task CreateAsync(SerialDbModel serial);
-
-        /// <summary>
-        /// Добавляет фильм в список избранного для авторизованного пользователя
-        /// </summary>
-        /// <param name="favoriteSerial">Модель таблицы Favorite</param>
-        /// <param name="userName">Модель авторизованного пользователя</param>
-        /// <returns></returns>
-        Task SetFavoriteSerial(FavoriteMovie favoriteSerial, User user);
 
         /// <summary>
         /// Ищет сериалы с непроверенными рецензиями для администратора

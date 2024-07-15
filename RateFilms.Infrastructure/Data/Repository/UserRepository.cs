@@ -42,7 +42,7 @@ namespace RateFilms.Infrastructure.Data.Repository
             return UserConvertor.UserDbConvertUserDomain(user);
         }
 
-        public async Task<User?> FindUserWithImage(string username)
+        public async Task<User?> FindUserIncludeImage(string username)
         {
             var user = await _context.User.Include(u => u.Image).FirstOrDefaultAsync(u => u.UserName == username);
 

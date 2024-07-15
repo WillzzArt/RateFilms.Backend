@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RateFilms.Domain.Models.StorageModels
 {
-    [Table("FavoriteSerial")]
+    /*[Table("FavoriteSerial")]
     public class FavoriteSerialDbModel
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -16,5 +16,5 @@ namespace RateFilms.Domain.Models.StorageModels
         public bool IsFavorite { get; set; }
         public int? Score { get; set; }
         public IEnumerable<CommentInSerialDbModel>? Comments { get; set; }
-    }
+    }*/
 }
