@@ -8,5 +8,7 @@ namespace RateFilms.Domain.Repositories
     {
         Task CreateAsync(MovieDbModel movie);
         Task SetFavoriteMovie(FavoriteMovie favoriteSerial, User user);
+        Task<bool> IsExistMovie(int kinopoiskId);
+        Task<bool> IsExistPerson(int kinopoiskId);
     }
 }

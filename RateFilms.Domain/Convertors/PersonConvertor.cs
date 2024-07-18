@@ -13,6 +13,7 @@ namespace RateFilms.Domain.Convertors
             var actor = new Person
             {
                 Id = actorDbModel.Id,
+                KinopoiskId = actorDbModel.KinopoiskId,
                 Name = actorDbModel.Name,
                 Age = actorDbModel.Age,
                 Image = ImageDbConvertImageDomain(actorDbModel.Image ?? new ImageDbModel())
@@ -29,6 +30,7 @@ namespace RateFilms.Domain.Convertors
                 .Select(p => new Person
                 {
                     Id = p.PersonId,
+                    KinopoiskId = p.Person.KinopoiskId,
                     Name = p.Person.Name,
                     Age = p.Person.Age,
                     Image = ImageDbConvertImageDomain(p.Person.Image),
@@ -49,6 +51,7 @@ namespace RateFilms.Domain.Convertors
                     Person = new PersonDbModel
                     {
                         Id = p.Id,
+                        KinopoiskId = p.KinopoiskId,
                         Age = p.Age,
                         Name = p.Name,
                         ImageId = p.Image?.Id,

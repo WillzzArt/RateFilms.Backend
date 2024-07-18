@@ -11,7 +11,6 @@ namespace RateFilms.Application.Services.Films
         Task<IEnumerable<FilmResponse?>> GetFilmForAuthorizeUser(string userName, CultureInfo culture);
         Task<FilmExtendResponse?> GetFilmById(Guid id, CultureInfo culture);
         Task<FilmExtendResponse?> GetFilmForAuthorizeUserById(Guid id, string userName, CultureInfo culture);
-        Task CreateFilmsAsync(Film film);
         Task<IEnumerable<FilmResponse>> GetAllFavoriteFilms(string userName, CultureInfo culture);
         Task<IEnumerable<FilmResponse>> GetFilmsWithUncheckedReview(CultureInfo culture);
         Task<IEnumerable<FilmResponse>> GetRecommendedFilms(string username, CultureInfo culture);

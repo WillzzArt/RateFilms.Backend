@@ -8,7 +8,5 @@ namespace RateFilms.Domain.Models.StorageModels
         public int Id { get; set; }
         public string Profession { get; set; }
         public IEnumerable<PersonInMovieDbModel> PersonInMovies { get; set; }
-        /*public IEnumerable<PersonInFilmDbModel> PersonInFilms { get; set; }
-        public IEnumerable<PersonInSerialDbModel> PersonInSerials { get; set; }*/ 
     }
 }

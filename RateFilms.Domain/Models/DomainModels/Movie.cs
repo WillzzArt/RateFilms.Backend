@@ -3,6 +3,7 @@
     public class Movie
     {
         public Guid Id { get; set; }
+        public int? KinopoiskId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public DateTimeOffset? ReleaseDate { get; set; }

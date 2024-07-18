@@ -8,5 +8,11 @@ namespace RateFilms.Common.Models.Localization
         public int Id { get; set; }
         public string Name { get; set; }
         public IEnumerable<Resource> Resources { get; set; }
+
+        public Culture(int id, string name)
+        {
+            Id = id;
+            Name = name;
+        }
     }
 }

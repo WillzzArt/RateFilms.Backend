@@ -1,9 +1,11 @@
-﻿using System.Globalization;
+﻿using RateFilms.Common.Models.Localization;
+using System.Globalization;
 
 namespace RateFilms.Domain.Repositories
 {
     public interface ILocalizationRepository
     {
-        public Dictionary<string, string> GetResource(CultureInfo culture);
+        Dictionary<string, string> GetResource(CultureInfo culture);
+        Task CreateResource(Resource resource, string culture);
     }
 }

@@ -19,7 +19,6 @@ namespace RateFilms.Application.Services.Films
         private readonly ICommentService _commentService;
         private readonly IReviewRepository _reviewRepository;
         private readonly IFavoriteRepository _favoriteRepository;
-        private readonly IMovieRepository _movieRepository;
         private readonly PredictionEnginePool<MovieRating, MovieRatingPrediction> _predictionEnginePool;
         private readonly LocalizationService _localizationService;
 
@@ -29,7 +28,6 @@ namespace RateFilms.Application.Services.Films
             ICommentService commentSerivice,
             IReviewRepository reviewRepository,
             IFavoriteRepository favoriteRepository,
-            IMovieRepository movieRepository,
             PredictionEnginePool<MovieRating, MovieRatingPrediction> predictionEnginePool,
             LocalizationService localizationService)
         {
@@ -38,17 +36,10 @@ namespace RateFilms.Application.Services.Films
             _commentService = commentSerivice;
             _reviewRepository = reviewRepository;
             _favoriteRepository = favoriteRepository;
-            _movieRepository = movieRepository;
             _predictionEnginePool = predictionEnginePool;
             _localizationService = localizationService;
             _localizationService.LoadTranslation();
         }
-
-        public async Task CreateFilmsAsync(Film film)
-        {
-            await _movieRepository.CreateAsync(FilmConvertor.FilmDomainConvertFilmDb(film));
-        }
-
 
         public async Task<IEnumerable<FilmResponse?>> GetFilmForAuthorizeUser(string userName, CultureInfo culture)
         {

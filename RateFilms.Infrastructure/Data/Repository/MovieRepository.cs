@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RateFilms.Common.Helpers;
-using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.Models.Authorization;
 using RateFilms.Domain.Models.DomainModels;
@@ -31,13 +30,14 @@ namespace RateFilms.Infrastructure.Data.Repository
                     {
                         var saveFilm = new FilmDbModel
                         {
+                            KinopoiskId = film.KinopoiskId,
                             Name = film.Name,
                             Description = film.Description,
                             Duration = film.Duration,
                             AgeRating = film.AgeRating,
                             ReleaseDate = film.ReleaseDate,
                             Country = film.Country,
-                            Type = MovieType.Film,
+                            Type = MovieType.Film
                         };
 
                         await _context.Film.AddAsync(saveFilm);
@@ -53,6 +53,7 @@ namespace RateFilms.Infrastructure.Data.Repository
                     {
                         var saveSerial = new SerialDbModel
                         {
+                            KinopoiskId = serial.KinopoiskId,
                             Name = serial.Name,
                             Description = serial.Description,
                             AgeRating = serial.AgeRating,
@@ -105,35 +106,57 @@ namespace RateFilms.Infrastructure.Data.Repository
             await _context.SaveChangesAsync();
         }
 
+        public async Task<bool> IsExistMovie(int kinopoiskId)
+        {
+            return await _context.Movie.AnyAsync(x => x.KinopoiskId == kinopoiskId);
+        }
+
+        public async Task<bool> IsExistPerson(int kinopoiskId)
+        {
+            return await _context.Person.AnyAsync(x => x.KinopoiskId == kinopoiskId);
+        }
+
         private async Task SavePerson(IEnumerable<PersonInMovieDbModel> people, MovieDbModel saveFilm)
         {
             var professions = _context.Profession.ToList();
 
             foreach (var person in people)
             {
+                var personDb = await _context.Person.FirstOrDefaultAsync(p => p.KinopoiskId == person.Person.KinopoiskId);
+
                 var savePersInMovie = new PersonInMovieDbModel
                 {
                     Movie = saveFilm,
                     PersonId = person.PersonId
                 };
 
-                if (person.PersonId == Guid.Empty)
+                if (personDb == null)
                 {
-                    var savePerson = new PersonDbModel
+                    if (person.PersonId == Guid.Empty)
                     {
-                        Age = person.Person.Age,
-                        Image = person.Person.Image,
-                        Name = person.Person.Name
-                    };
+                        var savePerson = new PersonDbModel
+                        {
+                            KinopoiskId = person.Person.KinopoiskId,
+                            Age = person.Person.Age,
+                            Image = person.Person.Image,
+                            Name = person.Person.Name
+                        };
 
-                    await _context.Person.AddAsync(savePerson);
-                    savePersInMovie.Person = savePerson;
+                        await _context.Person.AddAsync(savePerson);
+
+                        savePersInMovie.PersonId = savePerson.Id;
+                        savePersInMovie.Person = savePerson;
+                    }
+                }
+                else
+                {
+                    savePersInMovie.PersonId = personDb.Id;
                 }
 
                 await _context.PersonInMovie.AddAsync(savePersInMovie);
 
                 savePersInMovie.Professions = professions
-                        .Where(p => person.Professions.Any(prof => prof.Id == p.Id)).ToList();
+                       .Where(p => person.Professions.Any(prof => prof.Id == p.Id)).ToList();
             }
         }
 

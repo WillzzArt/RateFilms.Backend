@@ -7,11 +7,14 @@
         Autor,
         Director,
         Manager,
-        Screenwriter,
+        Writer,
         Operator,
         Producer,
         ProductionDesigner,
         Editor,
-        Composer
+        Composer,
+        Voice_director,
+        Design,
+        Translator
     }
 }

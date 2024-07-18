@@ -6,10 +6,10 @@ namespace RateFilms.Domain.Models.StorageModels
     public class MovieDbModel: IEntity
     {
         public Guid Id { get; set; }
+        public int? KinopoiskId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public DateTimeOffset? ReleaseDate { get; set; }
-        //public Image PreviewImage { get; set; }
         public int AgeRating { get; set; }
         public string? Country { get; set; }
         public MovieType Type { get; set; }

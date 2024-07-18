@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RateFilms.Application.Services.Films;
+using RateFilms.Application.Services.Movies;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.WebAPI.Helpers;
 
@@ -13,13 +14,16 @@ namespace RateFilms.WebAPI.Controllers
         private readonly ILogger<FilmController> _logger;
 
         private readonly IFilmService _filmService;
+        private readonly IMovieService _movieService;
 
         public FilmController(
             ILogger<FilmController> logger,
-            IFilmService filmService)
+            IFilmService filmService,
+            IMovieService movieService)
         {
             _logger = logger;
             _filmService = filmService;
+            _movieService = movieService;
         }
 
         [AllowAnonymous]
@@ -77,7 +81,7 @@ namespace RateFilms.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> AddFilms(Film film)
         {
-            await _filmService.CreateFilmsAsync(film);
+            await _movieService.CreateMovieAsync(film);
 
             return Ok();
         }
@@ -90,8 +94,5 @@ namespace RateFilms.WebAPI.Controllers
 
             return Ok(film);
         }
-
-
-
     }
 }

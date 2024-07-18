@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RateFilms.Application.Services.Movies;
 using RateFilms.Application.Services.Serials;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.WebAPI.Helpers;
@@ -11,17 +12,19 @@ namespace RateFilms.WebAPI.Controllers
     public class SerialController : Controller
     {
         private readonly ISerialService _serialService;
+        private readonly IMovieService _movieService;
 
-        public SerialController(ISerialService serialService)
+        public SerialController(ISerialService serialService, IMovieService movieService)
         {
             _serialService = serialService;
+            _movieService = movieService;
         }
 
         [Authorize(Policy = "admin")]
         [HttpPost]
         public async Task<IActionResult> AddSerials(Serial serial)
         {
-            await _serialService.CreateSerialAsync(serial);
+            await _movieService.CreateMovieAsync(serial);
 
             return Ok();
         }

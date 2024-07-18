@@ -15,6 +15,7 @@ namespace RateFilms.Domain.Convertors
             var serial = new Serial
             {
                 Id = serialDbModel.Id,
+                KinopoiskId = serialDbModel.KinopoiskId,
                 Name = serialDbModel.Name,
                 Description = serialDbModel.Description,
                 PreviewImage = PersonConvertor.ImageDbConvertImageDomain(serialDbModel.PreviewImage ?? new ImageDbModel()),
@@ -85,6 +86,7 @@ namespace RateFilms.Domain.Convertors
             var serialDb = new SerialDbModel
             {
                 Id = serial.Id,
+                KinopoiskId = serial.KinopoiskId,
                 Name = serial.Name,
                 Description = serial.Description,
                 AgeRating = serial.AgeRating,

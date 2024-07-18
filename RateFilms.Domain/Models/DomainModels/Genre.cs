@@ -14,6 +14,22 @@
         Historical,
         Romance,
         Crime,
-        Anime
+        Anime,
+        Biography,
+        Western,
+        Military,
+        Detective,
+        Children,
+        Documentary,
+        Game,
+        Concert,
+        ShortFilm,
+        Music,
+        Musical,
+        News,
+        Family,
+        Sports,
+        Fantastic,
+        Ceremony
     }
 }

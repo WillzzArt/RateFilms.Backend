@@ -13,10 +13,12 @@ namespace RateFilms.WebAPI.Controllers
     public class MovieController : Controller
     {
         private readonly IMovieService _movieService;
+        private readonly IMovieFromKinopoiskServise _movieFromKinopoiskService;
 
-        public MovieController(IMovieService movieService)
+        public MovieController(IMovieService movieService, IMovieFromKinopoiskServise movieFromKinopoiskService)
         {
             _movieService = movieService;
+            _movieFromKinopoiskService = movieFromKinopoiskService;
         }
 
         [AllowAnonymous]
@@ -69,5 +71,22 @@ namespace RateFilms.WebAPI.Controllers
 
             return Ok();
         }
+
+        [Authorize(Policy = "admin")]
+        [HttpPost("CreateFilmFromKinopoisk")]
+        public async Task<IActionResult> CreateFilmFromKinopoisk(int movieId)
+        {
+            await _movieFromKinopoiskService.CreateFilm(movieId);
+            return Ok();
+        }
+
+        [Authorize(Policy = "admin")]
+        [HttpPost("CreateSerialFromKinopoisk")]
+        public async Task<IActionResult> CreateSerialFromKinopoisk(int movieId)
+        {
+            await _movieFromKinopoiskService.CreateSerial(movieId);
+            return Ok();
+        }
+
     }
 }

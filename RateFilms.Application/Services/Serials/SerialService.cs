@@ -3,7 +3,6 @@ using RateFilms.Application.Services.Localization;
 using RateFilms.Application.Services.Movies;
 using RateFilms.Common.Models.MovieRatingModels;
 using RateFilms.Domain.Convertors;
-using RateFilms.Domain.DTO.Movies;
 using RateFilms.Domain.DTO.Serials;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Repositories;
@@ -18,7 +17,6 @@ namespace RateFilms.Application.Services.Serials
         private readonly ICommentService _commentService;
         private readonly IReviewRepository _reviewRepository;
         private readonly IFavoriteRepository _favoriteRepository;
-        private readonly IMovieRepository _movieRepository;
         private readonly PredictionEnginePool<MovieRating, MovieRatingPrediction> _predictionEnginePool;
         private readonly LocalizationService _localizationService;
 
@@ -28,7 +26,6 @@ namespace RateFilms.Application.Services.Serials
             ICommentService commentService,
             IReviewRepository reviewRepository,
             IFavoriteRepository favoriteRepository,
-            IMovieRepository movieRepository,
             PredictionEnginePool<MovieRating, MovieRatingPrediction> predictionEnginePool,
             LocalizationService localizationService)
         {
@@ -37,26 +34,10 @@ namespace RateFilms.Application.Services.Serials
             _commentService = commentService;
             _reviewRepository = reviewRepository;
             _favoriteRepository = favoriteRepository;
-            _movieRepository = movieRepository;
             _predictionEnginePool = predictionEnginePool;
             _localizationService = localizationService;
             _localizationService.LoadTranslation();
         }
-        public async Task CreateSerialAsync(Serial serial)
-        {
-            if (serial.Seasons.Any(s => s.RealeseDate < serial.ReleaseDate))
-            {
-                throw new ArgumentOutOfRangeException(nameof(serial.Seasons));
-            }
-
-            if (serial.Seasons.Any(s => s.Series.Any(sSeries => sSeries.RealeseDate < s.RealeseDate)))
-            {
-                throw new ArgumentOutOfRangeException("series");
-            }
-
-            await _movieRepository.CreateAsync(SerialConvertor.SerialDomainConvertSerialDb(serial));
-        }
-
 
         public async Task<IEnumerable<SerialResponse?>> GetSerialForAuthorizeUser(string userName, CultureInfo culture)
         {
@@ -82,7 +63,7 @@ namespace RateFilms.Application.Services.Serials
         {
             var serials = await _serialRepositoty.GetAllSerialsWithFavorite();
 
-            foreach(var serial in serials)
+            foreach (var serial in serials)
                 LocalizeFieldsSerial(serial, culture);
 
             var res = serials.Select(s => new SerialResponse(s, null));
@@ -156,7 +137,7 @@ namespace RateFilms.Application.Services.Serials
         {
             var serials = await _serialRepositoty.GetSerialsWithUncheckedReview();
 
-            foreach(var serial in serials)
+            foreach (var serial in serials)
                 LocalizeFieldsSerial(serial, culture);
 
             var res = serials.Select(s => new SerialResponse(s, null));

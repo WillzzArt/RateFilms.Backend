@@ -1,6 +1,8 @@
 ﻿using RateFilms.Application.Services.Films;
 using RateFilms.Application.Services.Serials;
+using RateFilms.Domain.Convertors;
 using RateFilms.Domain.DTO.Movies;
+using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Repositories;
 using System.Globalization;
 
@@ -23,6 +25,26 @@ namespace RateFilms.Application.Services.Movies
             _serialService = serialService;
             _movieRepository = movieRepository;
             this._userRepository = userRepository;
+        }
+
+        public async Task CreateMovieAsync(Film film)
+        {
+            await _movieRepository.CreateAsync(FilmConvertor.FilmDomainConvertFilmDb(film));
+        }
+
+        public async Task CreateMovieAsync(Serial serial)
+        {
+            if (serial.Seasons.Any(s => s.RealeseDate < serial.ReleaseDate))
+            {
+                throw new ArgumentOutOfRangeException(nameof(serial.Seasons));
+            }
+
+            if (serial.Seasons.Any(s => s.Series.Any(sSeries => sSeries.RealeseDate < s.RealeseDate)))
+            {
+                throw new ArgumentOutOfRangeException("series");
+            }
+
+            await _movieRepository.CreateAsync(SerialConvertor.SerialDomainConvertSerialDb(serial));
         }
 
         public async Task<MovieResponse> GetAllFavoritesMovie(string username, CultureInfo culture)

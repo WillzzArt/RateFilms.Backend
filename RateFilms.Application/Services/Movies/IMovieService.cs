@@ -1,4 +1,5 @@
 ﻿using RateFilms.Domain.DTO.Movies;
+using RateFilms.Domain.Models.DomainModels;
 using System.Globalization;
 
 namespace RateFilms.Application.Services.Movies
@@ -11,5 +12,7 @@ namespace RateFilms.Application.Services.Movies
         Task<MovieResponse> GetMoviesWithUncheckedReview(CultureInfo culture);
         Task<MovieResponse> GetRecommendedMovie(string username, CultureInfo culture);
         Task SetFavoriteMovie(FavoriteMovie favoriteFilm, string userName);
+        Task CreateMovieAsync(Film film);
+        Task CreateMovieAsync(Serial serial);
     }
 }

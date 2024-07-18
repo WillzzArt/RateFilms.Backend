@@ -13,8 +13,6 @@ namespace RateFilms.Domain.Models.StorageModels
         public IEnumerable<CommentUserDbModel> Users { get; set; }
         public Guid FavoriteId { get; set; }
         public FavoriteMovieDbModel? Favorite { get; set; }
-        /*public CommentInFilmDbModel? CommentInFilm { get; set; }
-        public CommentInSerialDbModel? CommentInSerial { get; set; }*/
         public AdminNoteDbModel? AdminNote { get; set; }
     }
 }

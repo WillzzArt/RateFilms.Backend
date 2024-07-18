@@ -25,6 +25,7 @@ namespace RateFilms.Domain.Convertors
             var film = new Film
             {
                 Id = filmDbModel.Id,
+                KinopoiskId = filmDbModel.KinopoiskId,
                 Name = filmDbModel.Name,
                 Description = filmDbModel.Description,
                 People = PersonConvertor.PersonInMovieDbListConvertPersonDomainList(filmDbModel.People ?? new List<PersonInMovieDbModel>()),
@@ -78,6 +79,7 @@ namespace RateFilms.Domain.Convertors
             var filmDb = new FilmDbModel
             {
                 Id = film.Id,
+                KinopoiskId = film.KinopoiskId,
                 Name = film.Name,
                 Description = film.Description,
                 People = PersonConvertor.PersonDomainListConvertPersonInMovieDbList(film.People ?? new List<Person>(), film.Id),
