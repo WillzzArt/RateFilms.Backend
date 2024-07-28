@@ -61,7 +61,7 @@ namespace RateFilms.Application.Services.Films
             return favoriteFilmsForUser;
         }
 
-        public async Task<IEnumerable<FilmResponse?>> GetFilms(CultureInfo culture)
+        public async Task<IEnumerable<FilmResponse>> GetFilms(CultureInfo culture)
         {
             var films = await _filmRepository.GetAllFilmsWithFavorite();
 

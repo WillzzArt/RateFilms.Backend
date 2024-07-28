@@ -100,6 +100,8 @@ builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<ILocalizationRepository, LocalizationRepository>();
 builder.Services.AddScoped<LocalizationService>();
 
+builder.Services.AddCors();
+
 builder.Services.AddPredictionEnginePool<MovieRating, MovieRatingPrediction>()
     .FromFile(modelName: "MovieRecommenderModel", filePath: "Data/MovieRecommenderModel.zip", watchForChanges: true);
 
@@ -127,6 +129,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseCors(builder => builder.AllowAnyOrigin());
 
 app.MapControllers();
 

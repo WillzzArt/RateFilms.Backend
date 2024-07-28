@@ -3,11 +3,8 @@ using RateFilms.Common.Helpers;
 using RateFilms.Common.Models.KinopoiskMovie;
 using RateFilms.Common.Models.Localization;
 using RateFilms.Domain.Convertors;
-using RateFilms.Domain.DTO.Films;
 using RateFilms.Domain.Models.DomainModels;
 using RateFilms.Domain.Repositories;
-using System;
-using System.Xml.Linq;
 
 namespace RateFilms.Application.Services.Movies
 {
@@ -87,7 +84,7 @@ namespace RateFilms.Application.Services.Movies
                 serial.Seasons = seasonData.Items.Where(s => s.Episodes.Count() > 1).Select(s => new Season
                 {
                     Description = serialData.NameOriginal.Replace(" ", "") + "Season" + s.Number + "DescriprionKey",
-                    
+
                     CountMaxSeries = s.Episodes.Count(),
                     RealeseDate = ConvertData(s.Episodes.First().ReleaseDate),
 
@@ -108,8 +105,8 @@ namespace RateFilms.Application.Services.Movies
                         }
                     }),
 
-                    Images = new List<Image>() 
-                    { 
+                    Images = new List<Image>()
+                    {
                         new Image()
                         {
                             isPreview = false,
@@ -126,16 +123,16 @@ namespace RateFilms.Application.Services.Movies
                 });
 
                 await SaveResource(serialData, peopleData, seasonData.Items.Where(s => s.Episodes.Count() > 1));
-                
+
                 await _movieService.CreateMovieAsync(serial);
 
-                DateTimeOffset ConvertData(string Data) => 
+                DateTimeOffset ConvertData(string Data) =>
                     DateTimeOffset.ParseExact(Data, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture).UtcDateTime;
 
             }
         }
 
-        private Movie GenerateMovieModel<T>(MovieKinopoisk movieData, IEnumerable<PersonKinopoisk> person) where T: Movie, new()
+        private Movie GenerateMovieModel<T>(MovieKinopoisk movieData, IEnumerable<PersonKinopoisk> person) where T : Movie, new()
         {
             var name = movieData.NameOriginal.Replace(" ", "");
             var releaseDate = new DateTimeOffset(
@@ -240,7 +237,7 @@ namespace RateFilms.Application.Services.Movies
 
                 await _localizationRepository.CreateResource(resourceRu, culture);
             }
-            
+
         }
 
         private static async Task<T> SendRequest<T>(string url)

@@ -193,7 +193,8 @@ namespace RateFilms.Infrastructure.Data.Repository
                 {
                     Description = season.Description,
                     Serial = saveSerial,
-                    RealeseDate = season.RealeseDate
+                    RealeseDate = season.RealeseDate,
+                    CountMaxSeries = season.CountMaxSeries
                 };
 
                 await _context.Season.AddAsync(saveSeason);

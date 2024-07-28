@@ -59,7 +59,7 @@ namespace RateFilms.Application.Services.Serials
             return favoriteSerialsForUser;
         }
 
-        public async Task<IEnumerable<SerialResponse?>> GetSerials(CultureInfo culture)
+        public async Task<IEnumerable<SerialResponse>> GetSerials(CultureInfo culture)
         {
             var serials = await _serialRepositoty.GetAllSerialsWithFavorite();
 
