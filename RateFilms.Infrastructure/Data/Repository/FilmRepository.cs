@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RateFilms.Domain.Convertors;
 using RateFilms.Domain.Models.DomainModels;
+using RateFilms.Domain.Models.StorageModels;
 using RateFilms.Domain.Repositories;
 
 namespace RateFilms.Infrastructure.Data.Repository
@@ -27,16 +28,26 @@ namespace RateFilms.Infrastructure.Data.Repository
 
         public async Task<Film?> GetFilmWithFavoriteById(Guid filmId)
         {
-            var filmDb = await _context.Film
-                .Include(f => f.People)
-                    .ThenInclude(p => p.Professions)
-                .Include(f => f.People)
-                    .ThenInclude(p => p.Person)
-                        .ThenInclude(p => p.Image)
-                .Include(p => p.Images)
-                .Include(p => p.Genre)
-                .Include(f => f.Favorites)
-                .FirstOrDefaultAsync(f => f.Id == filmId);
+            var filmDb = await _context.Film.Select(f => new FilmDbModel
+            {
+                Id = f.Id,
+                Description = f.Description,
+                ReleaseDate = f.ReleaseDate,
+                AgeRating = f.AgeRating,
+                Country = f.Country,
+                Favorites = f.Favorites.ToList(),
+                Name = f.Name,
+                Duration = f.Duration,
+                Images = f.Images.ToList(),
+                Genre = f.Genre.ToList(),
+                People = f.People.Select(p => new PersonInMovieDbModel
+                {
+                    PersonId = p.PersonId,
+                    Person = p.Person,
+                    Professions = p.Professions.ToList()
+                }).Where(p => p.Professions.Count() > 1).ToList()
+
+            }).FirstOrDefaultAsync(f => f.Id == filmId);
 
             if (filmDb != null)
             {
