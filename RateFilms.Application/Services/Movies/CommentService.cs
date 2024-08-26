@@ -45,7 +45,7 @@ namespace RateFilms.Application.Services.Movies
                 return comments.Select(c => new CommentResponse(c));
             }
 
-            return comments.Take(countComm).Select(c => new CommentResponse(c));
+            return comments.OrderByDescending(c => c.Date).Take(countComm).Select(c => new CommentResponse(c));
         }
 
 
@@ -191,11 +191,6 @@ namespace RateFilms.Application.Services.Movies
             }
         }
 
-        public Task DeleteComment(CommentRequest commentRequest, string username)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<bool> UpdateReview(Guid reviewId, string text)
         {
             return await _reviewRepository.UpdateReview(reviewId, text);
@@ -214,27 +209,5 @@ namespace RateFilms.Application.Services.Movies
         {
             await _commentRepository.DeleteComment(commentId);
         }
-
-        /*public async Task<IEnumerable<CommentResponse>> GetCommentsInSerial(Guid serialId, int countComm, string? username)
-        {
-            IEnumerable<Comment> comments;
-
-            if (username != null)
-            {
-                var user = await _userRepository.FindUser(username);
-                comments = await _commentRepository.GetCommentsInSerial(serialId, user?.Id);
-            }
-            else
-            {
-                comments = await _commentRepository.GetCommentsInSerial(serialId, null);
-            }
-
-            if (countComm == 0)
-            {
-                return comments.Select(c => new CommentResponse(c));
-            }
-
-            return comments.Take(countComm).Select(c => new CommentResponse(c));
-        }*/
     }
 }

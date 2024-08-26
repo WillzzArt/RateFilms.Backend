@@ -82,7 +82,7 @@ namespace RateFilms.Infrastructure.Data.Repository
         {
             var commentsInFav = _context.FavoriteMovie.Where(fav => fav.MovieId == movieId && fav.Comments != null);
 
-            var commentRes = from commInFav in commentsInFav
+            var commentRes = from commInFav in commentsInFav.Include(c => c.User).ThenInclude(u => u.Image)
                              from comm in commInFav.Comments!
                              where comm.Status == ReviewStatus.None
                              let isLiked = comm.Users.Any(u => u.UserId == userId)

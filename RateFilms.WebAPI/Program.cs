@@ -109,6 +109,7 @@ builder.Services.AddPredictionEnginePool<MovieRating, MovieRatingPrediction>()
     .FromFile(modelName: "data_preparation_pipeline", filePath: "Data/data_preparation_pipeline.zip", watchForChanges: true);
 
 builder.Services.Configure<TokenOptions>(config.GetSection("JwtSettings"));
+builder.Services.Configure<ConnectionOptions>(config.GetSection("ConnectionStrings"));
 
 var connectionString = builder.Configuration.GetConnectionString("WebApiDatabase");
 
@@ -127,10 +128,16 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors(builder => builder
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+);
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseCors(builder => builder.AllowAnyOrigin());
+//app.UseCors(builder => builder.AllowAnyOrigin());
 
 app.MapControllers();
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using RateFilms.Application.Option;
 using RateFilms.Common.Models.Localization;
 using RateFilms.Domain.Models.StorageModels;
 
@@ -7,16 +8,16 @@ namespace RateFilms.Infrastructure.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        protected readonly IConfiguration configuration;
+        private readonly ConnectionOptions _connectionOptions;
 
-        public ApplicationDbContext(IConfiguration configuration)
+        public ApplicationDbContext(IOptions<ConnectionOptions> connectionOptions)
         {
-            this.configuration = configuration;
+            _connectionOptions = connectionOptions.Value;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Host=localhost; Database=RateFilms_2.0; Username=postgres; Password=root");
+            optionsBuilder.UseNpgsql(_connectionOptions.WebApiDatabase);
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -74,77 +75,6 @@ namespace RateFilms.Infrastructure.Data
                 .WithMany(f => f.Comments)
                 .HasForeignKey(c => c.FavoriteId)
                 .HasPrincipalKey(f => f.Id);
-
-            /*builder.Entity<FavoriteFilmDbModel>()
-                .HasKey(ff => new { ff.FilmId, ff.UserId });
-
-            builder.Entity<FavoriteSerialDbModel>()
-                .HasKey(fs => new { fs.SerialId, fs.UserId });*/
-
-            /*builder.Entity<PersonInFilmDbModel>()
-                .HasKey(pf => new { pf.FilmId, pf.PersonId });
-
-            builder.Entity<PersonInSerialDbModel>()
-                .HasKey(ps => new { ps.SerialId, ps.PersonId });*/
-
-            /*builder.Entity<FilmDbModel>()
-                 .HasMany(f => f.Genre)
-                 .WithMany(g => g.Films)
-                 .UsingEntity(j => j.ToTable("FilmGenries"));
-
-             builder.Entity<SerialDbModel>()
-                 .HasMany(f => f.Genre)
-                 .WithMany(g => g.Serials)
-                 .UsingEntity(j => j.ToTable("SerialGenries"));*/
-
-            /*builder.Entity<PersonInFilmDbModel>()
-                .HasMany(f => f.Professions)
-                .WithMany(g => g.PersonInFilms)
-                .UsingEntity(j => j.ToTable("PersonInFilmProfession"));
-
-            builder.Entity<PersonInSerialDbModel>()
-                .HasMany(f => f.Professions)
-                .WithMany(g => g.PersonInSerials)
-                .UsingEntity(j => j.ToTable("PersonInSerialProfession"));*/
-
-            /*builder.Entity<CommentInMovieDbModel>()
-                .HasKey(comm => new { comm.FavoriteId, comm.CommentId });
-
-            builder.Entity<CommentInMovieDbModel>()
-                .HasOne(c => c.Favorite)
-                .WithMany(f => f.Comments)
-                .HasForeignKey(c => c.FavoriteId)
-                .HasPrincipalKey(f => f.Id);*/
-
-            /*builder.Entity<CommentInFilmDbModel>()
-                .HasKey(comm => new { comm.FavoriteId, comm.CommentId });
-
-            builder.Entity<CommentInFilmDbModel>()
-                .HasOne(c => c.Favorite)
-                .WithMany(f => f.Comments)
-                .HasForeignKey(c => c.FavoriteId)
-                .HasPrincipalKey(f => f.FavoriteId);
-
-            builder.Entity<CommentInSerialDbModel>()
-                .HasKey(comm => new { comm.FavoriteId, comm.CommentId });
-
-            builder.Entity<CommentInSerialDbModel>()
-                .HasOne(c => c.Favorite)
-                .WithMany(f => f.Comments)
-                .HasForeignKey(c => c.FavoriteId)
-                .HasPrincipalKey(f => f.FavoriteId);*/
-
-            /*builder.Entity<CommentDbModel>()
-                .HasOne(c => c.CommentInMovie)
-                .WithOne(c => c.Comment);*/
-
-            /*builder.Entity<CommentDbModel>()
-                .HasOne(c => c.CommentInFilm)
-                .WithOne(c => c.Comment);
-
-            builder.Entity<CommentDbModel>()
-                .HasOne(c => c.CommentInSerial)
-                .WithOne(c => c.Comment);*/
         }
 
         public DbSet<MovieDbModel> Movie { get; set; }
@@ -165,12 +95,5 @@ namespace RateFilms.Infrastructure.Data
         public DbSet<Resource> Resource { get; set; }
         public DbSet<Culture> Culture { get; set; }
         public DbSet<TokenDbModel> Token { get; set; }
-
-        //public DbSet<FavoriteFilmDbModel> FavoriteFilms { get; set; }
-        //public DbSet<FavoriteSerialDbModel> FavoriteSerials { get; set; }
-        //public DbSet<PersonInFilmDbModel> PersonInFilm { get; set; }
-        //public DbSet<PersonInSerialDbModel> PersonInSerials { get; set; }
-        //public DbSet<CommentInFilmDbModel> CommentInFilm { get; set; }
-        //public DbSet<CommentInSerialDbModel> CommentInSerial { get; set; }
     }
 }
